@@ -1,0 +1,9 @@
+# Versions the notebook was built and run against.
+jupyter
+nbformat
+numpy
+pandas
+scikit-learn==1.8.0
+matplotlib
+seaborn
+joblib

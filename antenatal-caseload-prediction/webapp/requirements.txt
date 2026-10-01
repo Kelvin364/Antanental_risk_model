@@ -1,0 +1,8 @@
+# Versions the model artefact was built and tested against.
+# scikit-learn and joblib must match to deserialise lbw_model.joblib safely.
+fastapi==0.142.2
+uvicorn[standard]==0.46.0
+pydantic==2.13.3
+scikit-learn==1.8.0
+joblib==1.5.3
+numpy==2.4.4
