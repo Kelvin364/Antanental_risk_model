@@ -14,7 +14,7 @@ Capstone project: model notebook, frozen model artefact, prediction API, and pro
 | | |
 | --- | --- |
 | **GitHub repository** | https://github.com/Kelvin364/Antanental_risk_model |
-| **Demo video** | _(link to be added)_ |
+| **Demo video** | https://youtu.be/QN0X9P8TFkA |
 | **Figma design file** | https://www.figma.com/design/UHmymjrnb2HJX47uQzf4jg |
 | **Local interface** | http://127.0.0.1:8000/ (after setup below) |
 | **Interactive API docs** | http://127.0.0.1:8000/docs |
