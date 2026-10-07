@@ -1,0 +1,25 @@
+variable,group,n,n_lbw,lbw_rate_percent,ci_low_percent,ci_high_percent
+preterm_labour,no,8459,273,3.2,2.9,3.6
+preterm_labour,yes,358,170,47.5,42.4,52.7
+still_births,no,8687,403,4.6,4.2,5.1
+still_births,yes,130,40,30.8,23.5,39.2
+live_births,no,208,61,29.3,23.6,35.8
+live_births,yes,8609,382,4.4,4.0,4.9
+twins_delivery,no,8394,421,5.0,4.6,5.5
+twins_delivery,yes,423,22,5.2,3.5,7.7
+mode_of_delivery,c-section,1280,69,5.4,4.3,6.8
+mode_of_delivery,forceps,1,1,100.0,20.7,100.0
+mode_of_delivery,svd,7533,373,5.0,4.5,5.5
+mode_of_delivery,vaccum,3,0,0.0,0.0,56.1
+Risk,high,5510,264,4.8,4.3,5.4
+Risk,low,3307,179,5.4,4.7,6.2
+SN decile,01,882,29,3.3,2.3,4.7
+SN decile,02,882,43,4.9,3.6,6.5
+SN decile,03,881,36,4.1,3.0,5.6
+SN decile,04,882,49,5.6,4.2,7.3
+SN decile,05,882,48,5.4,4.1,7.1
+SN decile,06,881,53,6.0,4.6,7.8
+SN decile,07,882,50,5.7,4.3,7.4
+SN decile,08,881,58,6.6,5.1,8.4
+SN decile,09,882,44,5.0,3.7,6.6
+SN decile,10,882,33,3.7,2.7,5.2

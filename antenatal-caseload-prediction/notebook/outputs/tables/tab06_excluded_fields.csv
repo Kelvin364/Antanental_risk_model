@@ -1,0 +1,494 @@
+column,block,reason
+labour_at_term_1,baseline,Leakage audit: history field that behaves like a delivery outcome
+preterm_labour_1,baseline,Leakage audit: history field that behaves like a delivery outcome
+miscarriages_or_abortions_1,outcome,Leakage audit: history field that behaves like a delivery outcome
+Risk,label,Dataset risk label; not an LBW label and assigned with knowledge of the whole record
+bp_is_greater_than_140_90_v1,anc_v1,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v2,anc_v2,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v3,anc_v3,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v4,anc_v4,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v5,anc_v5,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v6,anc_v6,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v7,anc_v7,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+bp_is_greater_than_140_90_v8,anc_v8,Derived BP flag contradicts the recorded BP (all zero at visit 1 while 90 readings are at or above 140/90)
+total_antenatal_visits,outcome,Counted after delivery; reveals how long the pregnancy lasted
+visit_number_1,outcome,Delivery record; only known after birth
+visit_number_2,outcome,Delivery record; only known after birth
+visit_number_3,outcome,Delivery record; only known after birth
+visit_number_4,outcome,Delivery record; only known after birth
+visit_number_5,outcome,Delivery record; only known after birth
+visit_number_6,outcome,Delivery record; only known after birth
+visit_number_7,outcome,Delivery record; only known after birth
+mode_of_delivery,outcome,Delivery record; only known after birth
+live_births,outcome,Delivery record; only known after birth
+still_births,outcome,Delivery record; only known after birth
+labour_at_term,outcome,Delivery record; only known after birth
+post_term,outcome,Delivery record; only known after birth
+preterm_labour,outcome,Delivery record; only known after birth
+twins_delivery,outcome,Delivery record; only known after birth
+number_of_twins,outcome,Delivery record; only known after birth
+newborn_birth_weight_kg_,outcome,Delivery record; only known after birth
+newborn_with_weight_4kg_and_above,outcome,Delivery record; only known after birth
+gender_of_new_born_child,outcome,Delivery record; only known after birth
+new_born_with_complication,outcome,Delivery record; only known after birth
+immunization_status,outcome,Delivery record; only known after birth
+bleeding_during_pregnancy,outcome,Delivery record; only known after birth
+bleeding_during_delivery,outcome,Delivery record; only known after birth
+bleeding_after_delivery,outcome,Delivery record; only known after birth
+other_problems_during_pregnancy,outcome,Delivery record; only known after birth
+blood_pressure_v1_1_p,postnatal_v1,Postnatal visit; only known after birth
+weight_v1_p,postnatal_v1,Postnatal visit; only known after birth
+haemoglobin_level_v1_p,postnatal_v1,Postnatal visit; only known after birth
+pv_bleeding_amount_v1_p,postnatal_v1,Postnatal visit; only known after birth
+uterus_involution_v1_p,postnatal_v1,Postnatal visit; only known after birth
+uterus_tenderness_v1_p,postnatal_v1,Postnatal visit; only known after birth
+perineum_v1_p,postnatal_v1,Postnatal visit; only known after birth
+surgical_wound_v1_p,postnatal_v1,Postnatal visit; only known after birth
+breast_pain_and_engorgement_v1_p,postnatal_v1,Postnatal visit; only known after birth
+pmtct_status_v1_p,postnatal_v1,Postnatal visit; only known after birth
+breastfeeding_status_v1_p,postnatal_v1,Postnatal visit; only known after birth
+mental_status_v1_p,postnatal_v1,Postnatal visit; only known after birth
+child_check_v1_p,postnatal_v1,Postnatal visit; only known after birth
+vaccinated_v1_p,postnatal_v1,Postnatal visit; only known after birth
+jaundiced_v1_p,postnatal_v1,Postnatal visit; only known after birth
+dib_v1_p,postnatal_v1,Postnatal visit; only known after birth
+umbilicus_status_v1_p,postnatal_v1,Postnatal visit; only known after birth
+temperature_v1_p,postnatal_v1,Postnatal visit; only known after birth
+blood_pressure_v2_1_p,postnatal_v2,Postnatal visit; only known after birth
+weight_v2_p,postnatal_v2,Postnatal visit; only known after birth
+haemoglobin_level_v2_p,postnatal_v2,Postnatal visit; only known after birth
+pv_bleeding_amount_v2_p,postnatal_v2,Postnatal visit; only known after birth
+uterus_involution_v2_p,postnatal_v2,Postnatal visit; only known after birth
+uterus_tenderness_v2_p,postnatal_v2,Postnatal visit; only known after birth
+perineum_v2_p,postnatal_v2,Postnatal visit; only known after birth
+surgical_wound_v2_p,postnatal_v2,Postnatal visit; only known after birth
+breast_pain_and_engorgement_v2_p,postnatal_v2,Postnatal visit; only known after birth
+pmtct_status_v2_p,postnatal_v2,Postnatal visit; only known after birth
+breastfeeding_status_v2_p,postnatal_v2,Postnatal visit; only known after birth
+mental_status_v2_p,postnatal_v2,Postnatal visit; only known after birth
+child_check_v2_p,postnatal_v2,Postnatal visit; only known after birth
+vaccinated_v2_p,postnatal_v2,Postnatal visit; only known after birth
+jaundiced_v2_p,postnatal_v2,Postnatal visit; only known after birth
+dib_v2_p,postnatal_v2,Postnatal visit; only known after birth
+umbilicus_status_v2_p,postnatal_v2,Postnatal visit; only known after birth
+temperature_v2_p,postnatal_v2,Postnatal visit; only known after birth
+blood_pressure_v3_1_p,postnatal_v3,Postnatal visit; only known after birth
+weight_v3_p,postnatal_v3,Postnatal visit; only known after birth
+haemoglobin_level_v3_p,postnatal_v3,Postnatal visit; only known after birth
+pv_bleeding_amount_v3_p,postnatal_v3,Postnatal visit; only known after birth
+uterus_involution_v3_p,postnatal_v3,Postnatal visit; only known after birth
+uterus_tenderness_v3_p,postnatal_v3,Postnatal visit; only known after birth
+perineum_v3_p,postnatal_v3,Postnatal visit; only known after birth
+surgical_wound_v3_p,postnatal_v3,Postnatal visit; only known after birth
+breast_pain_and_engorgement_v3_p,postnatal_v3,Postnatal visit; only known after birth
+pmtct_status_v3_p,postnatal_v3,Postnatal visit; only known after birth
+breastfeeding_status_v3_p,postnatal_v3,Postnatal visit; only known after birth
+mental_status_v3_p,postnatal_v3,Postnatal visit; only known after birth
+child_check_v3_p,postnatal_v3,Postnatal visit; only known after birth
+vaccinated_v3_p,postnatal_v3,Postnatal visit; only known after birth
+jaundiced_v3_p,postnatal_v3,Postnatal visit; only known after birth
+dib_v3_p,postnatal_v3,Postnatal visit; only known after birth
+umbilicus_status_v3_p,postnatal_v3,Postnatal visit; only known after birth
+temperature_v3_p,postnatal_v3,Postnatal visit; only known after birth
+blood_pressure_v4_1_p,postnatal_v4,Postnatal visit; only known after birth
+weight_v4_p,postnatal_v4,Postnatal visit; only known after birth
+haemoglobin_level_v4_p,postnatal_v4,Postnatal visit; only known after birth
+pv_bleeding_amount_v4_p,postnatal_v4,Postnatal visit; only known after birth
+uterus_involution_v4_p,postnatal_v4,Postnatal visit; only known after birth
+uterus_tenderness_v4_p,postnatal_v4,Postnatal visit; only known after birth
+perineum_v4_p,postnatal_v4,Postnatal visit; only known after birth
+surgical_wound_v4_p,postnatal_v4,Postnatal visit; only known after birth
+breast_pain_and_engorgement_v4_p,postnatal_v4,Postnatal visit; only known after birth
+pmtct_status_v4_p,postnatal_v4,Postnatal visit; only known after birth
+breastfeeding_status_v4_p,postnatal_v4,Postnatal visit; only known after birth
+mental_status_v4_p,postnatal_v4,Postnatal visit; only known after birth
+child_check_v4_p,postnatal_v4,Postnatal visit; only known after birth
+vaccinated_v4_p,postnatal_v4,Postnatal visit; only known after birth
+jaundiced_v4_p,postnatal_v4,Postnatal visit; only known after birth
+dib_v4_p,postnatal_v4,Postnatal visit; only known after birth
+umbilicus_status_v4_p,postnatal_v4,Postnatal visit; only known after birth
+temperature_v4_p,postnatal_v4,Postnatal visit; only known after birth
+smoking_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v3,anc_v3,Antenatal visit after visit 2; outside the two visit prediction window
+smoking_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v4,anc_v4,Antenatal visit after visit 2; outside the two visit prediction window
+smoking_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v5,anc_v5,Antenatal visit after visit 2; outside the two visit prediction window
+smoking_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v6,anc_v6,Antenatal visit after visit 2; outside the two visit prediction window
+smoking_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v7,anc_v7,Antenatal visit after visit 2; outside the two visit prediction window
+smoking_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+alcohol_drugs_abuse_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+intimate_partner_violence_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+gbv_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+social_support_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+tetanus_immunization_status_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+mother_not_vaccinated_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+folic_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+iron_and_folic_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+calcium_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+check_date_first_foetal_movement_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+date_of_first_foetal_movement_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+birth_and_emergency_plan_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+teach_danger_signs_during_gravidity_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+discuss_sti_hiv_aid_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+provide_long_lasting_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+give_intermittent_and_preventive_treatment_of_malaria_in_gravidity_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+treat_any_problem_observed_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+indicate_problem_treated_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_pressure_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+body_temperature_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+respiratory_rate_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+pulse_rate_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+weight_kg_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+breast_examination_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+pregnant_week_number_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+uterine_size_symphysis_fundal_height_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+abdominal_palpation_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+other_abdominal_palpation_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+fetal_auscaltation_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+pelvic_examination_findings_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+obstetric_ultrasound_scan_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hemoglobin_check_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_albumin_check_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+hiv_test_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_glucose_check_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+urine_analysis_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+syphilis_test_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_group_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_grp_check_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+check_blood_rhesus_factor_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+malaria_rapid_test_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_result_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window
+blood_sugar_action_v8,anc_v8,Antenatal visit after visit 2; outside the two visit prediction window

@@ -1,0 +1,16 @@
+check,count,denominator,percent,decision
+Gravidity 1 (first pregnancy) but prior deliveries above 0,2001,2392,83.7,Flag as qc_parity_conflict; keep the rows; run a sensitivity cohort without them
+Prior deliveries at or above gravidity,4881,8817,55.4,"Same flag; gravidity counts the current pregnancy, so prior deliveries must be smaller"
+Twin pregnancy recorded at booking,139,8817,1.6,Not used for exclusion
+Twin delivery recorded,423,8817,4.8,Exclusion uses twins_delivery
+Twin at booking and twin at delivery,7,139,5.0,The two fields barely overlap; booking field kept only as a weak predictor
+EDD minus LMP within 275 to 285 days (expected about 280),2066,8811,23.4,Dates are not used: fewer than a quarter agree with each other and years range from 1985 to 2202
+duration_of_pregnancy_weeks_ equals visit 1 gestational week,2109,8817,23.9,Not used; gestational age comes from pregnant_week_number_v1
+Visit 1 parsed BP at or above 140/90 while the derived flag is 0,90,8657,1.0,Derived flag never used; BP features come from the parsed readings
+"Visit 2 parsed BP at or above 140/90 (derived flag holds text, not 0 or 1)",62,6737,0.9,Derived flag never used
+Booking weight differs from visit 1 weight by more than 5 kg,3091,8352,37.0,Use visit 1 weight; booking weight_kg is not used
+Duplicate rows ignoring SN,1,8817,0.0,Drop the second copy (SN 773)
+Age outside 12 to 55 years (raw range 11 to 121),158,8817,1.8,Set to missing in clean_age (Section 9)
+Height outside 130 to 200 cm (raw range 0 to 180),34,8817,0.4,Set to missing in clean_height_cm (Section 9)
+Weight change visit 1 to 2 beyond plus or minus 15 kg,104,6799,1.5,Handled by the weekly weight change bound (Section 9)
+intimate_partner_violence_v1 identical to alcohol_and_drugs_abuse_v1,8817,8817,100.0,Likely an export error; both features are kept as specified but the training notebook should use only one

@@ -1,0 +1,7 @@
+feature,group,n,lbw_percent,lbw_ci_low,lbw_ci_high,median_age,mean_sn_decile
+hb_v1,value present,3748,6.14,5.41,6.95,25.0,5.18
+hb_v1,value missing,419,7.16,5.06,10.04,24.0,4.49
+urine_albumin_pos_v1,value present,2326,6.96,6.0,8.07,25.0,5.15
+urine_albumin_pos_v1,value missing,1841,5.32,4.39,6.44,25.0,5.07
+syphilis_pos_v1,value present,3466,6.43,5.66,7.3,24.0,5.23
+syphilis_pos_v1,value missing,701,5.28,3.85,7.19,25.0,4.55

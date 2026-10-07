@@ -1,0 +1,104 @@
+column,block,token,rows
+blood_sugar_result_v1,anc_v1,negative,361
+blood_sugar_result_v2,anc_v2,negative,38
+blood_sugar_result_v3,anc_v3,negative,21
+blood_sugar_result_v4,anc_v4,negative,20
+blood_sugar_result_v5,anc_v5,negative,9
+blood_sugar_result_v6,anc_v6,negative,4
+body_temperature_v1,anc_v1,not_checked,2588
+body_temperature_v2,anc_v2,not_checked,2485
+body_temperature_v2,anc_v2,noi,1
+body_temperature_v2,anc_v2,36.9.8,1
+body_temperature_v2,anc_v2,noted,1
+body_temperature_v2,anc_v2,36.5.,1
+body_temperature_v2,anc_v2,36.9.,1
+body_temperature_v3,anc_v3,not_checked,2194
+haemoglobin_level_v1_p,postnatal_v1,11.8.9,3
+haemoglobin_level_v1_p,postnatal_v1,11..2,2
+haemoglobin_level_v1_p,postnatal_v1,11.7.,2
+haemoglobin_level_v1_p,postnatal_v1,11.3.,2
+haemoglobin_level_v2_p,postnatal_v2,12..4,3
+haemoglobin_level_v2_p,postnatal_v2,11.3.,2
+haemoglobin_level_v2_p,postnatal_v2,9.4..,1
+haemoglobin_level_v2_p,postnatal_v2,5.8.,1
+hemoglobin_check_result_v2,anc_v2,negative,2
+hemoglobin_check_result_v2,anc_v2,nil,2
+hemoglobin_check_result_v2,anc_v2,.9.7,1
+hemoglobin_check_result_v2,anc_v2,9.3.,1
+hemoglobin_check_result_v3,anc_v3,negative,2
+hemoglobin_check_result_v3,anc_v3,normal,1
+hemoglobin_check_result_v3,anc_v3,9.3.,1
+hemoglobin_check_result_v4,anc_v4,10.8.,1
+hemoglobin_check_result_v5,anc_v5,12..4,2
+hemoglobin_check_result_v5,anc_v5,.8.5,1
+hemoglobin_check_result_v5,anc_v5,12..3,1
+pulse_rate_v1,anc_v1,not_checked,1088
+pulse_rate_v1,anc_v1,not taken,1
+pulse_rate_v1,anc_v1,o,1
+pulse_rate_v1,anc_v1,peasant,1
+pulse_rate_v1,anc_v1,c,1
+pulse_rate_v1,anc_v1,pr,1
+pulse_rate_v2,anc_v2,not_checked,1089
+pulse_rate_v2,anc_v2,not taken,1
+pulse_rate_v2,anc_v2,not tested,1
+pulse_rate_v3,anc_v3,not_checked,1041
+pulse_rate_v4,anc_v4,not_checked,890
+pulse_rate_v4,anc_v4,pr,1
+pulse_rate_v4,anc_v4,fv,1
+pulse_rate_v5,anc_v5,not_checked,540
+pulse_rate_v6,anc_v6,not_checked,176
+pulse_rate_v6,anc_v6,no documented but checked,1
+pulse_rate_v7,anc_v7,not_checked,43
+pulse_rate_v7,anc_v7,no documentedb,1
+pulse_rate_v8,anc_v8,not_checked,7
+pv_bleeding_amount_v1_p,postnatal_v1,normal,1981
+pv_bleeding_amount_v1_p,postnatal_v1,nomal,1043
+pv_bleeding_amount_v1_p,postnatal_v1,no,130
+pv_bleeding_amount_v1_p,postnatal_v1,post pertum haermorrhage,5
+pv_bleeding_amount_v1_p,postnatal_v1,normally,3
+pv_bleeding_amount_v1_p,postnatal_v1,pph,2
+pv_bleeding_amount_v1_p,postnatal_v1,pph due to retained placenta,2
+pv_bleeding_amount_v1_p,postnatal_v1,not measured,1
+pv_bleeding_amount_v1_p,postnatal_v1,sever breding,1
+pv_bleeding_amount_v1_p,postnatal_v1,sever breading,1
+pv_bleeding_amount_v1_p,postnatal_v1,sawa,1
+pv_bleeding_amount_v1_p,postnatal_v1,post pertum haermorrhage due to cervical tear,1
+pv_bleeding_amount_v1_p,postnatal_v1,no!,1
+pv_bleeding_amount_v1_p,postnatal_v1,normal v,1
+pv_bleeding_amount_v1_p,postnatal_v1,mls,1
+pv_bleeding_amount_v1_p,postnatal_v1,negative,1
+respiratory_rate_v1,anc_v1,not_checked,2547
+respiratory_rate_v2,anc_v2,not_checked,2458
+respiratory_rate_v2,anc_v2,not tested,1
+respiratory_rate_v3,anc_v3,not_checked,2167
+respiratory_rate_v3,anc_v3,not checkedt,1
+temperature_v1_p,postnatal_v1,not checked,512
+temperature_v1_p,postnatal_v1,36.5.,15
+temperature_v1_p,postnatal_v1,36.6.,13
+temperature_v1_p,postnatal_v1,36.8.,7
+temperature_v1_p,postnatal_v1,36.0.,7
+temperature_v1_p,postnatal_v1,36.7.,6
+temperature_v1_p,postnatal_v1,36.2.,5
+temperature_v1_p,postnatal_v1,37.1.,4
+temperature_v1_p,postnatal_v1,37.2.,4
+temperature_v1_p,postnatal_v1,stil birth,2
+temperature_v1_p,postnatal_v1,37.3.,2
+temperature_v1_p,postnatal_v1,o,2
+temperature_v1_p,postnatal_v1,37.5.,2
+temperature_v1_p,postnatal_v1,na,2
+temperature_v1_p,postnatal_v1,37.0.,2
+temperature_v1_p,postnatal_v1,36.9.,2
+temperature_v1_p,postnatal_v1,36..,2
+temperature_v1_p,postnatal_v1,nil,1
+temperature_v1_p,postnatal_v1,no,1
+temperature_v1_p,postnatal_v1,3.6.9,1
+temperature_v1_p,postnatal_v1,normal,1
+temperature_v1_p,postnatal_v1,not applied,1
+temperature_v1_p,postnatal_v1,37.4.,1
+temperature_v1_p,postnatal_v1,n,1
+temperature_v1_p,postnatal_v1,_,1
+temperature_v2_p,postnatal_v2,not checked,62
+temperature_v3_p,postnatal_v3,not checked,461
+temperature_v3_p,postnatal_v3,minute,1
+temperature_v4_p,postnatal_v4,not checked,596
+weight_kg,baseline,no,411
