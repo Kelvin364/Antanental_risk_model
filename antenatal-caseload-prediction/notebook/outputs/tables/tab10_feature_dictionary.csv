@@ -1,0 +1,76 @@
+feature,source_columns,definition,type,unit,group,set_A,set_B,set_C,screened_out,percent_missing_cohort
+age,age,"Age in years, bounded 12 to 55",continuous,years,A,yes,yes,yes,,1.9
+gravidity,no_pregnancy,Number of pregnancies including this one,count,pregnancies,A,yes,yes,yes,,0.0
+prior_deliveries,number_of_prior_deliveries,Number of previous deliveries,count,deliveries,A,yes,yes,yes,,0.0
+prior_live_births,number_of_prior_pregnancies_with_live_births,Previous pregnancies ending in a live birth,count,pregnancies,A,yes,yes,yes,,0.0
+prior_stillbirths,number_of_prior_pregnancies_with_stillbirths,Previous pregnancies ending in a stillbirth,count,pregnancies,A,yes,yes,yes,,0.0
+living_children,number_of_living_children_and_birth_weight,Number of living children,count,children,A,yes,yes,yes,,0.0
+prior_macrosomia,infant_weight_of_4kg_and_above,Any previous baby of 4 kg or more,binary,yes = 1,A,yes,yes,yes,,0.0
+prior_caesarean,prior_caesarean_delivery,Previous caesarean delivery,binary,yes = 1,A,yes,yes,yes,,0.0
+prior_miscarriage,miscarriages_or_abortions,Previous miscarriage or abortion (booking history field),binary,yes = 1,A,yes,yes,yes,,0.0
+prior_bleeding_any,"bleeding_in_previous_pregnancies, bleeding_in_previous_deliveries, bleeding_in_previous_puerperium","Bleeding in any previous pregnancy, delivery or puerperium",binary,yes = 1,A,yes,yes,yes,,0.0
+prior_hypertension_pregnancy,presence_of_hypertension_in_previous_pregnancies,Hypertension in a previous pregnancy,binary,yes = 1,A,yes,yes,yes,,0.0
+hiv_pos,"hiv, hiv_test_result_v1",HIV history yes or visit 1 test positive,binary,yes = 1,A,yes,yes,yes,,0.0
+twin_pregnancy_booking,twin_pregnancy,Twin pregnancy recorded at booking,binary,yes = 1,A,yes,yes,yes,,0.0
+height_cm,height_cm,"Height, bounded 130 to 200",continuous,cm,A,yes,yes,yes,,0.3
+weight_v1,weight_kg_v1,"Weight at visit 1, bounded 30 to 150",continuous,kg,A,yes,yes,yes,,0.2
+bmi_v1,"weight_kg_v1, height_cm",Body mass index at visit 1 (pregnant weight),continuous,kg/m2,A,yes,yes,yes,,0.5
+ga_v1,pregnant_week_number_v1,Gestational week at visit 1,continuous,weeks,A,yes,yes,yes,,0.0
+sbp_v1,blood_pressure_v1,"Systolic BP at visit 1, bounded 60 to 250",continuous,mmHg,A,yes,yes,yes,,1.7
+dbp_v1,blood_pressure_v1,"Diastolic BP at visit 1, bounded 30 to 150",continuous,mmHg,A,yes,yes,yes,,1.7
+map_v1,blood_pressure_v1,Mean arterial pressure (systolic + 2 x diastolic) / 3,continuous,mmHg,A,yes,yes,yes,,1.8
+bp_high_v1,blood_pressure_v1,Systolic at or above 140 or diastolic at or above 90,binary,yes = 1,A,yes,yes,yes,,1.8
+pulse_v1,pulse_rate_v1,"Pulse at visit 1, bounded 40 to 180",continuous,beats/min,A,yes,yes,yes,,19.6
+temp_v1,body_temperature_v1,"Temperature at visit 1, bounded 34 to 42",continuous,degrees C,A,yes,yes,yes,,41.7
+rr_v1,respiratory_rate_v1,"Respiratory rate at visit 1, bounded 8 to 60",continuous,breaths/min,A,yes,yes,yes,,41.3
+hb_v1,hemoglobin_check_result_v1,"Haemoglobin at visit 1, bounded 3 to 20",continuous,g/dL,A,yes,yes,yes,,10.1
+anaemia_v1,hemoglobin_check_result_v1,Haemoglobin below 11 g/dL,binary,yes = 1,A,yes,yes,yes,,10.1
+severe_anaemia_v1,hemoglobin_check_result_v1,Haemoglobin below 7 g/dL,binary,yes = 1,A,yes,yes,yes,,10.1
+malaria_pos_v1,malaria_rapid_test_result_v1,Malaria rapid test positive (other or missing results are NaN),binary,yes = 1,A,yes,yes,yes,,10.5
+syphilis_pos_v1,syphilis_test_result_v1,Syphilis test positive,binary,yes = 1,A,yes,yes,yes,,16.8
+urine_albumin_pos_v1,urine_albumin_check_result_v1,Urine protein positive,binary,yes = 1,A,yes,yes,yes,,44.2
+sfh_abnormal_v1,uterine_size_symphysis_fundal_height_v1,Fundal height recorded as abnormal,binary,yes = 1,A,yes,yes,yes,,0.0
+fetal_heart_absent_v1,fetal_auscaltation_v1,Fetal heart not heard (expected before about 20 weeks),binary,yes = 1,A,yes,yes,yes,,0.0
+palpation_abnormal_v1,abdominal_palpation_v1,Breech or transverse lie on palpation,binary,yes = 1,A,yes,yes,yes,,0.0
+social_support_absent_v1,social_support_v1,No social support reported,binary,yes = 1,A,yes,yes,yes,,0.0
+ipv_v1,intimate_partner_violence_v1,Intimate partner violence reported,binary,yes = 1,A,yes,yes,yes,,0.0
+gbv_v1,gbv_v1,Gender based violence reported,binary,yes = 1,A,yes,yes,yes,,0.0
+substance_v1,"smoking_v1, alcohol_and_drugs_abuse_v1",Smoking or alcohol and drug use,binary,yes = 1,A,yes,yes,yes,,0.0
+ifa_v1,iron_and_folic_v1,Iron and folic acid given,binary,yes = 1,A,yes,yes,yes,,0.0
+iptp_v1,give_intermittent_preventive_treatment_of_malaria_in_gravidity_v1,Intermittent preventive malaria treatment given,binary,yes = 1,A,yes,yes,yes,,0.0
+llin_v1,provide_long_lasting_v1,Long lasting insecticidal net provided,binary,yes = 1,A,yes,yes,yes,,0.0
+tt_not_vaccinated_v1,tetanus_immunization_status_v1,Never vaccinated against tetanus,binary,yes = 1,A,yes,yes,yes,,0.0
+problem_treated_v1,treat_any_problem_observed_v1,A problem was observed and treated at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+not_checked_bp_v1,blood_pressure_v1,bp recorded as not checked at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+not_checked_pulse_v1,pulse_rate_v1,pulse recorded as not checked at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+not_checked_temp_v1,body_temperature_v1,temp recorded as not checked at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+not_checked_rr_v1,respiratory_rate_v1,rr recorded as not checked at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+not_checked_hb_v1,hemoglobin_check_v1,Haemoglobin not checked at visit 1,binary,yes = 1,A,yes,yes,yes,,0.0
+weight_v2,weight_kg_v2,"Weight at visit 2, bounded 30 to 150",continuous,kg,B,,yes,,,0.2
+ga_v2,pregnant_week_number_v2,Gestational week at visit 2,continuous,weeks,B,,yes,,,0.0
+gap_weeks,"pregnant_week_number_v1, pregnant_week_number_v2",Weeks between visit 1 and visit 2,continuous,weeks,B,,yes,,,0.0
+sbp_v2,blood_pressure_v2,Systolic BP at visit 2,continuous,mmHg,B,,yes,,,2.1
+dbp_v2,blood_pressure_v2,Diastolic BP at visit 2,continuous,mmHg,B,,yes,,,2.1
+map_v2,blood_pressure_v2,Mean arterial pressure at visit 2,continuous,mmHg,B,,yes,,,2.2
+bp_high_v2,blood_pressure_v2,BP at or above 140/90 at visit 2,binary,yes = 1,B,,yes,,,2.2
+pulse_v2,pulse_rate_v2,Pulse at visit 2,continuous,beats/min,B,,yes,,,20.0
+temp_v2,body_temperature_v2,Temperature at visit 2,continuous,degrees C,B,,,,yes,42.3
+rr_v2,respiratory_rate_v2,Respiratory rate at visit 2,continuous,breaths/min,B,,,,yes,41.8
+hb_v2,hemoglobin_check_result_v2,Haemoglobin at visit 2,continuous,g/dL,B,,,,yes,62.1
+sfh_abnormal_v2,uterine_size_symphysis_fundal_height_v2,Fundal height abnormal at visit 2,binary,yes = 1,B,,yes,,,0.0
+fetal_heart_absent_v2,fetal_auscaltation_v2,Fetal heart not heard at visit 2,binary,yes = 1,B,,yes,,,0.0
+palpation_abnormal_v2,abdominal_palpation_v2,Breech or transverse lie at visit 2,binary,yes = 1,B,,yes,,,0.0
+urine_albumin_pos_v2,urine_albumin_check_result_v2,Urine protein positive at visit 2,binary,yes = 1,B,,,,yes,90.3
+malaria_pos_v2,malaria_rapid_test_result_v2,Malaria rapid test positive at visit 2,binary,yes = 1,B,,,,yes,80.4
+not_checked_bp_v2,blood_pressure_v2,bp recorded as not checked at visit 2,binary,yes = 1,B,,yes,,,0.0
+not_checked_pulse_v2,pulse_rate_v2,pulse recorded as not checked at visit 2,binary,yes = 1,B,,yes,,,0.0
+not_checked_temp_v2,body_temperature_v2,temp recorded as not checked at visit 2,binary,yes = 1,B,,,,yes,0.0
+not_checked_rr_v2,respiratory_rate_v2,rr recorded as not checked at visit 2,binary,yes = 1,B,,,,yes,0.0
+wt_change_per_week,"weight_kg_v1, weight_kg_v2, pregnant_week_number_v1, pregnant_week_number_v2","(weight v2 minus weight v1) / weeks between, bounded minus 2 to 3",continuous,kg/week,C,,,yes,,1.8
+sbp_change,"blood_pressure_v1, blood_pressure_v2",Systolic v2 minus v1,continuous,mmHg,C,,,yes,,3.4
+dbp_change,"blood_pressure_v1, blood_pressure_v2",Diastolic v2 minus v1,continuous,mmHg,C,,,yes,,3.5
+map_change,"blood_pressure_v1, blood_pressure_v2",Mean arterial pressure v2 minus v1,continuous,mmHg,C,,,yes,,3.6
+bp_new_high,"blood_pressure_v1, blood_pressure_v2",Normal BP at visit 1 and 140/90 or above at visit 2,binary,yes = 1,C,,,yes,,3.6
+sfh_became_abnormal,"uterine_size_symphysis_fundal_height_v1, _v2",Fundal height normal at visit 1 and abnormal at visit 2,binary,yes = 1,C,,,yes,,0.0
+hb_change,"hemoglobin_check_result_v1, hemoglobin_check_result_v2",Haemoglobin v2 minus v1 where both present,continuous,g/dL,C,,,,yes,65.6
+pulse_change,"pulse_rate_v1, pulse_rate_v2",Pulse v2 minus v1,continuous,beats/min,C,,,yes,,21.4

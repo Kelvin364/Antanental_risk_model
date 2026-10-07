@@ -1,0 +1,68 @@
+feature,sets,n,lbw_n,auroc,ci_low,ci_high,direction,lbw_rate_by_level,smd
+weight_v2,B,4157,260,0.577,0.541,0.611,lower is riskier,Q1: 8.3%; Q2: 5.7%; Q3: 6.9%; Q4: 3.9%,-0.266
+weight_v1,ABC,4159,260,0.574,0.538,0.612,lower is riskier,Q1: 8.0%; Q2: 6.5%; Q3: 6.6%; Q4: 3.8%,-0.248
+pulse_v1,ABC,3352,212,0.563,0.522,0.603,higher is riskier,Q1: 4.9%; Q2: 5.9%; Q3: 6.3%; Q4: 8.9%,0.202
+pulse_v2,B,3332,212,0.563,0.527,0.601,higher is riskier,Q1: 5.3%; Q2: 4.4%; Q3: 7.7%; Q4: 7.9%,0.211
+fetal_heart_absent_v2,B,4167,260,0.553,0.523,0.583,higher is riskier,0: 5.2%; 1: 7.9%,0.216
+prior_macrosomia,ABC,4167,260,0.549,0.518,0.579,higher is riskier,0: 4.9%; 1: 7.2%,0.201
+age,ABC,4087,254,0.549,0.512,0.589,lower is riskier,Q1: 8.1%; Q2: 5.5%; Q3: 3.8%; Q4: 6.5%,-0.117
+ga_v2,B,4167,260,0.546,0.507,0.585,lower is riskier,Q1: 7.1%; Q2: 6.9%; Q3: 5.2%; Q4: 4.7%,-0.169
+gravidity,ABC,4167,260,0.539,0.506,0.57,lower is riskier,Q1: 6.8%; Q2: 5.7%; Q3: 4.7%,-0.134
+temp_v1,ABC,2428,138,0.536,0.491,0.586,higher is riskier,Q1: 4.9%; Q2: 5.8%; Q3: 9.3%,0.104
+sbp_v1,ABC,4095,252,0.535,0.494,0.57,higher is riskier,Q1: 5.0%; Q2: 6.6%; Q3: 6.8%; Q4: 6.0%,0.133
+height_cm,ABC,4155,260,0.533,0.492,0.569,lower is riskier,Q1: 7.7%; Q2: 5.6%; Q3: 4.7%; Q4: 6.9%,-0.128
+prior_miscarriage,ABC,4167,260,0.532,0.517,0.55,higher is riskier,0: 5.8%; 1: 16.9%,0.267
+gap_weeks,B,4167,260,0.531,0.497,0.567,lower is riskier,Q1: 6.9%; Q2: 4.6%; Q3: 5.8%; Q4: 6.1%,-0.068
+not_checked_temp_v1,ABC,4167,260,0.528,0.497,0.56,higher is riskier,0: 5.7%; 1: 7.0%,0.112
+ga_v1,ABC,4167,260,0.528,0.492,0.565,lower is riskier,Q1: 7.1%; Q2: 6.0%; Q3: 6.6%; Q4: 5.1%,-0.113
+not_checked_rr_v1,ABC,4167,260,0.526,0.494,0.556,higher is riskier,0: 5.7%; 1: 7.0%,0.105
+sbp_change,C,4024,249,0.523,0.488,0.557,lower is riskier,Q1: 7.2%; Q2: 6.3%; Q3: 5.6%; Q4: 5.4%,-0.037
+iptp_v1,ABC,4167,260,0.523,0.493,0.553,lower is riskier,0: 7.4%; 1: 5.9%,-0.105
+fetal_heart_absent_v1,ABC,4167,260,0.523,0.495,0.55,higher is riskier,0: 5.4%; 1: 6.6%,0.101
+prior_stillbirths,ABC,4167,260,0.522,0.488,0.556,higher is riskier,Q1: 6.0%; Q2: 7.7%; Q3: 5.5%,0.077
+rr_v1,ABC,2445,140,0.519,0.469,0.574,lower is riskier,Q1: 6.5%; Q2: 5.6%; Q3: 2.7%; Q4: 6.4%,-0.016
+social_support_absent_v1,ABC,4167,260,0.517,0.492,0.54,lower is riskier,0: 6.5%; 1: 5.3%,-0.087
+bmi_v1,ABC,4147,260,0.517,0.481,0.554,lower is riskier,Q1: 7.3%; Q2: 5.4%; Q3: 6.4%; Q4: 6.0%,-0.076
+prior_live_births,ABC,4167,260,0.517,0.486,0.555,higher is riskier,Q1: 5.9%; Q2: 5.7%; Q3: 6.5%; Q4: 7.1%,0.037
+hb_v1,ABC,3748,230,0.516,0.474,0.553,higher is riskier,Q1: 5.7%; Q2: 5.7%; Q3: 6.6%; Q4: 6.7%,0.041
+palpation_abnormal_v2,B,4167,260,0.516,0.506,0.525,lower is riskier,0: 6.4%; 1: 2.7%,-0.164
+anaemia_v1,ABC,3748,230,0.514,0.481,0.541,lower is riskier,0: 6.4%; 1: 5.6%,-0.059
+dbp_v1,ABC,4095,252,0.513,0.482,0.546,lower is riskier,Q1: 5.7%; Q2: 7.2%; Q3: 7.7%; Q4: 4.1%,-0.023
+sbp_v2,B,4081,256,0.512,0.478,0.542,higher is riskier,Q1: 5.0%; Q2: 7.8%; Q3: 6.3%; Q4: 6.0%,0.095
+map_change,C,4018,247,0.512,0.477,0.546,lower is riskier,Q1: 6.2%; Q2: 6.4%; Q3: 5.9%; Q4: 5.9%,-0.035
+prior_caesarean,ABC,4167,260,0.51,0.5,0.518,lower is riskier,0: 6.4%; 1: 3.2%,-0.115
+not_checked_pulse_v2,B,4167,260,0.51,0.485,0.532,lower is riskier,0: 6.4%; 1: 5.7%,-0.051
+not_checked_hb_v1,ABC,4167,260,0.51,0.493,0.53,higher is riskier,0: 6.1%; 1: 7.8%,0.073
+palpation_abnormal_v1,ABC,4167,260,0.509,0.499,0.518,lower is riskier,0: 6.4%; 1: 3.2%,-0.113
+bp_high_v2,B,4076,254,0.509,0.5,0.519,higher is riskier,0: 6.1%; 1: 16.7%,0.137
+dbp_change,C,4021,247,0.509,0.473,0.546,lower is riskier,Q1: 6.5%; Q2: 6.2%; Q3: 5.0%; Q4: 6.4%,-0.022
+wt_change_per_week,C,4092,260,0.508,0.474,0.541,lower is riskier,Q1: 6.0%; Q2: 7.6%; Q3: 6.5%; Q4: 5.2%,0.01
+ifa_v1,ABC,4167,260,0.508,0.495,0.519,higher is riskier,0: 4.4%; 1: 6.3%,0.076
+llin_v1,ABC,4167,260,0.508,0.494,0.526,lower is riskier,0: 8.1%; 1: 6.1%,-0.07
+gbv_v1,ABC,4167,260,0.507,0.499,0.513,lower is riskier,0: 6.3%; 1: 2.9%,-0.103
+living_children,ABC,4167,260,0.507,0.472,0.541,higher is riskier,Q1: 6.1%; Q2: 6.0%; Q3: 6.3%; Q4: 6.6%,0.02
+tt_not_vaccinated_v1,ABC,4167,260,0.506,0.496,0.519,higher is riskier,0: 6.2%; 1: 9.1%,0.069
+not_checked_bp_v1,ABC,4167,260,0.506,0.497,0.515,higher is riskier,0: 6.2%; 1: 11.3%,0.084
+sfh_abnormal_v2,B,4167,260,0.506,0.499,0.515,higher is riskier,0: 6.2%; 1: 22.2%,0.122
+sfh_became_abnormal,C,4167,260,0.506,0.5,0.514,higher is riskier,0: 6.2%; 1: 23.5%,0.125
+not_checked_pulse_v1,ABC,4167,260,0.505,0.481,0.529,lower is riskier,0: 6.3%; 1: 5.9%,-0.027
+dbp_v2,B,4078,254,0.505,0.469,0.541,lower is riskier,Q1: 6.4%; Q2: 5.8%; Q3: 7.2%; Q4: 5.5%,-0.018
+hiv_pos,ABC,4167,260,0.504,0.494,0.515,higher is riskier,0: 6.2%; 1: 8.2%,0.048
+problem_treated_v1,ABC,4167,260,0.504,0.494,0.515,higher is riskier,0: 6.2%; 1: 8.0%,0.048
+bp_high_v1,ABC,4094,252,0.503,0.497,0.512,higher is riskier,0: 6.1%; 1: 10.0%,0.058
+twin_pregnancy_booking,ABC,4167,260,0.503,0.494,0.514,higher is riskier,0: 6.2%; 1: 8.0%,0.042
+pulse_change,C,3276,208,0.503,0.465,0.545,lower is riskier,Q1: 6.2%; Q2: 6.6%; Q3: 6.5%; Q4: 6.1%,0.014
+not_checked_bp_v2,B,4167,260,0.503,0.496,0.509,lower is riskier,0: 6.3%; 1: 4.3%,-0.045
+urine_albumin_pos_v1,ABC,2326,162,0.502,0.495,0.513,higher is riskier,0: 6.9%; 1: 11.1%,0.05
+syphilis_pos_v1,ABC,3466,223,0.502,0.501,0.502,lower is riskier,0: 6.5%; 1: 0.0%,-0.079
+prior_bleeding_any,ABC,4167,260,0.502,0.496,0.509,higher is riskier,0: 6.2%; 1: 10.0%,0.048
+map_v1,ABC,4094,252,0.501,0.467,0.532,lower is riskier,Q1: 4.8%; Q2: 8.1%; Q3: 6.5%; Q4: 4.7%,0.043
+ipv_v1,ABC,4167,260,0.501,0.494,0.509,higher is riskier,0: 6.2%; 1: 6.8%,0.011
+prior_deliveries,ABC,4167,260,0.501,0.469,0.538,higher is riskier,Q1: 6.3%; Q2: 5.6%; Q3: 6.9%; Q4: 6.1%,0.001
+malaria_pos_v1,ABC,3728,244,0.501,0.496,0.508,higher is riskier,0: 6.5%; 1: 8.7%,0.026
+severe_anaemia_v1,ABC,3748,230,0.501,0.496,0.504,lower is riskier,0: 6.1%; 1: 4.8%,-0.019
+bp_new_high,C,4018,247,0.501,0.496,0.507,higher is riskier,0: 6.1%; 1: 7.1%,0.014
+map_v2,B,4076,254,0.501,0.471,0.537,higher is riskier,Q1: 6.3%; Q2: 5.4%; Q3: 7.3%; Q4: 5.5%,0.035
+prior_hypertension_pregnancy,ABC,4167,260,0.5,0.498,0.505,higher is riskier,0: 6.2%; 1: 7.7%,0.013
+substance_v1,ABC,4167,260,0.5,0.491,0.508,lower is riskier,0: 6.2%; 1: 6.2%,-0.002
+sfh_abnormal_v1,ABC,4167,260,0.5,0.498,0.506,higher is riskier,0: 6.2%; 1: 7.7%,0.013

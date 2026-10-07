@@ -1,0 +1,13 @@
+item,value
+Dataset name,Dataset for Maternal Health Risks Stratification (MHRS) in Tanzania
+DOI,10.5281/zenodo.15309733
+Licence,CC BY 4.0
+Producers,"University of Dodoma; Rukia Mwifunyi, Theresia Masoi, Nyaura Kibinda"
+Funders,"Wellcome Trust, Lacuna Fund grant 228079"
+Districts,"Chamwino, Mkuranga, Meatu, Mbulu, Kilolo"
+Collection period,20 May 2024 to 30 March 2025
+Setting,Primary health facilities providing maternity services
+Unit of analysis,One row per pregnancy
+Rows,"8,817"
+Columns,683
+File hash (SHA256),ab95366ef22dde5d13df93f10723942f5faffda8fbf0007e8efe85e4f25c1126

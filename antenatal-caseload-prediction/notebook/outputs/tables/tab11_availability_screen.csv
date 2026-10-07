@@ -1,0 +1,13 @@
+measurement,visit1_feature,visit2_feature,available_v2_percent,available_both_percent,result,set_B_features,set_C_features
+weight,weight_v1,weight_v2,99.8,99.6,pass,weight_v2,wt_change_per_week
+gestational_week,ga_v1,ga_v2,100.0,100.0,pass,"ga_v2, gap_weeks",
+blood_pressure,sbp_v1,sbp_v2,97.9,96.6,pass,"sbp_v2, dbp_v2, map_v2, bp_high_v2, not_checked_bp_v2","sbp_change, dbp_change, map_change, bp_new_high"
+pulse,pulse_v1,pulse_v2,80.0,78.6,pass,"pulse_v2, not_checked_pulse_v2",pulse_change
+temperature,temp_v1,temp_v2,57.7,57.2,fail,"temp_v2, not_checked_temp_v2",
+respiratory_rate,rr_v1,rr_v2,58.2,57.8,fail,"rr_v2, not_checked_rr_v2",
+haemoglobin,hb_v1,hb_v2,37.9,34.4,fail,hb_v2,hb_change
+fundal_height,sfh_abnormal_v1,sfh_abnormal_v2,100.0,100.0,pass,sfh_abnormal_v2,sfh_became_abnormal
+fetal_heart,fetal_heart_absent_v1,fetal_heart_absent_v2,100.0,100.0,pass,fetal_heart_absent_v2,
+palpation,palpation_abnormal_v1,palpation_abnormal_v2,100.0,100.0,pass,palpation_abnormal_v2,
+urine_albumin,urine_albumin_pos_v1,urine_albumin_pos_v2,9.7,8.8,fail,urine_albumin_pos_v2,
+malaria,malaria_pos_v1,malaria_pos_v2,19.6,18.8,fail,malaria_pos_v2,

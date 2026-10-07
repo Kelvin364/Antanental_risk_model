@@ -1,0 +1,19 @@
+field,source,rule,lower,upper,non_missing_full,rows_out_of_bounds_full,non_missing_cohort,rows_out_of_bounds_cohort
+age,age,age,12,55,8817,158,4167,80
+height_cm,height_cm,height_cm,130,200,8817,34,4167,12
+weight_booking,weight_kg,weight,30,150,8406,30,4112,14
+weight_v1,weight_kg_v1,weight,30,150,8762,14,4167,8
+weight_v2,weight_kg_v2,weight,30,150,6844,17,4167,10
+sbp_v1,blood_pressure_v1,systolic,60,250,8657,7,4096,1
+sbp_v2,blood_pressure_v2,systolic,60,250,6737,5,4084,3
+dbp_v1,blood_pressure_v1,diastolic,30,150,8657,13,4096,1
+dbp_v2,blood_pressure_v2,diastolic,30,150,6737,11,4084,6
+hb_v1,hemoglobin_check_result_v1,haemoglobin,3,20,8125,20,3758,10
+hb_v2,hemoglobin_check_result_v2,haemoglobin,3,20,3046,10,1588,9
+temp_v1,body_temperature_v1,temperature,34,42,6174,0,2428,0
+temp_v2,body_temperature_v2,temperature,34,42,4355,3,2408,2
+pulse_v1,pulse_rate_v1,pulse,40,180,7669,5,3354,2
+pulse_v2,pulse_rate_v2,pulse,40,180,5753,9,3335,3
+rr_v1,respiratory_rate_v1,respiratory_rate,8,60,6215,7,2446,1
+rr_v2,respiratory_rate_v2,respiratory_rate,8,60,4385,4,2427,1
+wt_change_per_week,"weight_kg_v1, weight_kg_v2, pregnant_week_number_v1, pregnant_week_number_v2",weekly_weight_change,-2,3,6618,96,4149,57
