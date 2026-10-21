@@ -74,6 +74,8 @@ class FittedPipelineArtefact:
     prevalence: float
     events: int
     n_development: int
+    availability: dict[str, float] = field(default_factory=dict)
+    availability_threshold: float = 0.60
     spec: dict[str, object] = field(default_factory=dict)
 
     def score(self, cases: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -135,6 +137,14 @@ class FittedPipelineArtefact:
             "events": self.events,
             "prevalence": self.prevalence,
             "reference_caseload_size": len(self.reference_probabilities),
+            "availability_screen": {
+                name: {
+                    "available_both_visits": share,
+                    "passed": share >= self.availability_threshold,
+                }
+                for name, share in self.availability.items()
+            },
+            "availability_threshold": self.availability_threshold,
         }
 
     def save(self, directory: Path) -> str:

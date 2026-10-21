@@ -22,6 +22,7 @@ from antenatal.config import PRIMARY, StudySpec
 from antenatal.data.loader import DataLoader
 from antenatal.evaluation.nested_cv import CVResults, Experiment, NestedCVRunner
 from antenatal.features.builder import FeatureBuilder
+from antenatal.features.screen import AvailabilityScreen
 from antenatal.features.sets import PRIMARY_SETS, SetC
 from antenatal.models.factory import FAMILY_SCREEN, PRIMARY_MODELS
 from antenatal.paths import ProjectPaths
@@ -115,6 +116,8 @@ def freeze_artefact(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> FittedPip
         prevalence=events / len(development),
         events=events,
         n_development=len(development),
+        availability=AvailabilityScreen(spec).fit(development).availability,
+        availability_threshold=spec.availability_threshold,
         spec=spec.as_dict(),
     )
     artefact.save(paths.model)
