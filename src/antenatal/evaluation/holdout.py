@@ -16,6 +16,9 @@ import pandas as pd
 
 from antenatal.cohort.builder import Cohort
 from antenatal.cohort.partition import PartitionWriter
+from antenatal.config import PRIMARY, StudySpec
+from antenatal.evaluation.bootstrap import GroupBootstrap
+from antenatal.evaluation.metrics import ALL_METRICS
 
 ACCESS_LOG = "holdout_access.log"
 
@@ -72,3 +75,41 @@ class HoldoutEvaluator:
     def record_evaluation(self, artefact_version: str, artefact_sha256: str) -> None:
         """Append the completed evaluation to the access log."""
         self._log(f"EVALUATED\tartefact {artefact_version} {artefact_sha256}")
+
+    def evaluate_once(
+        self,
+        artefact,
+        cohort: Cohort,
+        output: Path,
+        *,
+        confirm_supervisor_reviewed: bool,
+        force: bool = False,
+        spec: StudySpec = PRIMARY,
+    ) -> pd.DataFrame:
+        """Score the held out records once with the frozen artefact and write the metrics.
+
+        Each metric carries its own group bootstrap interval over held out
+        registration groups. With few events the result confirms the direction
+        of the development estimate rather than establishing it.
+        """
+        if not confirm_supervisor_reviewed:
+            self._log("REFUSED\tevaluation without supervisor confirmation")
+            raise HoldoutAccessRefused("Evaluation needs confirm_supervisor_reviewed=True")
+        self.check_first_evaluation(force=force)
+        held = self.load_holdout(cohort, confirm_supervisor_reviewed=True)
+        y = held["lbw"].to_numpy()
+        probability = artefact.score(held)[0]
+        bootstrap = GroupBootstrap(
+            held["group_key"].to_numpy(), spec.bootstrap_resamples, spec.seed
+        )
+        rows = []
+        for metric in ALL_METRICS:
+            interval = bootstrap.single(y, probability, metric)
+            rows.append({"metric": metric.name, **interval.as_dict()})
+        table = pd.DataFrame(rows)
+        table["n"], table["events"] = len(held), int(y.sum())
+        table["artefact_version"] = artefact.version
+        table["evaluated_at"] = datetime.now(UTC).isoformat(timespec="seconds")
+        table.to_csv(output, index=False)
+        self.record_evaluation(artefact.version, artefact.partition_sha256)
+        return table
