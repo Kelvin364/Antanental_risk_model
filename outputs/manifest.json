@@ -1,0 +1,151 @@
+{
+  "created_at": "2026-10-21T15:33:34+00:00",
+  "git_commit": "c365b7c37dacb7b28fe3479124e6f0d27c6742ff",
+  "seed": 20260930,
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.8.0",
+    "joblib": "1.5.3",
+    "matplotlib": "3.10.9",
+    "pyarrow": "26.0.0"
+  },
+  "inputs": {
+    "data": {
+      "path": "data/maternal_dataset_csv.csv",
+      "sha256": "ab95366ef22dde5d13df93f10723942f5faffda8fbf0007e8efe85e4f25c1126"
+    },
+    "holdout_sha256_record": "249114c363dab8a86c5acbee9bb8cfd6fddbf97b3d74b62f907d1fda01a25ea0",
+    "folds": "5df188cc31765574674da6a745987f2490ecbcc2b4f337d62f5ed9529b2132d2"
+  },
+  "spec": {
+    "name": "primary",
+    "data_path": "data/maternal_dataset_csv.csv",
+    "data_sha256": "ab95366ef22dde5d13df93f10723942f5faffda8fbf0007e8efe85e4f25c1126",
+    "data_shape": [
+      8817,
+      683
+    ],
+    "data_doi": "10.5281/zenodo.15309733",
+    "data_licence": "CC BY 4.0",
+    "record_id": "SN",
+    "outcome_column": "newborn_birth_weight_kg_",
+    "lbw_threshold": 2.5,
+    "weight_bounds": [
+      1.0,
+      6.0
+    ],
+    "gestational_cutoff": 28,
+    "sensitivity_cutoffs": [
+      24,
+      32
+    ],
+    "exclude_term_and_preterm": false,
+    "ranges": {
+      "sbp": {
+        "low": 60,
+        "high": 250
+      },
+      "dbp": {
+        "low": 30,
+        "high": 160
+      },
+      "hb": {
+        "low": 3,
+        "high": 20
+      },
+      "weight": {
+        "low": 30,
+        "high": 150
+      },
+      "ga": {
+        "low": 1,
+        "high": 45
+      },
+      "age": {
+        "low": 12,
+        "high": 55
+      },
+      "height": {
+        "low": 120,
+        "high": 200
+      },
+      "gravidity": {
+        "low": 0,
+        "high": 20
+      },
+      "prior_deliveries": {
+        "low": 0,
+        "high": 15
+      },
+      "pulse": {
+        "low": 30,
+        "high": 200
+      }
+    },
+    "sentinel_tokens": [
+      "",
+      "invalid",
+      "n/r",
+      "na",
+      "nan",
+      "nil",
+      "no",
+      "none",
+      "not applicable",
+      "not applied",
+      "not checked",
+      "not checkedt",
+      "not measured",
+      "not taken",
+      "not tested",
+      "not_checked",
+      "unknown"
+    ],
+    "availability_threshold": 0.6,
+    "seed": 20260930,
+    "holdout_fraction": 0.2,
+    "outer_folds": 5,
+    "repeats": 10,
+    "inner_folds": 3,
+    "bootstrap_resamples": 2000,
+    "group_key_columns": [
+      "age",
+      "last_normal_menustration_date",
+      "height_cm",
+      "weight_kg",
+      "number_of_prior_deliveries"
+    ]
+  },
+  "outputs": {
+    "outputs/cohort_manifest.csv": "1d076944a1006e83a12a715f0cb5870443cd5d50f17d190523f85b286da92ccc",
+    "outputs/figures/fig01_cohort_flow.png": "11fab99e4063fb7e1fbc70ea892970c6a0be7b060f2b57d9a1633bc38cc08f43",
+    "outputs/figures/fig02_outcome_prevalence.png": "12b4d1787ce3ef034c5f357cf19a659c1fce08c91d254ee85d88ce5a8e465b3f",
+    "outputs/figures/fig03_measurements_by_outcome.png": "f05afdb87ddc3dd79acc760dd6824acfb76bb80887071463edbd610821a26e51",
+    "outputs/figures/fig04_missingness.png": "ec1ee1a425db100d6faa453e2f44acd1502fe34ca08d62258eefe6277f4903df",
+    "outputs/figures/fig05_availability_screen.png": "dfa6628e6bdb025128321af5f04999b1f6e4fc46b020b00800e64a3714739b0e",
+    "outputs/figures/fig06_model_families.png": "a62cb71d7865050095a8253628a57752749074deb00736db044db90ddb9cc935",
+    "outputs/figures/fig07_feature_set_differences.png": "173af7d2b9c6ab8a4103d81e34cc1742ab6b7cc9561323a4fd97c9ae71bbec0e",
+    "outputs/figures/fig08_calibration.png": "96649837014f8db961212e780b4d88a3a2dff900cf4c87c415124a6a64c7d970",
+    "outputs/figures/fig09_decision_curve.png": "285edf3d03441864431f3798714e0189114e06b523ef54cc821a5e40d92d2d7c",
+    "outputs/figures/fig10_detectable_difference.png": "7c2b8c2fea7839f3c009421c584e254730fa7dcc4c03c38d0a9848c844c1a073",
+    "outputs/figures/fig11_sensitivity.png": "6defebea0d4cd920abb0427eb9c11a0a06bc92bf9e1898fe58b83e7541ddc371",
+    "outputs/oof_predictions.parquet": "8cff81267a49fbbfbf79a6d051522ea2d6cd2efd19cfee44890fe3a30a2e2a3a",
+    "outputs/tables/availability_screen.csv": "0babd777f7053a9b501aec62b783487fbcffa9ad408300611689d08e455c3d54",
+    "outputs/tables/calibration_curves.csv": "43f122e92f03ba191b3d4a01b725fbd83c681ed8854fb40f95d78db2f346f146",
+    "outputs/tables/clinical_rule_b3.csv": "e34f51dc98d78657759039b1a50bc9952f699ff36f7b38779cdbaa7f3acc7c6b",
+    "outputs/tables/cohort_flow.csv": "3c39d8db6274ac1092f2e5e875ba5e7a44da8093591aefedf00bcc342b34b199",
+    "outputs/tables/cv_fold_metrics.csv": "915379dc4c3ebca2aacc4920f1c53eb17dee31dd5ecc69d06bca7e596f45487a",
+    "outputs/tables/decision_curve.csv": "f14e13b4d53e4aeef75ddb6009db442ca8ffa54be8f58f90753d2ee0a8891e43",
+    "outputs/tables/detectable_difference.csv": "2849d6985826e1eb297debb4c06b82da2010a76356b5a56c3f46393fa859b17e",
+    "outputs/tables/feature_set_comparisons.csv": "75113ea7549e2592f2b0ccdda047a5772e6b982ce3c9a752f6bd4ab1a15f15d8",
+    "outputs/tables/missingness.csv": "6835497afb5d51a09c464dcf0294081ad01e3618684ee0a2ca715fbdbd5a3d1d",
+    "outputs/tables/model_performance.csv": "4164661ad9e439ff9b7b872585e5f7884b7c6c89505a8444a77097e6f895b3ab",
+    "outputs/tables/sensitivity_analyses.csv": "511de70b9195785d1d9d0e1d15a43e4a94c6d145f38a0b2e3fd21e770fcf83ef",
+    "outputs/tables/sensitivity_cohorts.csv": "79e1a697ec2cafae1b0520ead0e8ae8cc699d3e70871ba5c0d626f1c2522aedc",
+    "outputs/tables/summary_by_experiment.csv": "a670d24005bf2b4c3c53873bc02ea4d3769778c8ce85cb3ffa1703fc824c26b2"
+  },
+  "analysis_seconds": 316.4
+}

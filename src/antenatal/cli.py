@@ -51,8 +51,31 @@ def seal_partition(paths: ProjectPaths) -> None:
     )
 
 
+def run_analysis(paths: ProjectPaths) -> None:
+    """Nested cross validation and every development table and figure."""
+    from antenatal.analysis import run_analysis as run
+
+    run(paths, PRIMARY)
+
+
+def freeze_artefact(paths: ProjectPaths) -> None:
+    """Fit the served configuration on development records and save the artefact."""
+    from antenatal.study import freeze_artefact as freeze
+
+    artefact = freeze(paths, PRIMARY)
+    print(
+        f"Artefact {artefact.version}: {artefact.family} on set {artefact.feature_set}, "
+        f"{len(artefact.feature_names)} features, saved to {paths.model}"
+    )
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
-    return {"derive-cohort": derive_cohort, "seal-partition": seal_partition}
+    return {
+        "derive-cohort": derive_cohort,
+        "seal-partition": seal_partition,
+        "run-analysis": run_analysis,
+        "freeze-artefact": freeze_artefact,
+    }
 
 
 def main(argv: list[str] | None = None) -> None:

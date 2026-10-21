@@ -1,0 +1,13 @@
+model,comparison,metric,role,difference,bootstrap_se,detectable_difference
+logistic_l2,C over B (first visit added),pr_auc,primary,-0.003959911815478029,0.003919711811853767,0.010981406671352311
+logistic_l2,B over A (second visit added),roc_auc,secondary,0.020486526869505584,0.013730514177065757,0.038467205555557965
+logistic_l2,C over A (both visits added),pr_auc,supporting,0.0013560176402547114,0.008472563481629902,0.023736608609658073
+logistic_l2,A over B0 (registration over prevalence),pr_auc,supporting,0.03379611321165609,0.011868652812936961,0.033251042279639084
+logistic_l2,B over B0,pr_auc,supporting,0.03911204266738883,0.012337394328633117,0.0345642615811293
+logistic_l2,C over B0,pr_auc,supporting,0.0351521308519108,0.011414208490333557,0.03197787778297803
+gradient_boosting,C over B (first visit added),pr_auc,primary,-0.0073711291714866345,0.005800135473341591,0.016249573805166465
+gradient_boosting,B over A (second visit added),roc_auc,secondary,0.04311197077154516,0.014657856163503728,0.041065233156898105
+gradient_boosting,C over A (both visits added),pr_auc,supporting,0.0020584250202668325,0.006556579886984962,0.018368817292753862
+gradient_boosting,A over B0 (registration over prevalence),pr_auc,supporting,0.02985504818347958,0.010952739492134374,0.030685033059005797
+gradient_boosting,B over B0,pr_auc,supporting,0.03928460237523305,0.012384811290403743,0.03469710424031372
+gradient_boosting,C over B0,pr_auc,supporting,0.03191347320374641,0.00988668051499007,0.027698377987001685

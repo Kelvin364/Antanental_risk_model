@@ -1,0 +1,7 @@
+measurement,available_both_visits_percent,threshold_percent,result,n_records
+sbp,100.0,60.0,pass,3126
+dbp,100.0,60.0,pass,3126
+weight,99.5,60.0,pass,3126
+ga,100.0,60.0,pass,3126
+pulse,80.6,60.0,pass,3126
+hb,35.4,60.0,fail,3126

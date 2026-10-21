@@ -1,0 +1,2 @@
+rule,n,events,flagged,events_flagged,sensitivity,positive_predictive_value
+Visit two blood pressure at or above 140/90,3126,165,34,5,0.030303030303030304,0.14705882352941177
