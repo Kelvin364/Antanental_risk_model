@@ -95,6 +95,14 @@ def summarise_results(paths: ProjectPaths) -> None:
     print(build_results_summary(paths).to_string(index=False))
 
 
+def meeting_evidence(paths: ProjectPaths) -> None:
+    """Write docs/meeting_evidence.md from the output tables."""
+    from antenatal.reporting.meeting_evidence import write_meeting_evidence
+
+    write_meeting_evidence(paths)
+    print("Wrote docs/meeting_evidence.md")
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
@@ -104,6 +112,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-artefact": freeze_artefact,
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "summarise-results": summarise_results,
+        "meeting-evidence": meeting_evidence,
     }
 
 

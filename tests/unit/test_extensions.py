@@ -93,3 +93,15 @@ def test_secondary_artefact_is_set_b_and_not_served(root):
     assert version["artefact_sha256"] != primary["artefact_sha256"]
     assert version["version"] != primary["version"]
     assert not [c for c in secondary.feature_names if c.endswith("_v1")]
+
+
+def test_meeting_evidence_is_generated_from_tables(root, tmp_path):
+    from antenatal.paths import ProjectPaths
+    from antenatal.reporting.meeting_evidence import write_meeting_evidence
+
+    paths = ProjectPaths.from_root(root)
+    text = write_meeting_evidence(paths)
+    assert "## Not yet complete" in text and "Stage 4" in text and "Stage 6" in text
+    assert "| Held out partition (sealed, not opened) | 782 | 41 |" in text
+    summary = pd.read_csv(root / TABLES / "results_summary.csv")
+    assert summary["source"].str.startswith("outputs/tables/").all()
