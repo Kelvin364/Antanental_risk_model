@@ -38,6 +38,8 @@ class PhysiologicalRanges:
     height: Range = Range(120, 200)
     gravidity: Range = Range(0, 20)
     prior_deliveries: Range = Range(0, 15)
+    # Pulse was not in the proposal's range rules. It is added here and is being added to
+    # Section 3.3.3: 30 to 200 beats per minute, the range the earlier prototype enforced.
     pulse: Range = Range(30, 200)
 
     def get(self, name: str) -> Range:
