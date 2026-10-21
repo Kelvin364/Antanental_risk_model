@@ -118,6 +118,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   └── web
 ├── docker-compose.yml
 ├── docs
+│   ├── ARCHITECTURE.md
 │   ├── deviations.md
 │   ├── meeting_evidence.md
 │   └── tripod_ai_checklist.md
