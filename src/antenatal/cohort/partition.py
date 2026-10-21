@@ -73,6 +73,21 @@ class FoldAssignment:
         return sorted(self.table["repeat"].unique().tolist())
 
 
+def grouped_outer_folds(development: pd.DataFrame, spec: StudySpec = PRIMARY) -> FoldAssignment:
+    """Grouped stratified outer folds for every repeat, seeded with ``spec.seed + repeat``."""
+    rows = []
+    for repeat in range(spec.repeats):
+        splitter = StratifiedGroupKFold(
+            n_splits=spec.outer_folds, shuffle=True, random_state=spec.seed + repeat
+        )
+        split = splitter.split(development, development["lbw"], development["group_key"])
+        for fold, (_, test) in enumerate(split):
+            ids = development["record_id"].iloc[test]
+            rows.append(pd.DataFrame({"record_id": ids, "repeat": repeat, "fold": fold}))
+    table = pd.concat(rows, ignore_index=True)
+    return FoldAssignment(table.sort_values(["repeat", "record_id"], ignore_index=True))
+
+
 class PartitionWriter:
     """Seals the held out partition and writes the outer fold assignment."""
 
@@ -116,19 +131,7 @@ class PartitionWriter:
 
     def outer_folds(self, development: pd.DataFrame) -> FoldAssignment:
         """Assign development records to grouped stratified folds for every repeat."""
-        rows = []
-        for repeat in range(self._spec.repeats):
-            splitter = StratifiedGroupKFold(
-                n_splits=self._spec.outer_folds,
-                shuffle=True,
-                random_state=self._spec.seed + repeat,
-            )
-            split = splitter.split(development, development["lbw"], development["group_key"])
-            for fold, (_, test) in enumerate(split):
-                ids = development["record_id"].iloc[test]
-                rows.append(pd.DataFrame({"record_id": ids, "repeat": repeat, "fold": fold}))
-        table = pd.concat(rows, ignore_index=True)
-        return FoldAssignment(table.sort_values(["repeat", "record_id"], ignore_index=True))
+        return grouped_outer_folds(development, self._spec)
 
     def write_folds(self, folds: FoldAssignment) -> Path:
         """Write the fold assignment; an existing file must hold identical content."""
