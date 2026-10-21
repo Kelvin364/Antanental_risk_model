@@ -120,6 +120,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── docs
 │   ├── ARCHITECTURE.md
 │   ├── deviations.md
+│   ├── ethics_note.md
 │   ├── meeting_evidence.md
 │   └── tripod_ai_checklist.md
 ├── notebooks
