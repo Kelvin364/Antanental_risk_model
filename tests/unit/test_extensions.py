@@ -1,0 +1,95 @@
+"""Stage 5: methods on toy data, and the shape of every output file."""
+
+import json
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from antenatal.artefact.artefact import FittedPipelineArtefact
+from antenatal.evaluation.learning_curve import FRACTIONS, subsample_groups
+from antenatal.evaluation.missingness_signal import newcombe_difference
+from antenatal.extensions import POOLED, pool_imputations
+from antenatal.models.factory import ITERATIVE_MODELS
+
+TABLES = "outputs/tables"
+
+
+def test_newcombe_interval_contains_difference():
+    d, low, high = newcombe_difference(10, 100, 30, 150)
+    assert d == pytest.approx(0.1 - 0.2)
+    assert low < d < high
+    assert all(np.isnan(v) for v in newcombe_difference(1, 0, 1, 10))
+
+
+def test_subsample_keeps_groups_whole():
+    train = pd.DataFrame({"group_key": list("aabbccddee"), "lbw": [0] * 10})
+    kept = subsample_groups(train, 0.4, seed=1)
+    assert kept["group_key"].nunique() == 2 and len(kept) == 4
+    assert subsample_groups(train, 1.0, seed=1) is train
+
+
+def test_pooling_averages_the_five_imputations():
+    rows = [
+        {"record_id": 1, "feature_set": "C", "repeat": 0, "fold": 0, "model": m, "probability": p}
+        for m, p in zip(ITERATIVE_MODELS, [0.1, 0.2, 0.3, 0.4, 0.5], strict=True)
+    ]
+    pooled = pool_imputations(pd.DataFrame(rows))
+    assert pooled.loc[pooled["model"] == POOLED, "probability"].item() == pytest.approx(0.3)
+
+
+def _table(root, name):
+    return pd.read_csv(root / TABLES / f"{name}.csv")
+
+
+def test_learning_curve_shape(root):
+    table = _table(root, "learning_curve")
+    assert len(table) == len(FRACTIONS) * 2
+    assert table["n_train"].is_monotonic_increasing
+
+
+@pytest.mark.parametrize(
+    ("name", "rows"),
+    [
+        ("ablation", 5 * 2),
+        ("parameterisation", 7 * 2),
+        ("missingness_indicator_signal", 2 * 2),
+        ("missingness_outcome_rates", 6),
+        ("gbt_missing_value_handling", 7 * 2),
+        ("multiple_imputation", 7 * 2),
+    ],
+)
+def test_extension_table_shapes(root, name, rows):
+    table = _table(root, name)
+    assert len(table) == rows
+    if "n" in table:
+        assert (table["n"] == 3126).all()
+
+
+def test_subgroups_follow_the_event_rule(root):
+    table = _table(root, "subgroups")
+    reported = table[table["reported"]]
+    assert (reported["events"] >= 30).all()
+    assert (table.loc[~table["reported"], "events"] < 30).all()
+
+
+def test_extension_figures_exist(root):
+    names = {p.name for p in (root / "outputs" / "figures").glob("fig1*.png")}
+    for expected in (
+        "fig12_learning_curve",
+        "fig13_ablation",
+        "fig14_parameterisation",
+        "fig15_missingness_rates",
+    ):
+        assert f"{expected}.png" in names
+
+
+def test_secondary_artefact_is_set_b_and_not_served(root):
+    directory = root / "webapp" / "model" / "secondary_set_b"
+    secondary = FittedPipelineArtefact.load(directory)
+    primary = json.loads((root / "webapp" / "model" / "version.json").read_text())
+    version = json.loads((directory / "version.json").read_text())
+    assert secondary.feature_set == "B" and "not served" in secondary.role
+    assert version["artefact_sha256"] != primary["artefact_sha256"]
+    assert version["version"] != primary["version"]
+    assert not [c for c in secondary.feature_names if c.endswith("_v1")]
