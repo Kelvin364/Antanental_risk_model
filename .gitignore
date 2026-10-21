@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Application runtime state
+webapp/data/*.sqlite3
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Editors and operating system
+.DS_Store
+.vscode/
+.idea/

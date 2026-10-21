@@ -1,0 +1,10 @@
+-r requirements.txt
+pytest==9.1.1
+pytest-cov==7.1.0
+coverage==7.16.2
+httpx==0.28.1
+ruff==0.17.1
+black==26.10.1
+nbconvert==7.17.2
+nbformat==5.11.1
+ipykernel==7.4.0
