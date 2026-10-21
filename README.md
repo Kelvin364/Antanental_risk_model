@@ -127,7 +127,8 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── ethics_note.md
 │   ├── evidence
 │   ├── meeting_evidence.md
-│   └── tripod_ai_checklist.md
+│   ├── tripod_ai_checklist.md
+│   └── tripod_ai_pending.md
 ├── notebooks
 │   ├── 01_data_audit.ipynb
 │   └── 02_model_notebook.ipynb

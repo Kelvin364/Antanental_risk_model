@@ -6,6 +6,8 @@ tripod-statement.org; the wording here is a short paraphrase. "D" marks items
 for model development, "E" for evaluation. This study develops a model and
 evaluates it internally, so both apply.
 
+Items awaiting the author are listed with prompts in `docs/tripod_ai_pending.md`.
+
 Status values: **Reported** (answered in the named place), **Partly** (answered
 with a stated gap), **Not applicable** (with the reason), **Pending** (answered
 in the technical report written in Stage 7, or after the single held out
