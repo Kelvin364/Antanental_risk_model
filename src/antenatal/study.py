@@ -28,6 +28,7 @@ from antenatal.models.factory import FAMILY_SCREEN, PRIMARY_MODELS
 from antenatal.paths import ProjectPaths
 
 SERVED_MODEL = "logistic_l2"
+UNIFORM_GBT = "gradient_boosting_uniform"
 SERVED_SET = SetC()
 ARTEFACT_VERSION = "1.0.0"
 OOF_FILE = "oof_predictions.parquet"
@@ -57,10 +58,12 @@ def load_context(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> StudyContext
 
 
 def experiments() -> list[Experiment]:
-    """Baseline B0, the primary models on A, B and C, and the family screen on C."""
+    """Baseline B0, the primary models on A, B and C, the family screen on C, and the
+    gradient boosted trees with uniform median imputation on A, B and C (sensitivity)."""
     out = [Experiment("baseline_prevalence", PRIMARY_SETS[0])]
     out += [Experiment(m, s) for m in PRIMARY_MODELS for s in PRIMARY_SETS]
     out += [Experiment(m, SetC()) for m in FAMILY_SCREEN if m not in PRIMARY_MODELS]
+    out += [Experiment(UNIFORM_GBT, s) for s in PRIMARY_SETS]
     return out
 
 

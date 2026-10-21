@@ -41,7 +41,15 @@ def test_analysis_writes_tables_and_figures(project):
     assert (comparisons["n"] == 3126).all()
     assert len(list(project.figures.glob("fig*.png"))) == 11
     sensitivity = pd.read_csv(project.tables / "sensitivity_analyses.csv")
-    assert set(sensitivity["analysis"]) == {"S1", "S2", "S3", "S4", "S5", "S6"}
+    assert set(sensitivity["analysis"]) == {
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "GBT, uniform imputation",
+    }
 
 
 def test_one_repeat_covers_every_development_record_once(project):

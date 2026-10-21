@@ -18,13 +18,20 @@ from antenatal.evaluation.comparisons import ComparisonRunner, primary_compariso
 from antenatal.evaluation.decision_curve import decision_curve_table
 from antenatal.evaluation.metrics import score_all
 from antenatal.evaluation.nested_cv import CVResults, NestedCVRunner
-from antenatal.evaluation.sensitivity import SensitivityRunner
+from antenatal.evaluation.sensitivity import DESCRIPTIONS, SensitivityRunner, core_comparisons
 from antenatal.features.screen import AvailabilityScreen
 from antenatal.models.factory import PRIMARY_MODELS
 from antenatal.paths import ProjectPaths
 from antenatal.reporting import figures, result_figures
 from antenatal.reporting.manifest import write_manifest
-from antenatal.study import OOF_FILE, StudyContext, clinical_rule, experiments, load_context
+from antenatal.study import (
+    OOF_FILE,
+    UNIFORM_GBT,
+    StudyContext,
+    clinical_rule,
+    experiments,
+    load_context,
+)
 
 SETS = ("A", "B", "C")
 
@@ -110,6 +117,14 @@ def draw(paths: ProjectPaths, context: StudyContext, tables: dict, results: CVRe
     result_figures.detectable_difference(tables["comparisons"], out)
 
 
+def uniform_imputation(results: CVResults, spec: StudySpec) -> pd.DataFrame:
+    """Sensitivity rows: gradient boosted trees with median imputation, not native handling."""
+    name = "GBT, uniform imputation"
+    table = ComparisonRunner(results, spec).run(core_comparisons(model=UNIFORM_GBT), analysis=name)
+    table.insert(1, "specification", DESCRIPTIONS[name])
+    return table
+
+
 def run_analysis(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> None:
     """Run the nested cross validation, the comparisons, the sensitivity analyses and figures."""
     started = time.time()
@@ -117,8 +132,10 @@ def run_analysis(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> None:
     results = NestedCVRunner(spec).run(context.development, context.folds, experiments())
     tables = write_tables(paths, context, results, spec)
     draw(paths, context, tables, results)
-    sensitivity = SensitivityRunner(context.raw, context.partition, spec).run_all(
-        context.development
+    runner = SensitivityRunner(context.raw, context.partition, spec)
+    sensitivity = pd.concat(
+        [runner.run_all(context.development), uniform_imputation(results, spec)],
+        ignore_index=True,
     )
     sensitivity.to_csv(paths.tables / "sensitivity_analyses.csv", index=False)
     result_figures.sensitivity(sensitivity, paths.figures)

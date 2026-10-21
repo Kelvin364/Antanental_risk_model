@@ -30,13 +30,15 @@ DESCRIPTIONS = {
     "S4": "Every screened measurement recorded at both visits",
     "S5": "Rate of change per week added to set C",
     "S6": "Lower birth weight bound relaxed to 0.5 kg",
+    "GBT, uniform imputation": "Gradient boosted trees with median imputation and indicators",
 }
 
 
-def _comparisons(new_c: str = "C") -> list[Comparison]:
+def core_comparisons(new_c: str = "C", model: str = MODEL) -> list[Comparison]:
+    """The primary (C over B) and secondary (B over A) comparisons for one model."""
     return [
-        Comparison(f"{new_c} over B", (MODEL, new_c), (MODEL, "B"), "pr_auc", "primary"),
-        Comparison("B over A", (MODEL, "B"), (MODEL, "A"), "roc_auc", "secondary"),
+        Comparison(f"{new_c} over B", (model, new_c), (model, "B"), "pr_auc", "primary"),
+        Comparison("B over A", (model, "B"), (model, "A"), "roc_auc", "secondary"),
     ]
 
 
@@ -63,7 +65,7 @@ class SensitivityRunner:
         cohort = CohortBuilder(spec).build(self._raw)
         development = self._partition.development(cohort)
         experiments = [Experiment(MODEL, s) for s in PRIMARY_SETS]
-        return self._evaluate(name, development, experiments, _comparisons())
+        return self._evaluate(name, development, experiments, core_comparisons())
 
     def complete_measurements(self, development: pd.DataFrame) -> pd.DataFrame:
         """S4: development records with every screened measurement at both visits."""
@@ -74,12 +76,12 @@ class SensitivityRunner:
             mask &= development[visit_column(name, 2)].notna()
         subset = development[mask].reset_index(drop=True)
         experiments = [Experiment(MODEL, s) for s in PRIMARY_SETS]
-        return self._evaluate("S4", subset, experiments, _comparisons())
+        return self._evaluate("S4", subset, experiments, core_comparisons())
 
     def rate_per_week(self, development: pd.DataFrame) -> pd.DataFrame:
         """S5: set C plus the change per week, against set B."""
         experiments = [Experiment(MODEL, s) for s in (*PRIMARY_SETS, SetCRate())]
-        return self._evaluate("S5", development, experiments, _comparisons(SetCRate.name))
+        return self._evaluate("S5", development, experiments, core_comparisons(SetCRate.name))
 
     def run_all(self, development: pd.DataFrame) -> pd.DataFrame:
         """Every analysis of Table 3.8 except the primary, in order."""

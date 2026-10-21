@@ -21,7 +21,7 @@ from antenatal.features.sets import (
     SetCWithChange,
     SetCWithout,
 )
-from antenatal.models.factory import MODEL_SPECS, ModelFactory
+from antenatal.models.factory import FAMILY_SCREEN, MODEL_SPECS, NATIVE, ModelFactory
 
 SCREEN = ScreenResult(
     {"sbp": 1.0, "dbp": 1.0, "weight": 0.99, "ga": 1.0, "pulse": 0.8, "hb": 0.35}, 0.6, 100
@@ -84,11 +84,25 @@ def test_builder_derives_changes_and_fills_missing_inputs():
 @pytest.mark.parametrize("key", list(MODEL_SPECS))
 def test_factory_builds_unweighted_pipelines(key):
     pipeline, grid = ModelFactory().build(key)
-    assert pipeline.named_steps["impute"].add_indicator
-    assert ("scale" in pipeline.named_steps) == MODEL_SPECS[key].scaled
+    spec = MODEL_SPECS[key]
+    assert ("impute" in pipeline.named_steps) == (spec.imputer != NATIVE)
+    if "impute" in pipeline.named_steps:
+        assert pipeline.named_steps["impute"].add_indicator == spec.indicator
+    assert ("scale" in pipeline.named_steps) == spec.scaled
     model = pipeline.named_steps["model"]
     assert getattr(model, "class_weight", None) is None
     assert all(name.startswith("model__") for name in grid)
+
+
+def test_gradient_boosting_handles_missing_values_natively():
+    pipeline, _ = ModelFactory().build("gradient_boosting")
+    assert list(pipeline.named_steps) == ["model"]
+    uniform, _ = ModelFactory().build("gradient_boosting_uniform")
+    assert list(uniform.named_steps) == ["impute", "model"]
+
+
+def test_family_screen_has_eight_families():
+    assert len(FAMILY_SCREEN) == 8 and "gradient_boosting_uniform" not in FAMILY_SCREEN
 
 
 def test_runner_on_development_subset(cohort, sealed):

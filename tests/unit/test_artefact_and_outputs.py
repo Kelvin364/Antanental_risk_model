@@ -121,8 +121,8 @@ def test_manifest_records_inputs_and_environment(root):
         ("cohort_flow.csv", 8),
         ("availability_screen.csv", 6),
         ("feature_set_comparisons.csv", 24),
-        ("sensitivity_analyses.csv", 24),
-        ("cv_fold_metrics.csv", 13 * 50),
+        ("sensitivity_analyses.csv", 28),
+        ("cv_fold_metrics.csv", 16 * 50),
     ],
 )
 def test_result_tables_have_expected_shape(root, name, rows):
