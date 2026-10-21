@@ -23,7 +23,7 @@ from antenatal.data.loader import DataLoader
 from antenatal.evaluation.nested_cv import CVResults, Experiment, NestedCVRunner
 from antenatal.features.builder import FeatureBuilder
 from antenatal.features.screen import AvailabilityScreen
-from antenatal.features.sets import PRIMARY_SETS, SetC
+from antenatal.features.sets import PRIMARY_SETS, FeatureSet, SetB, SetC
 from antenatal.models.factory import FAMILY_SCREEN, PRIMARY_MODELS
 from antenatal.paths import ProjectPaths
 
@@ -95,23 +95,42 @@ def clinical_rule(development: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def freeze_artefact(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> FittedPipelineArtefact:
-    """Fit the served configuration once on all development records and save it."""
+@dataclass(frozen=True)
+class ArtefactPlan:
+    """Which configuration to freeze, where, and under which version and role."""
+
+    model: str
+    feature_set: FeatureSet
+    subdirectory: str
+    version: str
+    role: str
+
+
+PRIMARY_PLAN = ArtefactPlan(SERVED_MODEL, SERVED_SET, "", ARTEFACT_VERSION, "primary, served")
+SECONDARY_PLAN = ArtefactPlan(
+    SERVED_MODEL, SetB(), "secondary_set_b", "1.0.0+set-b", "secondary, not served by default"
+)
+
+
+def freeze_artefact(
+    paths: ProjectPaths, spec: StudySpec = PRIMARY, plan: ArtefactPlan = PRIMARY_PLAN
+) -> FittedPipelineArtefact:
+    """Fit one pre specified configuration once on all development records and save it."""
     context = load_context(paths, spec)
     results = load_results(paths, context)
     development = results.development
-    experiment = Experiment(SERVED_MODEL, SERVED_SET)
+    experiment = Experiment(plan.model, plan.feature_set)
     fitted = NestedCVRunner(spec).fit(development, experiment, spec.seed)
     x_train = FeatureBuilder.matrix(development, fitted.columns)
     events = int(development["lbw"].sum())
     artefact = FittedPipelineArtefact(
-        version=ARTEFACT_VERSION,
+        version=plan.version,
         created_at=build_timestamp().isoformat(),
         data_sha256=spec.data_sha256,
         partition_sha256=context.partition.sha256,
         seed=spec.seed,
-        family=SERVED_MODEL,
-        feature_set=SERVED_SET.name,
+        family=plan.model,
+        feature_set=plan.feature_set.name,
         feature_names=fitted.columns,
         pipeline=fitted.pipeline,
         coefficient_covariance=coefficient_covariance(fitted.pipeline, x_train),
@@ -122,6 +141,7 @@ def freeze_artefact(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> FittedPip
         availability=AvailabilityScreen(spec).fit(development).availability,
         availability_threshold=spec.availability_threshold,
         spec=spec.as_dict(),
+        role=plan.role,
     )
-    artefact.save(paths.model)
+    artefact.save(paths.model / plan.subdirectory if plan.subdirectory else paths.model)
     return artefact

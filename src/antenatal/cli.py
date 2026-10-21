@@ -1,8 +1,9 @@
 """Command line entry point: ``python -m antenatal <command>``.
 
 Commands run in this order: ``derive-cohort``, ``seal-partition``,
-``run-analysis``, ``freeze-artefact``. ``run-all`` runs the four in sequence.
-``evaluate-holdout`` is separate and runs only with explicit confirmation.
+``run-analysis``, ``run-extensions``, ``freeze-artefact``,
+``freeze-secondary-artefact``, ``summarise-results``. ``run-all`` runs them in
+sequence. The single held out evaluation is never part of ``run-all``.
 Every path is relative to the repository root, which defaults to the current
 directory and can be changed with ``--root``.
 """
@@ -58,6 +59,13 @@ def run_analysis(paths: ProjectPaths) -> None:
     run(paths, PRIMARY)
 
 
+def run_extensions(paths: ProjectPaths) -> None:
+    """Stage 5 analyses on development records."""
+    from antenatal.extensions import run_extensions as run
+
+    run(paths, PRIMARY)
+
+
 def freeze_artefact(paths: ProjectPaths) -> None:
     """Fit the served configuration on development records and save the artefact."""
     from antenatal.study import freeze_artefact as freeze
@@ -69,12 +77,33 @@ def freeze_artefact(paths: ProjectPaths) -> None:
     )
 
 
+def freeze_secondary_artefact(paths: ProjectPaths) -> None:
+    """Fit the pre specified secondary configuration (set B) and save it beside the primary."""
+    from antenatal.study import SECONDARY_PLAN
+    from antenatal.study import freeze_artefact as freeze
+
+    artefact = freeze(paths, PRIMARY, SECONDARY_PLAN)
+    print(
+        f"Secondary artefact {artefact.version}: set {artefact.feature_set}, not served by default"
+    )
+
+
+def summarise_results(paths: ProjectPaths) -> None:
+    """Collect every headline number, with its source file, into results_summary.csv."""
+    from antenatal.reporting.results_summary import build_results_summary
+
+    print(build_results_summary(paths).to_string(index=False))
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
         "seal-partition": seal_partition,
         "run-analysis": run_analysis,
+        "run-extensions": run_extensions,
         "freeze-artefact": freeze_artefact,
+        "freeze-secondary-artefact": freeze_secondary_artefact,
+        "summarise-results": summarise_results,
     }
 
 

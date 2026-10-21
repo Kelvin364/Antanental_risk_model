@@ -62,74 +62,68 @@ class ModelSpec:
         return self.estimator or self.key
 
 
-def _specs() -> tuple[ModelSpec, ...]:
-    base = (
-        ModelSpec("baseline_prevalence", "B0 constant prevalence", LINEAR, False),
-        ModelSpec("logistic_l2", "Logistic regression, L2", LINEAR, True, LOGISTIC_GRID),
-        ModelSpec("logistic_l1", "Logistic regression, L1", LINEAR, True, LOGISTIC_GRID),
-        ModelSpec(
-            "lda", "Linear discriminant analysis", LINEAR, True, {"shrinkage": [None, "auto"]}
-        ),
-        ModelSpec("knn", "Nearest neighbours", LINEAR, True, {"n_neighbors": [25, 50, 100]}),
-        ModelSpec(
-            "naive_bayes",
-            "Gaussian naive Bayes",
-            LINEAR,
-            True,
-            {"var_smoothing": [1e-9, 1e-6, 1e-3]},
-        ),
-        ModelSpec(
-            "decision_tree",
-            "Decision tree",
-            TREE,
-            False,
-            {"max_depth": [2, 3, 4], "min_samples_leaf": [25, 50]},
-        ),
-        ModelSpec(
-            "random_forest",
-            "Random forest",
-            TREE,
-            False,
-            {"max_depth": [3, 5], "min_samples_leaf": [25, 50]},
-        ),
-        ModelSpec(
-            "gradient_boosting", "Gradient boosted trees", TREE, False, BOOSTING_GRID, NATIVE
-        ),
-        ModelSpec(
-            "gradient_boosting_uniform",
-            "GBT, uniform imputation",
-            TREE,
-            False,
-            BOOSTING_GRID,
-            estimator="gradient_boosting",
-        ),
-        ModelSpec(
-            "logistic_l2_no_indicator",
-            "Logistic regression, L2, no missingness indicators",
-            LINEAR,
-            True,
-            LOGISTIC_GRID,
-            indicator=False,
-            estimator="logistic_l2",
-        ),
+BASE_SPECS: tuple[ModelSpec, ...] = (
+    ModelSpec("baseline_prevalence", "B0 constant prevalence", LINEAR, False),
+    ModelSpec("logistic_l2", "Logistic regression, L2", LINEAR, True, LOGISTIC_GRID),
+    ModelSpec("logistic_l1", "Logistic regression, L1", LINEAR, True, LOGISTIC_GRID),
+    ModelSpec("lda", "Linear discriminant analysis", LINEAR, True, {"shrinkage": [None, "auto"]}),
+    ModelSpec("knn", "Nearest neighbours", LINEAR, True, {"n_neighbors": [25, 50, 100]}),
+    ModelSpec(
+        "naive_bayes",
+        "Gaussian naive Bayes",
+        LINEAR,
+        True,
+        {"var_smoothing": [1e-9, 1e-6, 1e-3]},
+    ),
+    ModelSpec(
+        "decision_tree",
+        "Decision tree",
+        TREE,
+        False,
+        {"max_depth": [2, 3, 4], "min_samples_leaf": [25, 50]},
+    ),
+    ModelSpec(
+        "random_forest",
+        "Random forest",
+        TREE,
+        False,
+        {"max_depth": [3, 5], "min_samples_leaf": [25, 50]},
+    ),
+    ModelSpec("gradient_boosting", "Gradient boosted trees", TREE, False, BOOSTING_GRID, NATIVE),
+    ModelSpec(
+        "gradient_boosting_uniform",
+        "GBT, uniform imputation",
+        TREE,
+        False,
+        BOOSTING_GRID,
+        estimator="gradient_boosting",
+    ),
+    ModelSpec(
+        "logistic_l2_no_indicator",
+        "Logistic regression, L2, no missingness indicators",
+        LINEAR,
+        True,
+        LOGISTIC_GRID,
+        indicator=False,
+        estimator="logistic_l2",
+    ),
+)
+ITERATIVE_SPECS: tuple[ModelSpec, ...] = tuple(
+    ModelSpec(
+        f"logistic_l2_iterative_{k}",
+        f"Logistic regression, L2, iterative imputation {k + 1}",
+        LINEAR,
+        True,
+        LOGISTIC_GRID,
+        ITERATIVE,
+        estimator="logistic_l2",
+        imputation_seed=SEED + k,
     )
-    iterative = tuple(
-        ModelSpec(
-            f"logistic_l2_iterative_{k}",
-            f"Logistic regression, L2, iterative imputation {k + 1}",
-            LINEAR,
-            True,
-            LOGISTIC_GRID,
-            ITERATIVE,
-            estimator="logistic_l2",
-            imputation_seed=SEED + k,
-        )
-        for k in range(IMPUTATIONS)
-    )
-    return base + iterative
+    for k in range(IMPUTATIONS)
+)
 
 
-MODEL_SPECS: dict[str, ModelSpec] = {spec.key: spec for spec in _specs()}
+MODEL_SPECS: dict[str, ModelSpec] = {spec.key: spec for spec in BASE_SPECS + ITERATIVE_SPECS}
 
 FAMILY_SCREEN: tuple[str, ...] = (
     "logistic_l2",
@@ -171,7 +165,6 @@ def _imputer(spec: ModelSpec):
             max_iter=10,
             random_state=spec.imputation_seed,
             add_indicator=spec.indicator,
-            keep_empty_features=True,
         )
     return SimpleImputer(strategy="median", add_indicator=spec.indicator)
 

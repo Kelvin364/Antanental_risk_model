@@ -77,6 +77,7 @@ class FittedPipelineArtefact:
     availability: dict[str, float] = field(default_factory=dict)
     availability_threshold: float = 0.60
     spec: dict[str, object] = field(default_factory=dict)
+    role: str = "primary, served"
 
     def score(self, cases: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Probability and interval for each row of cleaned case values."""
@@ -125,6 +126,7 @@ class FittedPipelineArtefact:
         """Contents of version.json."""
         return {
             "version": self.version,
+            "role": self.role,
             "created_at": self.created_at,
             "artefact_sha256": sha256,
             "data_sha256": self.data_sha256,
