@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-10-21T17:04:19+00:00",
-  "tests": 194,
+  "recorded_at": "2026-10-21T17:08:20+00:00",
+  "tests": 195,
   "failures": 0,
   "skipped": 0,
-  "seconds": 172.5,
+  "seconds": 154.8,
   "by_suite": {
     "integration": {
       "tests": 38,
@@ -11,12 +11,12 @@
       "skipped": 0
     },
     "unit": {
-      "tests": 156,
+      "tests": 157,
       "failed": 0,
       "skipped": 0
     }
   },
-  "line_coverage_percent": 96.2,
+  "line_coverage_percent": 97.8,
   "statements": 2701,
   "ruff_clean": true,
   "black_clean": true

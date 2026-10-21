@@ -13,7 +13,7 @@ evaluation of Stage 4).
 
 | Item | Topic | What must be reported | Where it is answered | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Title | Development or evaluation, target population, outcome | `docs/Technical-Report.md` title; proposal title | Pending |
+| 1 | Title | Development or evaluation, target population, outcome | `docs/Technical-Report.md` title; proposal title | Reported |
 | 2 | Abstract | TRIPOD+AI for Abstracts | `docs/Technical-Report.md` summary | Pending |
 | 3a | Background | Healthcare context and rationale, existing models | Proposal Sections 1.1, 1.2, 2.6, 2.7 | Reported |
 | 3b | Background | Target population, intended purpose and users | Proposal Section 1.5; README limitations; interface banner | Reported |
@@ -44,7 +44,7 @@ evaluation of Stage 4).
 | 14 | Fairness | Approaches to model fairness | `outputs/tables/subgroups.csv` (age and parity) | Partly: only age and parity are available |
 | 15 | Model output | Output type and any thresholds | Probability with confidence interval and rank; no classification (R11) | Reported |
 | 16 | Training versus evaluation | Differences between development and evaluation data | Same source and rules; random grouped split (`partitions/`) | Reported |
-| 17 | Ethical approval | Ethics committee and consent | `docs/ethics_note.md` | Pending |
+| 17 | Ethical approval | Ethics committee and consent | `docs/ethics_note.md` | Partly: the dataset release states no approval or consent; placeholder kept |
 | 18a | Funding | Funding source and role | `docs/Technical-Report.md` | Pending |
 | 18b | Conflicts of interest | Declarations | `docs/Technical-Report.md` | Pending |
 | 18c | Protocol | Where the protocol can be accessed | The proposal, frozen before analysis | Pending: state its location |
@@ -60,7 +60,7 @@ evaluation of Stage 4).
 | 23a | Model performance | Estimates with intervals, including subgroups | `outputs/tables/model_performance.csv`; `subgroups.csv` | Reported |
 | 23b | Model performance | Heterogeneity across clusters | No cluster identifier | Not applicable |
 | 24 | Model updating | Results of updating | No updating | Not applicable |
-| 25 | Interpretation | Overall interpretation including fairness | `notebooks/02_model_notebook.ipynb`; `docs/Technical-Report.md` | Partly: report pending |
+| 25 | Interpretation | Overall interpretation including fairness | `notebooks/02_model_notebook.ipynb`; `docs/Technical-Report.md` section 5 | Reported |
 | 26 | Limitations | Limitations and their effects | `notebooks/02_model_notebook.ipynb` section 12; proposal Section 3.8 | Reported |
 | 27a | Usability | Handling poor or unavailable inputs | Entry rules in `webapp/app/services/validation.py`; imputation inside the artefact | Reported |
 | 27b | Usability | User interaction and expertise required | Prototype is synthetic only and not for use (proposal Section 3.4.2) | Reported |
