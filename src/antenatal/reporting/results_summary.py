@@ -178,10 +178,43 @@ def _stage_five(s: SummaryBuilder) -> None:
     )
 
 
+def _questions(s: SummaryBuilder) -> None:
+    retrieval = s.table("retrieval_at_budget")
+    for row in retrieval.itertuples():
+        s.add(
+            f"retrieval_top_{row.budget_percent}",
+            f"Share of events in the top {row.budget_percent} percent of the ranking",
+            row.retrieval,
+            "retrieval_at_budget",
+            row.ci_low,
+            row.ci_high,
+        )
+    calibration = s.table("calibration_by_set")
+    for row in calibration.itertuples():
+        s.add(
+            f"calibration_slope_{row.model}_{row.feature_set}",
+            f"Calibration slope, {row.model}, set {row.feature_set}",
+            row.calibration_slope,
+            "calibration_by_set",
+            row.calibration_slope_low,
+            row.calibration_slope_high,
+        )
+    rates = s.table("missingness_outcome_rates")
+    pulse = rates[rates["measurement"] == "Pulse rate"].iloc[0]
+    s.add(
+        "pulse_missing_minus_recorded",
+        "Low birth weight rate, pulse missing minus recorded",
+        pulse["difference_missing_minus_recorded"],
+        "missingness_outcome_rates",
+        pulse["difference_low"],
+        pulse["difference_high"],
+    )
+
+
 def build_results_summary(paths: ProjectPaths) -> pd.DataFrame:
     """Write and return outputs/tables/results_summary.csv."""
     builder = SummaryBuilder(paths)
-    for part in (_cohort, _primary, _extensions, _stage_five):
+    for part in (_cohort, _primary, _extensions, _stage_five, _questions):
         part(builder)
     table = pd.DataFrame(builder.rows, columns=COLUMNS)
     table.to_csv(paths.tables / "results_summary.csv", index=False)

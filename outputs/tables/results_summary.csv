@@ -1,0 +1,49 @@
+key,description,value,ci_low,ci_high,source
+records_in_file,Records in the released file,8817.0,,,outputs/tables/cohort_flow.csv
+eligible_cohort,Eligible cohort,8161.0,,,outputs/tables/cohort_flow.csv
+analysis_cohort,Analysis cohort,3908.0,,,outputs/tables/cohort_flow.csv
+analysis_events,Low birth weight events in the analysis cohort,206.0,,,outputs/tables/cohort_flow.csv
+development_records,Development records,3126.0,,,outputs/tables/feature_set_comparisons.csv
+development_events,Development events,165.0,,,outputs/tables/feature_set_comparisons.csv
+primary_c_over_b_logistic,"C over B, PR AUC, logistic_l2",-0.003959911815478,-0.0130199485716905,0.0024690608145244,outputs/tables/feature_set_comparisons.csv
+primary_c_over_b_logistic_detectable,"Smallest detectable difference: C over B, PR AUC, logistic_l2",0.0109814066713523,,,outputs/tables/feature_set_comparisons.csv
+secondary_b_over_a_logistic,"B over A, ROC AUC, logistic_l2",0.0204865268695055,-0.0066087928295329,0.0476418411622837,outputs/tables/feature_set_comparisons.csv
+secondary_b_over_a_logistic_detectable,"Smallest detectable difference: B over A, ROC AUC, logistic_l2",0.0384672055555579,,,outputs/tables/feature_set_comparisons.csv
+primary_c_over_b_gbt,"C over B, PR AUC, gradient_boosting",-0.0066325316320447,-0.0172539236056392,0.0023699228833866,outputs/tables/feature_set_comparisons.csv
+primary_c_over_b_gbt_detectable,"Smallest detectable difference: C over B, PR AUC, gradient_boosting",0.014399184778923,,,outputs/tables/feature_set_comparisons.csv
+secondary_b_over_a_gbt,"B over A, ROC AUC, gradient_boosting",0.0345358345358345,0.0070079603084608,0.062720815570714,outputs/tables/feature_set_comparisons.csv
+secondary_b_over_a_gbt_detectable,"Smallest detectable difference: B over A, ROC AUC, gradient_boosting",0.0396946216411415,,,outputs/tables/feature_set_comparisons.csv
+logistic_A_pr_auc,"Logistic regression, set A, pr_auc",0.088013515940956,,,outputs/tables/summary_by_experiment.csv
+logistic_A_roc_auc,"Logistic regression, set A, roc_auc",0.6113413772988241,,,outputs/tables/summary_by_experiment.csv
+logistic_A_calibration_slope,"Logistic regression, set A, calibration_slope",1.208974309299677,,,outputs/tables/summary_by_experiment.csv
+logistic_A_calibration_intercept,"Logistic regression, set A, calibration_intercept",-0.0001506644770044,,,outputs/tables/summary_by_experiment.csv
+logistic_B_pr_auc,"Logistic regression, set B, pr_auc",0.0933294453966888,,,outputs/tables/summary_by_experiment.csv
+logistic_B_roc_auc,"Logistic regression, set B, roc_auc",0.6318279041683297,,,outputs/tables/summary_by_experiment.csv
+logistic_B_calibration_slope,"Logistic regression, set B, calibration_slope",1.0114495800833885,,,outputs/tables/summary_by_experiment.csv
+logistic_B_calibration_intercept,"Logistic regression, set B, calibration_intercept",-0.0004599201293395,,,outputs/tables/summary_by_experiment.csv
+logistic_C_pr_auc,"Logistic regression, set C, pr_auc",0.0893695335812108,,,outputs/tables/summary_by_experiment.csv
+logistic_C_roc_auc,"Logistic regression, set C, roc_auc",0.6280638195531811,,,outputs/tables/summary_by_experiment.csv
+logistic_C_calibration_slope,"Logistic regression, set C, calibration_slope",0.978830511326151,,,outputs/tables/summary_by_experiment.csv
+logistic_C_calibration_intercept,"Logistic regression, set C, calibration_intercept",-0.0018455949789248,,,outputs/tables/summary_by_experiment.csv
+sensitivity_primary_excluding_zero,Sensitivity analyses whose C over B interval excludes zero,0.0,,,outputs/tables/sensitivity_analyses.csv
+sensitivity_analyses_run,Sensitivity analyses run,7.0,,,outputs/tables/sensitivity_analyses.csv
+learning_curve_gap_full,"C minus B PR AUC with all training data, mean over repeats",-0.0040848428618586,,,outputs/tables/learning_curve.csv
+ablation_largest,Largest single first visit contribution: Visit one weight kept,0.0003759162207356,-0.0045147134471911,0.0037386258169152,outputs/tables/ablation.csv
+ablation_largest_detectable,Smallest detectable difference: Largest single first visit contribution: Visit one weight kept,0.0055914294091939,,,outputs/tables/ablation.csv
+indicator_signal_B,"Missingness indicators added, set B, PR AUC",0.0029373718393945,-0.0087849758526062,0.0146935992632155,outputs/tables/missingness_indicator_signal.csv
+indicator_signal_B_detectable,"Smallest detectable difference: Missingness indicators added, set B, PR AUC",0.0158780738215093,,,outputs/tables/missingness_indicator_signal.csv
+indicator_signal_C,"Missingness indicators added, set C, PR AUC",0.0022253976455961,-0.0068585545666899,0.0114062083801188,outputs/tables/missingness_indicator_signal.csv
+indicator_signal_C_detectable,"Smallest detectable difference: Missingness indicators added, set C, PR AUC",0.012882694066445,,,outputs/tables/missingness_indicator_signal.csv
+multiple_imputation_c_over_b,"C over B, PR AUC, pooled iterative imputation",-0.0054982708000565,-0.0151104044861571,0.0008477424349378,outputs/tables/multiple_imputation.csv
+multiple_imputation_c_over_b_detectable,"Smallest detectable difference: C over B, PR AUC, pooled iterative imputation",0.0109193654786878,,,outputs/tables/multiple_imputation.csv
+subgroups_reported,Strata with at least 30 events,3.0,,,outputs/tables/subgroups.csv
+retrieval_top_10,Share of events in the top 10 percent of the ranking,0.2181818181818181,0.1585288669342389,0.2792234999637234,outputs/tables/retrieval_at_budget.csv
+retrieval_top_20,Share of events in the top 20 percent of the ranking,0.3454545454545454,0.2780982905982905,0.4203898528442785,outputs/tables/retrieval_at_budget.csv
+retrieval_top_30,Share of events in the top 30 percent of the ranking,0.4787878787878787,0.4040972107608516,0.5536840116592896,outputs/tables/retrieval_at_budget.csv
+calibration_slope_logistic_l2_A,"Calibration slope, logistic_l2, set A",1.208974309299677,0.6443373926064087,1.822715613582207,outputs/tables/calibration_by_set.csv
+calibration_slope_logistic_l2_B,"Calibration slope, logistic_l2, set B",1.0114495800833885,0.6385726951949519,1.414712708301079,outputs/tables/calibration_by_set.csv
+calibration_slope_logistic_l2_C,"Calibration slope, logistic_l2, set C",0.978830511326151,0.6265698753257931,1.367670108324583,outputs/tables/calibration_by_set.csv
+calibration_slope_gradient_boosting_A,"Calibration slope, gradient_boosting, set A",0.9199595836700304,0.6141503373651364,1.2521993391563233,outputs/tables/calibration_by_set.csv
+calibration_slope_gradient_boosting_B,"Calibration slope, gradient_boosting, set B",1.1438382220250418,0.802870179452064,1.4768993631153635,outputs/tables/calibration_by_set.csv
+calibration_slope_gradient_boosting_C,"Calibration slope, gradient_boosting, set C",1.161299831878906,0.7910632589345534,1.5292699235267304,outputs/tables/calibration_by_set.csv
+pulse_missing_minus_recorded,"Low birth weight rate, pulse missing minus recorded",-0.0247438889969526,-0.0399170217145073,-0.0050867762387522,outputs/tables/missingness_outcome_rates.csv
