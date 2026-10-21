@@ -1,0 +1,9 @@
+number,criterion,excluded,remaining,events_remaining
+0,Records in the file,0,8817,443
+1,No recorded live birth,208,8609,382
+2,Multiple delivery,416,8193,360
+3,Recorded birth weight outside 1 to 6 kilograms,32,8161,360
+4,Visit one lacks a parsed blood pressure in range or a gestational age in range,167,7994,349
+5,"Visit two absent, or lacks a parsed blood pressure in range or a gestational age in range",1791,6203,271
+6,Gestational age at visit two not greater than at visit one,138,6065,268
+7,Visit two later than 28 weeks,2157,3908,206

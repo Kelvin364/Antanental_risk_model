@@ -35,3 +35,5 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "N"]
+# Exception names follow the study vocabulary (ChecksumMismatch, HoldoutAccessRefused).
+ignore = ["N818"]
