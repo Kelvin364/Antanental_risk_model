@@ -142,6 +142,10 @@ class NestedCVRunner:
         }
         return oof, metrics
 
+    def _repeats(self, folds: FoldAssignment) -> list[int]:
+        """Repeats of the fold assignment that the specification asks for."""
+        return [r for r in folds.repeats if r < self._spec.repeats]
+
     def run(
         self,
         development: pd.DataFrame,
@@ -154,7 +158,7 @@ class NestedCVRunner:
         tasks = [
             (experiment, repeat, fold, train, test)
             for experiment in experiments
-            for repeat in (repeats if repeats is not None else folds.repeats)
+            for repeat in (repeats if repeats is not None else self._repeats(folds))
             for fold, (train, test) in enumerate(folds.splits(development, repeat))
         ]
         outputs = Parallel(n_jobs=self._n_jobs)(
