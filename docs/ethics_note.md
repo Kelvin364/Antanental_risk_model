@@ -12,7 +12,7 @@ walkthrough. It answers TRIPOD+AI item 17 as far as the sources allow.
 | Authors | Mwifunyi, R., Kibinda, N., Elisa, N., Rashidi, F. U., Hassan, K., Mohsini, M., Masoi, T., Mnabwiru, L., Hussein, Y., and Manangwa, S. | Zenodo record 15309733 |
 | Version used | Version 1, published 30 April 2025 | Zenodo record 15309733 |
 | File used | `maternal_dataset_csv.csv`, SHA 256 recorded in `data/README.md` and verified on every load | This repository |
-| Newer version | The record states that a newer version exists. This study uses version 1 only, fixed by its checksum | Zenodo record 15309733 |
+| Newer version | A newer version exists on Zenodo. This study stays on version 1 because the specification and every count were frozen against its checksum | Zenodo record 15309733 |
 | Licence | Creative Commons Attribution 4.0 International | Zenodo record 15309733 |
 | Funders named on the record | Wellcome Trust; Lacuna Fund, grant 228079 | Zenodo record 15309733 |
 | Collection period | 20 May 2024 to 30 March 2025 | Zenodo record 15309733 |
@@ -20,6 +20,8 @@ walkthrough. It answers TRIPOD+AI item 17 as far as the sources allow.
 | DOI | https://doi.org/10.5281/zenodo.15309733 | |
 
 ## Ethics approval and consent statements of the data producers
+
+**Status.** The release contains no ethics approval or consent statement. A request for the producers' statement was sent to them on 21 October 2026. Until a reply is received, the placeholder below stays in place.
 
 > **PLACEHOLDER: no statement found yet.** The Zenodo record page
 > (https://zenodo.org/records/15309733) and its `metadata.pdf`, a field
