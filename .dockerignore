@@ -1,0 +1,13 @@
+.venv
+.git
+**/__pycache__
+.pytest_cache
+.ruff_cache
+outputs
+partitions
+notebooks
+data
+docs
+designs
+frontend/node_modules
+webapp/data/*.sqlite3
