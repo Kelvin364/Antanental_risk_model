@@ -8,6 +8,8 @@ Stratification (MHRS) in Tanzania.
 | Producers | University of Dodoma (Mwifunyi et al., 2025) |
 | DOI | https://doi.org/10.5281/zenodo.15309733 |
 | Licence | Creative Commons Attribution 4.0 (CC BY 4.0) |
+| Setting | Primary health facilities providing maternity services in Chamwino, Mkuranga, Meatu, Mbulu and Kilolo districts (no facility identifier in the file) |
+| Collection period | 20 May 2024 to 30 March 2025, as stated on the dataset record |
 | Records | 8,817, one per pregnancy |
 | Columns | 683 |
 | SHA 256 | `ab95366ef22dde5d13df93f10723942f5faffda8fbf0007e8efe85e4f25c1126` |
