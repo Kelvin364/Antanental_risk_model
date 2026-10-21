@@ -113,3 +113,19 @@ def test_readme_generated_blocks_are_current(root):
 
     text = (root / "README.md").read_text()
     assert render_readme(ProjectPaths.from_root(root), text) == text
+
+
+def test_technical_report_fills_every_field_from_files(root, tmp_path):
+    import shutil
+
+    from antenatal.paths import ProjectPaths
+    from antenatal.reporting.technical_report import write_technical_report
+
+    for folder in ("outputs", "docs/evidence"):
+        shutil.copytree(root / folder, tmp_path / folder)
+    (tmp_path / "docs").mkdir(exist_ok=True)
+    text = write_technical_report(ProjectPaths.from_root(tmp_path)).read_text()
+    assert "{" not in text and "}" not in text
+    summary = pd.read_csv(root / TABLES / "results_summary.csv").set_index("key")
+    assert f"{summary.loc['primary_c_over_b_logistic', 'value']:+.4f}" in text
+    assert "## 5. Results and limitations" in text

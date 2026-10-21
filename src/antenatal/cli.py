@@ -111,6 +111,13 @@ def update_readme(paths: ProjectPaths) -> None:
     print("Updated README.md")
 
 
+def technical_report(paths: ProjectPaths) -> None:
+    """Write docs/Technical-Report.md from the outputs and the evidence files."""
+    from antenatal.reporting.technical_report import write_technical_report
+
+    print(f"Wrote {write_technical_report(paths)}")
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
@@ -122,6 +129,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "summarise-results": summarise_results,
         "meeting-evidence": meeting_evidence,
         "update-readme": update_readme,
+        "technical-report": technical_report,
     }
 
 

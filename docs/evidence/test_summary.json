@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-21T17:04:19+00:00",
+  "tests": 194,
+  "failures": 0,
+  "skipped": 0,
+  "seconds": 172.5,
+  "by_suite": {
+    "integration": {
+      "tests": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    "unit": {
+      "tests": 156,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "line_coverage_percent": 96.2,
+  "statements": 2701,
+  "ruff_clean": true,
+  "black_clean": true
+}
