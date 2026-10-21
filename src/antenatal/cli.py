@@ -103,6 +103,14 @@ def meeting_evidence(paths: ProjectPaths) -> None:
     print("Wrote docs/meeting_evidence.md")
 
 
+def update_readme(paths: ProjectPaths) -> None:
+    """Refresh the generated results and structure blocks of README.md."""
+    from antenatal.reporting.readme import update_readme as update
+
+    update(paths)
+    print("Updated README.md")
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
@@ -113,6 +121,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "summarise-results": summarise_results,
         "meeting-evidence": meeting_evidence,
+        "update-readme": update_readme,
     }
 
 

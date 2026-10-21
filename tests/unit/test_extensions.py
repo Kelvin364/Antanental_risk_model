@@ -105,3 +105,11 @@ def test_meeting_evidence_is_generated_from_tables(root, tmp_path):
     assert "| Held out partition (sealed, not opened) | 782 | 41 |" in text
     summary = pd.read_csv(root / TABLES / "results_summary.csv")
     assert summary["source"].str.startswith("outputs/tables/").all()
+
+
+def test_readme_generated_blocks_are_current(root):
+    from antenatal.paths import ProjectPaths
+    from antenatal.reporting.readme import render_readme
+
+    text = (root / "README.md").read_text()
+    assert render_readme(ProjectPaths.from_root(root), text) == text

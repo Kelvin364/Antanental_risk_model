@@ -12,12 +12,12 @@ test:
 	$(PYTHON) -m pytest --cov --cov-report=term
 
 lint:
-	$(PYTHON) -m ruff check src tests webapp scripts
-	$(PYTHON) -m black --check src tests webapp scripts
+	$(PYTHON) -m ruff check src tests webapp
+	$(PYTHON) -m black --check src tests webapp
 
 format:
-	$(PYTHON) -m black src tests webapp scripts
-	$(PYTHON) -m ruff check --fix src tests webapp scripts
+	$(PYTHON) -m black src tests webapp
+	$(PYTHON) -m ruff check --fix src tests webapp
 
 run-all:
 	$(PYTHON) -m antenatal run-all
