@@ -149,5 +149,7 @@ def write_meeting_evidence(paths: ProjectPaths) -> str:
         TEMPLATE.read_text().strip(),
     ]
     text = "\n\n".join(parts) + "\n"
-    (paths.root / "docs" / "meeting_evidence.md").write_text(text)
+    target = paths.root / "docs" / "meeting_evidence.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(text)
     return text
