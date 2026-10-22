@@ -48,7 +48,7 @@ def seal_partition(paths: ProjectPaths) -> None:
     writer.write_folds(writer.outer_folds(development))
     print(
         f"Development {len(development)} records, {int(development['lbw'].sum())} events; "
-        f"held out {len(partition.holdout_ids)} records sealed with SHA 256 {partition.sha256}"
+        f"held out {partition.holdout_size} records sealed with SHA 256 {partition.sha256}"
     )
 
 

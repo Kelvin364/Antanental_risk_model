@@ -48,6 +48,11 @@ class Partition:
     holdout_ids: frozenset[int]
     sha256: str
 
+    @property
+    def holdout_size(self) -> int:
+        """Number of sealed held out records, without exposing which they are."""
+        return len(self.holdout_ids)
+
     def development(self, cohort: Cohort) -> pd.DataFrame:
         """Analysis cohort records that are not in the held out partition."""
         frame = cohort.analysis
