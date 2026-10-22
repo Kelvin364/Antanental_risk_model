@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import warnings
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -19,6 +20,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import InconsistentVersionWarning
 from sklearn.pipeline import Pipeline
 
 from antenatal.artefact.interval import wald_interval
@@ -30,6 +32,10 @@ CHECKSUM_FILE = "lbw_model.sha256"
 PARAMS_FILE = "model_params.json"
 VERSION_FILE = "version.json"
 QUANTILES = (0.01, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99)
+
+
+class ArtefactVersionMismatch(RuntimeError):
+    """The installed scikit-learn differs from the one that serialised the artefact."""
 
 
 def build_timestamp() -> datetime:
@@ -171,7 +177,22 @@ class FittedPipelineArtefact:
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             if digest != expected:
                 raise ChecksumMismatch(f"{path.name} has SHA 256 {digest}, expected {expected}")
-        artefact = joblib.load(path)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", InconsistentVersionWarning)
+            artefact = joblib.load(path)
+        mismatch = [w.message for w in caught if issubclass(w.category, InconsistentVersionWarning)]
+        for other in caught:
+            if not issubclass(other.category, InconsistentVersionWarning):
+                warnings.warn_explicit(other.message, other.category, other.filename, other.lineno)
+        if mismatch:
+            # A pickle from another scikit-learn release can load and then fail
+            # only when scoring, so refuse it here rather than at the first request.
+            first = mismatch[0]
+            raise ArtefactVersionMismatch(
+                f"{path.name} was saved with scikit-learn {first.original_sklearn_version} "
+                f"but {first.current_sklearn_version} is installed. Install the pinned "
+                "versions from requirements.txt (Python 3.12) and start again."
+            )
         if not isinstance(artefact, FittedPipelineArtefact):
             raise TypeError(f"{path} does not hold a FittedPipelineArtefact")
         return artefact

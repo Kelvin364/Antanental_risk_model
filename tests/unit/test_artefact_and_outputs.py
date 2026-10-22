@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from antenatal.artefact.artefact import FittedPipelineArtefact
+from antenatal.artefact.artefact import ArtefactVersionMismatch, FittedPipelineArtefact
 from antenatal.artefact.interval import design_rows
 from antenatal.cohort.builder import Cohort
 from antenatal.cohort.exclusion_log import ExclusionLog
@@ -92,6 +92,13 @@ def test_tampered_artefact_is_refused(root, tmp_path):
         handle.write(b"x")
     with pytest.raises(ChecksumMismatch):
         FittedPipelineArtefact.load(tmp_path / "model")
+
+
+def test_other_scikit_learn_release_is_refused(root, monkeypatch):
+    """A pickle from another release can fail only when scoring, so loading refuses it."""
+    monkeypatch.setattr("sklearn.base.__version__", "0.0.0")
+    with pytest.raises(ArtefactVersionMismatch, match="scikit-learn"):
+        FittedPipelineArtefact.load(root / "webapp" / "model")
 
 
 def test_version_record_matches_checksum(root):
