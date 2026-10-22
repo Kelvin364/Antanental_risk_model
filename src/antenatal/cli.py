@@ -131,6 +131,14 @@ def draw_figures(paths: ProjectPaths) -> None:
     print(f"Redrew {count} figures and refreshed outputs/manifest.json")
 
 
+def load_db(paths: ProjectPaths) -> None:
+    """Write the research tables of the data model into the application SQLite file."""
+    from antenatal.storage import database_url, load_database
+
+    counts = load_database(paths, PRIMARY)
+    print(f"Loaded {database_url(paths)}: {counts}")
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
@@ -141,6 +149,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
+        "load-db": load_db,
         "meeting-evidence": meeting_evidence,
         "update-readme": update_readme,
         "technical-report": technical_report,

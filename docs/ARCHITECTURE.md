@@ -22,6 +22,7 @@ flowchart LR
         artefact["artefact<br/>FittedPipelineArtefact, Wald interval"]
         reporting["reporting<br/>figures, manifest, results summary, README blocks"]
         cli["cli<br/>python -m antenatal"]
+        storage["storage<br/>research tables, load-db"]
     end
     subgraph files["Files"]
         raw[("data/maternal_dataset_csv.csv")]
@@ -32,7 +33,7 @@ flowchart LR
     subgraph app["Prototype: webapp/app"]
         api["api<br/>health, predict, cases"]
         services["services<br/>validation, CaseService, ModelService, RankingService"]
-        db[("SQLite<br/>synthetic cases, visits, assessments")]
+        db[("SQLite<br/>synthetic cases, visits, assessments;<br/>research tables from load-db")]
         page["static/index.html"]
     end
 
@@ -47,6 +48,8 @@ flowchart LR
     audit --> outs
     page --> api --> services
     services --> db
+    outs --> storage --> db
+    cli --> storage
     model --> services
     services -. "imports FittedPipelineArtefact and FeatureBuilder" .-> artefact
 ```
@@ -64,6 +67,23 @@ Each package has one job, and none reaches into another's internals:
 | `evaluation` | Nested cross validation, metric strategies, paired group bootstrap, detectable difference, sensitivity and extension analyses, and the only gate to the held out partition |
 | `artefact` | The fitted development pipeline with its covariance, reference probabilities, checksum and version |
 | `reporting` | Figures, the manifest, the results summary and the generated README blocks |
+| `storage` | The research side of the data model in SQLite, written by `load-db` |
+
+## Data model
+
+The proposal's data model (Section 3.4.4) has a research side and an interface side. Both live in the application's SQLite file, `webapp/data/app.sqlite3`, which is created locally and not committed.
+
+| Table | Entity | Written by | Uniqueness |
+| --- | --- | --- | --- |
+| `pregnancy_records` | PREGNANCY_RECORD | `load-db`, from `outputs/cohort_manifest.csv` | one row per record |
+| `visit_measurements` | VISIT_MEASUREMENT | `load-db`, cleaned visit one and two values | record and visit number |
+| `model_configurations` | MODEL_CONFIGURATION and PIPELINE_ARTEFACT | `load-db`, from each `version.json` and `model_params.json` | version |
+| `evaluation_results` | EVALUATION_RESULT | `load-db`, from `outputs/tables/cv_fold_metrics.csv` | model, feature set, repeat and fold |
+| `synthetic_cases` | SYNTHETIC_CASE | the prototype | synthetic flag always true |
+| `synthetic_visits` | SYNTHETIC_VISIT | the prototype | case and visit number |
+| `assessments` | ASSESSMENT | the prototype | references the artefact version and checksum |
+
+Exclusion reasons are columns of `pregnancy_records` (EXCLUSION_LOG), and partition assignments stay in `partitions/` (PARTITION_ASSIGNMENT), so no table records which records are held out. `load-db` drops and rebuilds its four tables, so it can be repeated.
 
 In the prototype, routers validate and route, services decide, the package
 computes, and the database stores.

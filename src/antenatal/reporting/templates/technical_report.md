@@ -17,6 +17,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 | Nested cross validation module | Run the primary design on development records | Completed | `outputs/tables/feature_set_comparisons.csv` |
 | Held out evaluation module (R5) | Evaluate once, logged with a timestamp | Partial: written and tested on synthetic data, not run | `src/antenatal/evaluation/holdout.py` |
 | Model serialiser (R12, R16) | One artefact with checksum and version | Completed | `webapp/model/version.json` |
+| Data model (Section 3.4.4) | Store records, visits, configurations and results | Completed in SQLite; the proposal budget named PostgreSQL | `src/antenatal/storage.py`, `python -m antenatal load-db` |
 | Sensitivity analyses S1 to S6 | Test the comparison under changed rules | Completed | `outputs/tables/sensitivity_analyses.csv` |
 | Interface screens 1 to 5 (Table 3.10) | Register, two visits, assessment, caseload | Completed as a single page over the API | `webapp/static/index.html` |
 | Entry rules (R9, R10) | Ranges, timing and the synthetic flag | Completed | `docs/evidence/input_tests.md` |
@@ -41,6 +42,8 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 **Interval on one probability.** For the served L2 logistic model the coefficient covariance is the inverse of the penalised Hessian of the fitted design matrix. For a new case the standard error of the logit is computed from that covariance, and the Wald interval is transformed to the probability scale. It describes uncertainty in the estimate, not in the outcome.
 
 **Decision curve and retrieval.** Net benefit counts true positives minus false positives weighted by the threshold odds. Retrieval reports the share of events in the top of the ranking against random ranking.
+
+**Data model.** `python -m antenatal load-db` writes the research side of the proposal's data model into the application's SQLite file: pregnancy records with their eligibility and exclusion reason, cleaned visit measurements unique on record and visit number, the frozen model configurations, and every outer fold result unique on model, feature set, repeat and fold. The prototype's synthetic cases, visits and assessments sit in the same file. No table records which records are held out.
 
 **Prototype.** A FastAPI application whose routers validate and route, whose services decide, and whose database stores synthetic cases, visits and assessments. Scoring goes only through the frozen artefact, whose checksum is verified when the application starts; a changed file stops the server. The interface shows rank, probability, the labelled interval, prevalence, event count, artefact version and a fixed limitation line, and never a risk category.
 

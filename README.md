@@ -57,6 +57,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Sensitivity analyses S1 to S6 | Completed | [`sensitivity_analyses.csv`](outputs/tables/sensitivity_analyses.csv) |
 | Further analyses: learning curve, ablation, parameterisation, missingness, multiple imputation, subgroups, retrieval | Completed | [`extensions.py`](src/antenatal/extensions.py), [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) |
 | Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
+| Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
 | Prototype interface, single page over the API, no risk categories (R11) | Completed | [`webapp/static/index.html`](webapp/static/index.html) |
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
