@@ -18,7 +18,7 @@ It contains four things that fit together:
 1. **The `antenatal` package** (`src/antenatal`). It loads the file after checking its SHA 256, derives the cohort exactly as Table 3.5 of the proposal states, seals a held out partition before any modelling step, runs repeated nested grouped cross validation on development records only, and writes every table and figure.
 2. **Two notebooks** (`notebooks/`) that explain the audit and the results in plain English. They compute nothing of their own; they read the package outputs.
 3. **A frozen model artefact** (`webapp/model/`): L2 logistic regression on set C, fitted once on the 3,126 development records, saved with a checksum and a version record. A set B artefact sits beside it and is not served.
-4. **A prototype interface** (`webapp/`): a FastAPI service and a single page that score synthetic cases with that artefact and show a rank, a probability and its confidence interval, never a clinical risk category.
+4. **A prototype interface** (`webapp/`, `frontend/`): a FastAPI service and a Next.js interface that score synthetic cases with that artefact and show a rank, a probability and its confidence interval, never a clinical risk category.
 
 ## Results
 
@@ -59,14 +59,14 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
 | Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
-| Prototype interface, single page over the API, no risk categories (R11) | Completed | [`webapp/static/index.html`](webapp/static/index.html) |
+| Prototype interface over the API, five screens, no risk categories (R11) | Completed: Next.js in `frontend/`; the earlier single page in `webapp/static/` is served only when the interface has not been built | [`frontend/src/`](frontend/src), [`webapp/static/index.html`](webapp/static/index.html) |
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
 | Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
-| Next.js interface and accessibility scores (Stage 6) | Not implemented | None yet |
+| Next.js interface (Stage 6): App Router, TypeScript, Tailwind, typed client generated from the OpenAPI schema, static export served by FastAPI | Completed; accessibility scores not yet measured | [`frontend/`](frontend), [`scripts/export_openapi.py`](scripts/export_openapi.py), [`tests/e2e/`](tests/e2e) |
 | Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
 | Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
@@ -75,11 +75,12 @@ In plain words: adding the first visit to the second did not improve prediction 
 
 ## Quick start
 
-These three commands install everything and start the prototype at http://127.0.0.1:8000/. They need Python 3.12 on the path as `python3.12`.
+These commands install everything, build the interface and start the prototype at http://127.0.0.1:8000/. They need Python 3.12 on the path as `python3.12` and Node.js 20.9 or newer.
 
 ```bash
 git clone https://github.com/Kelvin364/Antanental_risk_model.git && cd Antanental_risk_model
 make install
+make frontend
 make serve
 ```
 
@@ -93,7 +94,7 @@ make serve
 | NumPy | 2.4.4 |
 | FastAPI | 0.142.2 |
 | uvicorn | 0.46.0 |
-| Node.js | not used yet; needed only for the Stage 6 interface |
+| Node.js | 20.9 or newer, to build the interface (Next.js 16.4.2) |
 
 Every runtime version is pinned in [`requirements.txt`](requirements.txt) and every development tool in [`requirements-dev.txt`](requirements-dev.txt). The artefact is serialised with scikit-learn 1.8.0 and joblib 1.5.3, and other versions may not load it.
 
@@ -196,7 +197,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 **The notebooks.** `make notebook` executes both notebooks in place. They read the outputs above.
 
-**The application.** `make serve` starts the API and the interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
+**The application.** `make frontend` builds the Next.js interface into `frontend/out`, and `make serve` starts the API and serves that interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. Without a build, `make serve` falls back to the single page in `webapp/static/`. While changing the interface, `make frontend-dev` serves it with hot reloading at http://127.0.0.1:3000/ and forwards API calls to `make serve`. After a change to an API request or response, `make api-types` regenerates `frontend/openapi.json` and the typed client; continuous integration fails if either is stale. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
 
 **The tests.** `make test` runs the unit, integration and browser suites with coverage, and `make lint` runs ruff and black. The browser tests need `make browsers` once, which downloads Chromium, Firefox and WebKit for Playwright; without them those tests are skipped. `make e2e` runs only the browser tests and rewrites `docs/evidence/compatibility.md`.
 

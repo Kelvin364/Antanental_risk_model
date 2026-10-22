@@ -232,3 +232,19 @@ def test_interface_text_has_no_triage_language(client):
     text = " ".join(client.get("/api/interface-text").json().values()).lower()
     for word in ("see sooner", "routine", "high risk", "low risk", "priority"):
         assert word not in text
+
+
+def test_interface_export_is_served_beside_the_api(settings, tmp_path):
+    """Each screen of the Next.js export resolves to its page, and the API routes still win."""
+    out = tmp_path / "out"
+    pages = ("register", "visit-one", "visit-two", "assessment", "caseload")
+    for page in ("", *pages):
+        (out / page).mkdir(parents=True, exist_ok=True)
+        (out / page / "index.html").write_text(f"<p>{page or 'home'}</p>")
+    client = TestClient(create_app(Settings(settings.model_dir, settings.database_url, out)))
+    assert client.get("/").text == "<p>home</p>"
+    for page in pages:
+        assert client.get(f"/{page}/").text == f"<p>{page}</p>"
+        assert client.get(f"/{page}").text == f"<p>{page}</p>"
+    assert client.get("/health").json()["status"] == "ok"
+    assert client.get("/api/caseload").json()["rows"] == []

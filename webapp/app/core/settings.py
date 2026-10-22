@@ -9,6 +9,8 @@ from pathlib import Path
 from antenatal.config import LIMITATION  # noqa: F401  one source for app and figures (R7)
 
 WEBAPP = Path(__file__).resolve().parents[2]
+# The Next.js static export, when it has been built; otherwise the single page.
+FRONTEND_BUILD = WEBAPP.parent / "frontend" / "out"
 
 SYNTHETIC_BANNER = "Synthetic cases only. Do not enter any real pregnancy."
 INTERVAL_LABEL = (
@@ -27,10 +29,16 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
-        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL`` and ``ANTENATAL_STATIC_DIR``."""
+        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL`` and ``ANTENATAL_STATIC_DIR``.
+
+        The interface defaults to the Next.js build in frontend/out when it
+        exists, and to the single page in webapp/static when it does not.
+        """
         database = WEBAPP / "data" / "app.sqlite3"
+        built = (FRONTEND_BUILD / "index.html").exists()
+        interface = FRONTEND_BUILD if built else WEBAPP / "static"
         return cls(
             model_dir=Path(os.environ.get("ANTENATAL_MODEL_DIR", WEBAPP / "model")),
             database_url=os.environ.get("ANTENATAL_DATABASE_URL", f"sqlite:///{database}"),
-            static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", WEBAPP / "static")),
+            static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", interface)),
         )

@@ -7,7 +7,7 @@ so a changed artefact stops the server from starting (R12).
 from __future__ import annotations
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from webapp.app.api import cases, health, predict
@@ -55,10 +55,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     _handlers(app)
     for router in (health.router, predict.router, cases.router):
         app.include_router(router)
-    index = settings.static_dir / "index.html"
-    if index.exists():
-        app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
-        app.add_api_route("/", lambda: FileResponse(index), include_in_schema=False)
+    # Mounted last so the API routes match first. With ``html`` a path such as
+    # /visit-one/ serves visit-one/index.html from the Next.js export.
+    if (settings.static_dir / "index.html").exists():
+        app.mount("/", StaticFiles(directory=settings.static_dir, html=True), name="interface")
     return app
 
 

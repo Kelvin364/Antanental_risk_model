@@ -1,6 +1,7 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs
+.PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
+	frontend api-types frontend-dev
 
 install:
 	python3.12 -m venv .venv
@@ -37,3 +38,17 @@ notebook:
 
 serve:
 	$(PYTHON) -m uvicorn webapp.app.main:app --host 127.0.0.1 --port 8000
+
+# The Next.js interface. `make frontend` builds the static export that
+# `make serve` then serves at http://127.0.0.1:8000/.
+frontend:
+	cd frontend && npm ci && npm run build
+
+# Regenerate the typed client after a change to an API request or response.
+api-types:
+	$(PYTHON) scripts/export_openapi.py
+	cd frontend && npm run gen:types
+
+# Hot reloading interface on :3000, forwarding /api to `make serve` on :8000.
+frontend-dev:
+	cd frontend && npm run dev

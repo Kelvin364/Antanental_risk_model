@@ -4,11 +4,21 @@ All notable changes to this project. Dates are in UTC.
 
 ## Unreleased
 
+### Added
+
+* The Next.js interface in `frontend/` (App Router, TypeScript, Tailwind): the five screens as separate routes over the existing API, a typed client generated from the API's OpenAPI schema, validation messages taken from the API only, and a footer reporting the artefact version from `/health`. FastAPI serves its static export; the single page remains the fallback.
+* `scripts/export_openapi.py`, with a `--check` mode in continuous integration, and an interface build job.
+* The cross browser tests and the design screens were rerun against the new interface.
+
+### Fixed
+
+* Loading the artefact under a scikit-learn release other than the one that saved it now stops the server at start up instead of failing at the first prediction.
+
 ### Not yet done
 
 * Stage 4: the single evaluation of the held out partition. The code is written and tested on synthetic data and runs only after the supervisor has reviewed the analysis plan.
-* Stage 6: the Next.js interface, cross browser tests, accessibility scores, latency benchmark and regenerated design screens.
-* The container image: the Dockerfile and compose file have never been built or run.
+* Stage 6 remainder: accessibility scores, and a latency benchmark rerun.
+* The container image: the Dockerfile and compose file have never been built or run. The Dockerfile now builds the interface in a Node stage.
 
 ## 1.0.0 (2026-10-21)
 

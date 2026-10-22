@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Colour tokens carried over from the single page interface, with a dark set. */
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --line: #dddcd6;
+  --ink: #16211e;
+  --muted: #5b625f;
+  --green: #145c4c;
+  --green-ink: #ffffff;
+  --green-soft: #e3eee9;
+  --banner: #f5ebd7;
+  --banner-ink: #6b4e00;
+  --error: #a4231c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121614;
+    --surface: #1a201e;
+    --line: #2e3633;
+    --ink: #e8ecea;
+    --muted: #a3ada9;
+    --green: #3fa58a;
+    --green-ink: #08130f;
+    --green-soft: #1f2e29;
+    --banner: #3a3020;
+    --banner-ink: #f0d79a;
+    --error: #f2867f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #121614;
+  --surface: #1a201e;
+  --line: #2e3633;
+  --ink: #e8ecea;
+  --muted: #a3ada9;
+  --green: #3fa58a;
+  --green-ink: #08130f;
+  --green-soft: #1f2e29;
+  --banner: #3a3020;
+  --banner-ink: #f0d79a;
+  --error: #f2867f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-green: var(--green);
+  --color-green-ink: var(--green-ink);
+  --color-green-soft: var(--green-soft);
+  --color-banner: var(--banner);
+  --color-banner-ink: var(--banner-ink);
+  --color-error: var(--error);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+@layer components {
+  .card {
+    @apply mb-4 rounded-xl border border-line bg-surface p-5;
+  }
+  .btn-primary {
+    @apply cursor-pointer rounded-lg bg-green px-5 py-3 font-semibold text-green-ink disabled:cursor-wait disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply cursor-pointer rounded-lg border border-line bg-surface px-5 py-3 text-ink;
+  }
+  .kicker {
+    @apply text-xs font-semibold tracking-widest text-muted uppercase;
+  }
+  .big {
+    @apply font-mono text-4xl leading-tight font-bold sm:text-5xl;
+  }
+  .limit {
+    @apply mt-5 font-mono text-[13px] text-muted;
+  }
+}

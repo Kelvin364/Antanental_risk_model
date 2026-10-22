@@ -1,7 +1,15 @@
 # Serves the prototype interface and API with the frozen artefact.
 # The analysis itself runs on the host with `make run-all`; the image only
 # needs the package (for the artefact class and feature construction), the
-# webapp and the artefact files.
+# webapp and the artefact files. The Next.js interface is built in its own
+# stage and only its static export is copied into the final image.
+FROM node:22-slim AS interface
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend ./
+RUN NEXT_TELEMETRY_DISABLED=1 npm run build
+
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
@@ -13,6 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src ./src
 RUN pip install --no-cache-dir --no-deps .
 COPY webapp ./webapp
+COPY --from=interface /frontend/out ./frontend/out
 
 RUN useradd --create-home appuser && mkdir -p /app/state && chown appuser /app/state
 USER appuser

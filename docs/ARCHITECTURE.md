@@ -34,7 +34,9 @@ flowchart LR
         api["api<br/>health, predict, cases"]
         services["services<br/>validation, CaseService, ModelService, RankingService"]
         db[("SQLite<br/>synthetic cases, visits, assessments;<br/>research tables from load-db")]
-        page["static/index.html"]
+    end
+    subgraph ui["Interface: frontend"]
+        page["Next.js static export<br/>five screens, typed client from openapi.json"]
     end
 
     raw --> data --> cohort
@@ -95,7 +97,7 @@ A synthetic case is registered, its two visits are recorded, and an assessment i
 ```mermaid
 sequenceDiagram
     actor User
-    participant Page as index.html
+    participant Page as Next.js interface
     participant API as api/cases.py
     participant Rules as services/validation.py
     participant Cases as services/case_service.py

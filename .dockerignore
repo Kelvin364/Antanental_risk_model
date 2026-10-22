@@ -10,4 +10,6 @@ data
 docs
 designs
 frontend/node_modules
+frontend/.next
+frontend/out
 webapp/data/*.sqlite3

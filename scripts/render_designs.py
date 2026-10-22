@@ -82,6 +82,7 @@ def _walk(page: Page) -> list[Path]:
     _fill(page, "v2", VISIT_TWO)
     shots.append(_capture(page, "visit2", "03-visit-two"))
     page.click("#save-visit2")
+    page.wait_for_selector("#assessment:not([hidden])")
     page.wait_for_function("document.querySelector('#rank').textContent.includes(' of ')")
     shots.append(_capture(page, "assessment", "04-assessment"))
     page.click("#to-caseload")

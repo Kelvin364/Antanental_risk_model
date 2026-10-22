@@ -1,0 +1,1061 @@
+{
+  "components": {
+    "schemas": {
+      "AssessmentOut": {
+        "description": "What the Assessment screen shows (Table 3.10, screen 4).",
+        "properties": {
+          "artefact_sha256": {
+            "title": "Artefact Sha256",
+            "type": "string"
+          },
+          "artefact_version": {
+            "title": "Artefact Version",
+            "type": "string"
+          },
+          "assessed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessed At"
+          },
+          "events": {
+            "title": "Events",
+            "type": "integer"
+          },
+          "interval_high": {
+            "title": "Interval High",
+            "type": "number"
+          },
+          "interval_label": {
+            "title": "Interval Label",
+            "type": "string"
+          },
+          "interval_low": {
+            "title": "Interval Low",
+            "type": "number"
+          },
+          "limitation": {
+            "title": "Limitation",
+            "type": "string"
+          },
+          "prevalence": {
+            "title": "Prevalence",
+            "type": "number"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "rank_position": {
+            "title": "Rank Position",
+            "type": "integer"
+          },
+          "reference_caseload_size": {
+            "title": "Reference Caseload Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "probability",
+          "interval_low",
+          "interval_high",
+          "interval_label",
+          "rank_position",
+          "reference_caseload_size",
+          "prevalence",
+          "events",
+          "artefact_version",
+          "artefact_sha256",
+          "limitation"
+        ],
+        "title": "AssessmentOut",
+        "type": "object"
+      },
+      "CaseCreate": {
+        "description": "Registration of a synthetic pregnancy (screen 1, set A fields).",
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maternal age, 12 to 55 years",
+            "title": "Age"
+          },
+          "chronic_hypertension": {
+            "default": false,
+            "title": "Chronic Hypertension",
+            "type": "boolean"
+          },
+          "diabetes": {
+            "default": false,
+            "title": "Diabetes",
+            "type": "boolean"
+          },
+          "gravidity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Number of pregnancies, 0 to 20",
+            "title": "Gravidity"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Height, 120 to 200 cm",
+            "title": "Height Cm"
+          },
+          "hiv": {
+            "default": false,
+            "title": "Hiv",
+            "type": "boolean"
+          },
+          "intimate_partner_violence": {
+            "default": false,
+            "title": "Intimate Partner Violence",
+            "type": "boolean"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Free label, not a name",
+            "title": "Label"
+          },
+          "prior_caesarean": {
+            "default": false,
+            "title": "Prior Caesarean",
+            "type": "boolean"
+          },
+          "prior_deliveries": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Prior deliveries, 0 to 15",
+            "title": "Prior Deliveries"
+          },
+          "prior_hypertension_pregnancy": {
+            "default": false,
+            "title": "Prior Hypertension Pregnancy",
+            "type": "boolean"
+          },
+          "registration_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weight, 30 to 150 kg",
+            "title": "Registration Weight"
+          },
+          "sickle_cell": {
+            "default": false,
+            "title": "Sickle Cell",
+            "type": "boolean"
+          },
+          "smoking": {
+            "default": false,
+            "title": "Smoking",
+            "type": "boolean"
+          },
+          "synthetic": {
+            "description": "Must be true. No real pregnancy may be entered (R10).",
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "tuberculosis": {
+            "default": false,
+            "title": "Tuberculosis",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "synthetic",
+          "age",
+          "gravidity",
+          "prior_deliveries",
+          "height_cm",
+          "registration_weight"
+        ],
+        "title": "CaseCreate",
+        "type": "object"
+      },
+      "CaseOut": {
+        "description": "A stored case with its visits and its latest assessment.",
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Maternal age, 12 to 55 years",
+            "title": "Age"
+          },
+          "chronic_hypertension": {
+            "default": false,
+            "title": "Chronic Hypertension",
+            "type": "boolean"
+          },
+          "diabetes": {
+            "default": false,
+            "title": "Diabetes",
+            "type": "boolean"
+          },
+          "gravidity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Number of pregnancies, 0 to 20",
+            "title": "Gravidity"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Height, 120 to 200 cm",
+            "title": "Height Cm"
+          },
+          "hiv": {
+            "default": false,
+            "title": "Hiv",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "intimate_partner_violence": {
+            "default": false,
+            "title": "Intimate Partner Violence",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "latest_assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prior_caesarean": {
+            "default": false,
+            "title": "Prior Caesarean",
+            "type": "boolean"
+          },
+          "prior_deliveries": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Prior deliveries, 0 to 15",
+            "title": "Prior Deliveries"
+          },
+          "prior_hypertension_pregnancy": {
+            "default": false,
+            "title": "Prior Hypertension Pregnancy",
+            "type": "boolean"
+          },
+          "registration_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weight, 30 to 150 kg",
+            "title": "Registration Weight"
+          },
+          "sickle_cell": {
+            "default": false,
+            "title": "Sickle Cell",
+            "type": "boolean"
+          },
+          "smoking": {
+            "default": false,
+            "title": "Smoking",
+            "type": "boolean"
+          },
+          "synthetic": {
+            "description": "Must be true. No real pregnancy may be entered (R10).",
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "tuberculosis": {
+            "default": false,
+            "title": "Tuberculosis",
+            "type": "boolean"
+          },
+          "visits": {
+            "items": {
+              "$ref": "#/components/schemas/VisitOut"
+            },
+            "title": "Visits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "synthetic",
+          "label",
+          "age",
+          "gravidity",
+          "prior_deliveries",
+          "height_cm",
+          "registration_weight",
+          "id",
+          "visits"
+        ],
+        "title": "CaseOut",
+        "type": "object"
+      },
+      "CaseloadOut": {
+        "description": "The Caseload screen.",
+        "properties": {
+          "artefact_version": {
+            "title": "Artefact Version",
+            "type": "string"
+          },
+          "banner": {
+            "title": "Banner",
+            "type": "string"
+          },
+          "events": {
+            "title": "Events",
+            "type": "integer"
+          },
+          "interval_label": {
+            "title": "Interval Label",
+            "type": "string"
+          },
+          "limitation": {
+            "title": "Limitation",
+            "type": "string"
+          },
+          "prevalence": {
+            "title": "Prevalence",
+            "type": "number"
+          },
+          "reference_caseload_size": {
+            "title": "Reference Caseload Size",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CaseloadRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows",
+          "reference_caseload_size",
+          "prevalence",
+          "events",
+          "artefact_version",
+          "interval_label",
+          "limitation",
+          "banner"
+        ],
+        "title": "CaseloadOut",
+        "type": "object"
+      },
+      "CaseloadRow": {
+        "description": "One row of the Caseload screen.",
+        "properties": {
+          "artefact_version": {
+            "title": "Artefact Version",
+            "type": "string"
+          },
+          "case_id": {
+            "title": "Case Id",
+            "type": "integer"
+          },
+          "caseload_position": {
+            "title": "Caseload Position",
+            "type": "integer"
+          },
+          "interval_high": {
+            "title": "Interval High",
+            "type": "number"
+          },
+          "interval_low": {
+            "title": "Interval Low",
+            "type": "number"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "reference_rank_position": {
+            "title": "Reference Rank Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "case_id",
+          "label",
+          "caseload_position",
+          "reference_rank_position",
+          "probability",
+          "interval_low",
+          "interval_high",
+          "artefact_version"
+        ],
+        "title": "CaseloadRow",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "PredictRequest": {
+        "description": "A complete case scored without being saved.",
+        "properties": {
+          "case": {
+            "$ref": "#/components/schemas/CaseCreate"
+          },
+          "visit_one": {
+            "$ref": "#/components/schemas/VisitCreate"
+          },
+          "visit_two": {
+            "$ref": "#/components/schemas/VisitCreate"
+          }
+        },
+        "required": [
+          "case",
+          "visit_one",
+          "visit_two"
+        ],
+        "title": "PredictRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VisitCreate": {
+        "description": "Measurements of one antenatal visit (screens 2 and 3).",
+        "properties": {
+          "diastolic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Diastolic pressure, 30 to 160 mmHg",
+            "title": "Diastolic"
+          },
+          "gestational_week": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Gestational week, 1 to 45 weeks",
+            "title": "Gestational Week"
+          },
+          "haemoglobin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Haemoglobin, 3 to 20 g/dL",
+            "title": "Haemoglobin"
+          },
+          "pulse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pulse, 30 to 200 per minute",
+            "title": "Pulse"
+          },
+          "systolic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Systolic pressure, 60 to 250 mmHg",
+            "title": "Systolic"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weight, 30 to 150 kg",
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "gestational_week",
+          "systolic",
+          "diastolic",
+          "weight_kg"
+        ],
+        "title": "VisitCreate",
+        "type": "object"
+      },
+      "VisitOut": {
+        "description": "A stored visit.",
+        "properties": {
+          "diastolic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Diastolic pressure, 30 to 160 mmHg",
+            "title": "Diastolic"
+          },
+          "gestational_week": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Gestational week, 1 to 45 weeks",
+            "title": "Gestational Week"
+          },
+          "haemoglobin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Haemoglobin, 3 to 20 g/dL",
+            "title": "Haemoglobin"
+          },
+          "pulse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pulse, 30 to 200 per minute",
+            "title": "Pulse"
+          },
+          "systolic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Systolic pressure, 60 to 250 mmHg",
+            "title": "Systolic"
+          },
+          "visit_number": {
+            "title": "Visit Number",
+            "type": "integer"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Weight, 30 to 150 kg",
+            "title": "Weight Kg"
+          }
+        },
+        "required": [
+          "gestational_week",
+          "systolic",
+          "diastolic",
+          "weight_kg",
+          "visit_number"
+        ],
+        "title": "VisitOut",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Research prototype. Synthetic cases only. Not for clinical use.",
+    "title": "Antenatal caseload prototype",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/artefact": {
+      "get": {
+        "description": "The artefact's version record (version.json).",
+        "operationId": "artefact_api_artefact_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Artefact Api Artefact Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Artefact",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/caseload": {
+      "get": {
+        "description": "Assessed synthetic cases ordered by predicted probability.",
+        "operationId": "caseload_api_caseload_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Caseload",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/cases": {
+      "post": {
+        "description": "Register a synthetic pregnancy. Refused unless the synthetic flag is set.",
+        "operationId": "create_case_api_cases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Case",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/cases/{case_id}": {
+      "get": {
+        "description": "A case with its visits and latest assessment.",
+        "operationId": "get_case_api_cases__case_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Case",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/cases/{case_id}/assessment": {
+      "post": {
+        "description": "Score the case with the frozen artefact and store the assessment.",
+        "operationId": "assess_api_cases__case_id__assessment_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Assess",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/cases/{case_id}/visits/{visit_number}": {
+      "put": {
+        "description": "Record or replace visit one or visit two, with range and timing rules.",
+        "operationId": "save_visit_api_cases__case_id__visits__visit_number__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "visit_number",
+            "required": true,
+            "schema": {
+              "maximum": 2,
+              "minimum": 1,
+              "title": "Visit Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save Visit",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
+    "/api/interface-text": {
+      "get": {
+        "description": "The fixed banner, limitation and interval wording every screen shows.",
+        "operationId": "interface_text_api_interface_text_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Interface Text Api Interface Text Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Interface Text",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/predict": {
+      "post": {
+        "description": "Apply the entry rules and score the case with the frozen artefact, without saving it.",
+        "operationId": "predict_api_predict_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PredictRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Predict",
+        "tags": [
+          "predict"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Artefact version and checksums, data checksum, prevalence and feature count.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Health Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  }
+}
