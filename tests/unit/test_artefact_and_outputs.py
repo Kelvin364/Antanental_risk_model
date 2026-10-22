@@ -183,3 +183,11 @@ def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
             spec=spec,
         )
     assert evaluator.evaluations_logged() == 1
+
+
+def test_manifest_checksums_match_every_figure(root):
+    from antenatal.data.loader import sha256_of
+
+    manifest = json.loads((root / "outputs" / "manifest.json").read_text())["outputs"]
+    for figure in (root / "outputs" / "figures").glob("*.png"):
+        assert manifest[str(figure.relative_to(root))] == sha256_of(figure), figure.name

@@ -120,9 +120,15 @@ def technical_report(paths: ProjectPaths) -> None:
 
 def draw_figures(paths: ProjectPaths) -> None:
     """Redraw every figure from the saved tables, with the limitation footer."""
+    import json
+
+    from antenatal.reporting.manifest import write_manifest
     from antenatal.reporting.redraw import redraw_all
 
-    print(f"Redrew {len(redraw_all(paths))} figures")
+    count = len(redraw_all(paths))
+    previous = json.loads((paths.outputs / "manifest.json").read_text())
+    write_manifest(paths, PRIMARY, {"analysis_seconds": previous.get("analysis_seconds")})
+    print(f"Redrew {count} figures and refreshed outputs/manifest.json")
 
 
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
