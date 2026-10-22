@@ -6,12 +6,10 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
+from antenatal.config import LIMITATION  # noqa: F401  one source for app and figures (R7)
+
 WEBAPP = Path(__file__).resolve().parents[2]
 
-LIMITATION = (
-    "Research estimate from a study on one Tanzanian dataset. Not validated for any pregnancy. "
-    "Not a clinical risk category and not a recommendation for care."
-)
 SYNTHETIC_BANNER = "Synthetic cases only. Do not enter any real pregnancy."
 INTERVAL_LABEL = (
     "95 percent confidence interval for the estimated probability, reflecting uncertainty in "

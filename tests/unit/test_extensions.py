@@ -146,3 +146,44 @@ def test_fold_level_summary_carries_bootstrap_intervals(root):
         assert (
             (table[f"{metric}_low"] <= table[metric]) & (table[metric] <= table[f"{metric}_high"])
         ).all()
+
+
+def test_every_figure_carries_the_limitation_footer(tmp_path):
+    """R7: style.save adds the fixed limitation line to every figure it writes."""
+    from antenatal.config import LIMITATION
+    from antenatal.reporting.style import plt, save
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.plot([0, 1], [0, 1])
+    captured = []
+    original = fig.savefig
+    fig.savefig = lambda *a, **k: (
+        captured.extend(t.get_text() for t in fig.texts),
+        original(*a, **k),
+    )
+    save(fig, tmp_path, "probe")
+    assert (tmp_path / "probe.png").exists()
+    assert any(" ".join(text.split()) == LIMITATION for text in captured)
+
+
+def test_app_and_figures_share_one_limitation_line():
+    from antenatal.config import LIMITATION
+    from webapp.app.core import settings
+
+    assert settings.LIMITATION is LIMITATION
+
+
+def test_draw_figures_redraws_all_sixteen(root, tmp_path):
+    import shutil
+
+    from antenatal.paths import ProjectPaths
+    from antenatal.reporting.redraw import redraw_all
+
+    for folder in ("outputs/tables", "partitions"):
+        shutil.copytree(root / folder, tmp_path / folder)
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "maternal_dataset_csv.csv").symlink_to(
+        root / "data" / "maternal_dataset_csv.csv"
+    )
+    paths = ProjectPaths.from_root(tmp_path).ensure()
+    assert len(redraw_all(paths)) == 16

@@ -135,6 +135,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── outputs
 │   ├── cohort_manifest.csv
 │   ├── figures
+│   ├── learning_curve_predictions.parquet
 │   ├── manifest.json
 │   ├── oof_extensions.parquet
 │   ├── oof_predictions.parquet

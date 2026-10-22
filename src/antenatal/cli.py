@@ -118,6 +118,13 @@ def technical_report(paths: ProjectPaths) -> None:
     print(f"Wrote {write_technical_report(paths)}")
 
 
+def draw_figures(paths: ProjectPaths) -> None:
+    """Redraw every figure from the saved tables, with the limitation footer."""
+    from antenatal.reporting.redraw import redraw_all
+
+    print(f"Redrew {len(redraw_all(paths))} figures")
+
+
 def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
     return {
         "derive-cohort": derive_cohort,
@@ -127,6 +134,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-artefact": freeze_artefact,
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "summarise-results": summarise_results,
+        "draw-figures": draw_figures,
         "meeting-evidence": meeting_evidence,
         "update-readme": update_readme,
         "technical-report": technical_report,

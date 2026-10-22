@@ -3,17 +3,21 @@
 Colours are the first three slots of a palette validated for colour vision
 deficiency on a light surface. Text always uses the ink colours, never a series
 colour. Every figure title states the number of pregnancies and events
-(Requirement R6).
+(Requirement R6), and every saved figure carries the fixed limitation line as
+a footer (Requirement R7).
 """
 
 from __future__ import annotations
 
+import textwrap
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+
+from antenatal.config import LIMITATION  # noqa: E402
 
 SERIES = {"A": "#2a78d6", "B": "#eb6834", "C": "#1baf7a"}
 ORDERED = ("#2a78d6", "#eb6834", "#1baf7a")
@@ -55,8 +59,23 @@ def count_label(n: int, events: int) -> str:
     return f"n = {n:,}, events = {events}"
 
 
+def add_limitation(fig: plt.Figure) -> None:
+    """Place the fixed limitation line under the figure, wrapped to its width."""
+    width_characters = int(fig.get_figwidth() * 15)
+    fig.text(
+        0.01,
+        -0.03,
+        textwrap.fill(LIMITATION, width_characters),
+        ha="left",
+        va="top",
+        fontsize=7.5,
+        color=INK_SECONDARY,
+    )
+
+
 def save(fig: plt.Figure, directory: Path, name: str) -> Path:
-    """Write ``fig`` as a PNG and close it."""
+    """Add the limitation footer, write ``fig`` as a PNG and close it."""
+    add_limitation(fig)
     path = Path(directory) / f"{name}.png"
     fig.savefig(path, bbox_inches="tight", facecolor=SURFACE)
     plt.close(fig)

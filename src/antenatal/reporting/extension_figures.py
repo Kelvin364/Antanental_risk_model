@@ -30,19 +30,19 @@ def learning_curve(summary: pd.DataFrame, n: int, events: int, directory: Path) 
                 label=f"Set {name}",
             )
         ax.set_xlabel("Share of each outer training fold used, percent")
-        ax.set_ylabel(f"{label}, predictions averaged over repeats")
+        ax.set_ylabel(label)
         ax.set_xticks([20, 40, 60, 80, 100])
     axes[0].axhline(events / n, color=INK_SECONDARY, linestyle="--", linewidth=1)
     axes[0].text(21, events / n, " no skill", fontsize=8, color=INK_SECONDARY, va="bottom")
     axes[1].legend(loc="lower right")
     fig.suptitle(
-        "Learning curve, logistic regression, 95 percent group bootstrap intervals\n"
-        + count_label(n, events),
+        "Learning curve, logistic regression, predictions averaged over repeats, "
+        "95 percent group bootstrap intervals\n" + count_label(n, events),
         x=0.01,
         ha="left",
         fontweight="bold",
     )
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
     return save(fig, directory, "fig12_learning_curve")
 
 

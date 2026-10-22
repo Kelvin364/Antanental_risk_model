@@ -83,15 +83,9 @@ def measurement_distributions(development: pd.DataFrame, directory: Path) -> Pat
             patch.set_facecolor(colour)
         for median in parts["medians"]:
             median.set_color("#0b0b0b")
-        ax.set_title(f"{item.label} at visit two, {item.unit}", fontsize=9.5)
-        ax.text(
-            0.02,
-            0.97,
-            f"recorded for {sum(len(g) for g in groups):,}",
-            transform=ax.transAxes,
-            va="top",
-            fontsize=8,
-            color=INK_SECONDARY,
+        recorded = sum(len(g) for g in groups)
+        ax.set_title(
+            f"{item.label} at visit two, {item.unit}\nrecorded for {recorded:,}", fontsize=9.5
         )
     fig.suptitle(
         "Visit two measurements by outcome, development records ("

@@ -72,6 +72,13 @@ SENTINEL_TOKENS: frozenset[str] = frozenset(
 )
 
 
+LIMITATION = (
+    "Research estimate from a study on one Tanzanian dataset. Not validated for any pregnancy. "
+    "Not a clinical risk category and not a recommendation for care."
+)
+"""The fixed limitation line shown on every interface screen and every figure (R7)."""
+
+
 @dataclass(frozen=True)
 class StudySpec:
     """Frozen specification of the study (Table 3.4 and Sections 3.3.2 to 3.3.9)."""
