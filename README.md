@@ -64,7 +64,8 @@ In plain words: adding the first visit to the second did not improve prediction 
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
-| Next.js interface, cross browser tests and accessibility scores (Stage 6) | Not implemented | None yet |
+| Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
+| Next.js interface and accessibility scores (Stage 6) | Not implemented | None yet |
 | Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | Technical report | Completed as Markdown; the PDF is not produced yet | [`docs/Technical-Report.md`](docs/Technical-Report.md) |
 | Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
@@ -158,6 +159,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── tests
 │   ├── __init__.py
 │   ├── conftest.py
+│   ├── e2e
 │   ├── integration
 │   └── unit
 └── webapp
@@ -188,7 +190,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 **The application.** `make serve` starts the API and the interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
 
-**The tests.** `make test` runs the unit and integration suites with coverage, and `make lint` runs ruff and black.
+**The tests.** `make test` runs the unit, integration and browser suites with coverage, and `make lint` runs ruff and black. The browser tests need `make browsers` once, which downloads Chromium, Firefox and WebKit for Playwright; without them those tests are skipped. `make e2e` runs only the browser tests and rewrites `docs/evidence/compatibility.md`.
 
 **The benchmarks.** `.venv/bin/python scripts/benchmark_api.py` starts its own server, sends 500 sequential and 50 concurrent predictions and writes `docs/evidence/performance.md`.
 

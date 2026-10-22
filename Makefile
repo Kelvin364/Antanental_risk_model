@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: install test lint format run-all notebook serve clean-outputs
+.PHONY: install browsers test e2e lint format run-all notebook serve clean-outputs
 
 install:
 	python3.12 -m venv .venv
@@ -8,8 +8,14 @@ install:
 	$(PYTHON) -m pip install -r requirements-dev.txt
 	$(PYTHON) -m pip install -e .
 
+browsers:
+	$(PYTHON) -m playwright install chromium firefox webkit
+
 test:
 	$(PYTHON) -m pytest --cov --cov-report=term
+
+e2e:
+	$(PYTHON) -m pytest tests/e2e -o addopts=""
 
 lint:
 	$(PYTHON) -m ruff check src tests webapp

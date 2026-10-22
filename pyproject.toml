@@ -23,7 +23,10 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-markers = ["slow: runs part of the analysis on the real data file"]
+markers = [
+    "slow: runs part of the analysis on the real data file",
+    "e2e: drives the interface in real browsers; skipped when Playwright or a browser is absent",
+]
 
 [tool.coverage.run]
 source = ["antenatal", "webapp/app"]
