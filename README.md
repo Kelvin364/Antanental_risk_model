@@ -65,6 +65,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
+| Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
 | Next.js interface and accessibility scores (Stage 6) | Not implemented | None yet |
 | Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | Technical report | Completed as Markdown; the PDF is not produced yet | [`docs/Technical-Report.md`](docs/Technical-Report.md) |
@@ -121,6 +122,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── README.md
 │   └── maternal_dataset_csv.csv
 ├── designs
+│   ├── README.md
 │   └── web
 ├── docker-compose.yml
 ├── docs
@@ -153,7 +155,8 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── scripts
 │   ├── benchmark_api.py
 │   ├── input_variation.py
-│   └── record_test_results.py
+│   ├── record_test_results.py
+│   └── render_designs.py
 ├── src
 │   └── antenatal
 ├── tests
@@ -196,7 +199,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 ## Designs
 
-`designs/web/` holds seven screens from the earlier Figma design. They include sign up and sign in screens and triage wording, both of which are now out of scope, so they do not match the current interface. They are to be regenerated from the real screens in Stage 6.
+`designs/web/` holds five screenshots of the running interface, one per screen, drawn by `scripts/render_designs.py` from a synthetic case. The earlier Figma screens with sign up, sign in and triage wording were removed. [`designs/README.md`](designs/README.md) lists the files.
 
 ## Links
 
