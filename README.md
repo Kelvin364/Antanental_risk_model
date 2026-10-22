@@ -138,6 +138,15 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── meeting_evidence.md
 │   ├── tripod_ai_checklist.md
 │   └── tripod_ai_pending.md
+├── frontend
+│   ├── next-env.d.ts
+│   ├── next.config.ts
+│   ├── openapi.json
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── src
+│   └── tsconfig.json
 ├── notebooks
 │   ├── 01_data_audit.ipynb
 │   └── 02_model_notebook.ipynb
@@ -159,6 +168,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── scripts
 │   ├── benchmark_api.py
 │   ├── build_report_pdf.py
+│   ├── export_openapi.py
 │   ├── input_variation.py
 │   ├── package_attempt2.py
 │   ├── record_test_results.py

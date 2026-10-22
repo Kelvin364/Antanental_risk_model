@@ -33,6 +33,7 @@ frontend/*.tsbuildinfo
 CLAUDE.md
 CLAUDE.local.md
 .claude/
+AGENTS.md
 docs/STATUS_REPORT.md
 docs/*Roadmap*.md
 docs/*Guideline*.md
