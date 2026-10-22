@@ -10,3 +10,5 @@ nbformat==5.11.1
 ipykernel==7.4.0
 psutil==7.2.2
 playwright==1.64.0
+pypdf==6.21.2
+mistune==3.4.0

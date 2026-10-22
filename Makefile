@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: install browsers test e2e lint format run-all notebook serve clean-outputs
+.PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs
 
 install:
 	python3.12 -m venv .venv
@@ -17,13 +17,16 @@ test:
 e2e:
 	$(PYTHON) -m pytest tests/e2e -o addopts=""
 
+report-pdf:
+	$(PYTHON) scripts/build_report_pdf.py
+
 lint:
-	$(PYTHON) -m ruff check src tests webapp
-	$(PYTHON) -m black --check src tests webapp
+	$(PYTHON) -m ruff check src tests webapp scripts
+	$(PYTHON) -m black --check src tests webapp scripts
 
 format:
-	$(PYTHON) -m black src tests webapp
-	$(PYTHON) -m ruff check --fix src tests webapp
+	$(PYTHON) -m black src tests webapp scripts
+	$(PYTHON) -m ruff check --fix src tests webapp scripts
 
 run-all:
 	$(PYTHON) -m antenatal run-all

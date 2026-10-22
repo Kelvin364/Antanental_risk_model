@@ -9,6 +9,9 @@ __pycache__/
 coverage.xml
 htmlcov/
 
+# Submission bundle
+dist/
+
 # Notebooks
 .ipynb_checkpoints/
 

@@ -68,7 +68,8 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
 | Next.js interface and accessibility scores (Stage 6) | Not implemented | None yet |
 | Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
-| Technical report | Completed as Markdown; the PDF is not produced yet | [`docs/Technical-Report.md`](docs/Technical-Report.md) |
+| Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
+| Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
 | Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
 | Input variation evidence | Completed | [`docs/evidence/input_tests.md`](docs/evidence/input_tests.md) |
 
@@ -128,6 +129,8 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── docs
 │   ├── ARCHITECTURE.md
 │   ├── Technical-Report.md
+│   ├── Technical-Report.pdf
+│   ├── VIDEO_SCRIPT.md
 │   ├── deviations.md
 │   ├── ethics_note.md
 │   ├── evidence
@@ -154,7 +157,9 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── requirements.txt
 ├── scripts
 │   ├── benchmark_api.py
+│   ├── build_report_pdf.py
 │   ├── input_variation.py
+│   ├── package_attempt2.py
 │   ├── record_test_results.py
 │   └── render_designs.py
 ├── src
@@ -206,7 +211,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 | Item | Link |
 | --- | --- |
 | Demonstration video | To be added |
-| Technical report | [`docs/Technical-Report.md`](docs/Technical-Report.md); PDF to be added |
+| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), built from [`docs/Technical-Report.md`](docs/Technical-Report.md) |
 
 ## Limitations
 
