@@ -83,6 +83,7 @@ def _tests(evidence: Path) -> dict[str, str]:
         "failures": str(t["failures"]),
         "unit_tests": str(t["by_suite"].get("unit", {}).get("tests", 0)),
         "integration_tests": str(t["by_suite"].get("integration", {}).get("tests", 0)),
+        "browser_tests": str(t["by_suite"].get("e2e", {}).get("tests", 0)),
         "coverage": str(t["line_coverage_percent"]),
         "statements": f"{t['statements']:,}",
         "ruff": "no findings" if t["ruff_clean"] else "findings",

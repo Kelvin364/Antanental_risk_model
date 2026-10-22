@@ -49,7 +49,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 
 ## 3. Testing approaches and results
 
-The test suite ran {tests} tests in {seconds} seconds with {failures} failures: {unit_tests} unit tests and {integration_tests} integration tests. Line coverage of the package and the application was {coverage} percent of {statements} statements. Ruff reported {ruff} and black reported {black}.
+The test suite ran {tests} tests in {seconds} seconds with {failures} failures: {unit_tests} unit tests, {integration_tests} integration tests and {browser_tests} browser tests. Line coverage of the package and the application was {coverage} percent of {statements} statements. Ruff reported {ruff} and black reported {black}.
 
 | Approach | What it checks |
 | --- | --- |
