@@ -63,7 +63,8 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
-| Next.js interface, cross browser tests, accessibility and latency benchmarks (Stage 6) | Not implemented | None yet |
+| API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
+| Next.js interface, cross browser tests and accessibility scores (Stage 6) | Not implemented | None yet |
 | Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | Technical report | Completed as Markdown; the PDF is not produced yet | [`docs/Technical-Report.md`](docs/Technical-Report.md) |
 | Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
@@ -189,7 +190,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 **The tests.** `make test` runs the unit and integration suites with coverage, and `make lint` runs ruff and black.
 
-**The benchmarks.** No benchmark exists yet. The latency benchmark is part of Stage 6.
+**The benchmarks.** `.venv/bin/python scripts/benchmark_api.py` starts its own server, sends 500 sequential and 50 concurrent predictions and writes `docs/evidence/performance.md`.
 
 ## Designs
 
