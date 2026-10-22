@@ -206,12 +206,13 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 `designs/web/` holds five screenshots of the running interface, one per screen, drawn by `scripts/render_designs.py` from a synthetic case. The earlier Figma screens with sign up, sign in and triage wording were removed. [`designs/README.md`](designs/README.md) lists the files.
 
-## Links
+## Submission
 
 | Item | Link |
 | --- | --- |
-| Demonstration video | To be added |
-| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), built from [`docs/Technical-Report.md`](docs/Technical-Report.md) |
+| Demonstration video | To be added after recording; outline in [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
+| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), built from [`docs/Technical-Report.md`](docs/Technical-Report.md) by `make report-pdf`; final submitted link to be added |
+| Submission bundle | `.venv/bin/python scripts/package_attempt2.py VIDEO` writes `dist/attempt2.zip` |
 
 ## Limitations
 
