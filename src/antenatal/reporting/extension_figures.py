@@ -11,32 +11,33 @@ from antenatal.reporting.style import INK, INK_SECONDARY, MUTED, SERIES, count_l
 
 
 def learning_curve(summary: pd.DataFrame, n: int, events: int, directory: Path) -> Path:
-    """PR AUC and ROC AUC of sets B and C against the share of training data."""
+    """PR AUC and ROC AUC of sets B and C against the share of training data, with intervals."""
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
     for ax, metric, label in (
         (axes[0], "pr_auc", "Precision recall area"),
         (axes[1], "roc_auc", "ROC area"),
     ):
-        for name in ("B", "C"):
+        for offset, name in ((-0.8, "B"), (0.8, "C")):
             rows = summary[summary["feature_set"] == name]
+            estimate = rows[f"{metric}_pooled"]
             ax.errorbar(
-                rows["fraction"] * 100,
-                rows[f"{metric}_mean"],
-                yerr=rows[f"{metric}_sd"],
+                rows["fraction"] * 100 + offset,
+                estimate,
+                yerr=[estimate - rows[f"{metric}_low"], rows[f"{metric}_high"] - estimate],
                 color=SERIES[name],
                 marker="o",
                 capsize=3,
                 label=f"Set {name}",
             )
         ax.set_xlabel("Share of each outer training fold used, percent")
-        ax.set_ylabel(f"{label}, mean over repeats")
+        ax.set_ylabel(f"{label}, predictions averaged over repeats")
         ax.set_xticks([20, 40, 60, 80, 100])
     axes[0].axhline(events / n, color=INK_SECONDARY, linestyle="--", linewidth=1)
     axes[0].text(21, events / n, " no skill", fontsize=8, color=INK_SECONDARY, va="bottom")
     axes[1].legend(loc="lower right")
     fig.suptitle(
-        "Learning curve, logistic regression, error bars are one standard deviation across "
-        f"repeats\n{count_label(n, events)}",
+        "Learning curve, logistic regression, 95 percent group bootstrap intervals\n"
+        + count_label(n, events),
         x=0.01,
         ha="left",
         fontweight="bold",

@@ -12,7 +12,7 @@ import pandas as pd
 from antenatal.config import PRIMARY, StudySpec
 from antenatal.evaluation.bootstrap import GroupBootstrap
 from antenatal.evaluation.comparisons import Comparison, ComparisonRunner
-from antenatal.evaluation.learning_curve import LearningCurve, summarise
+from antenatal.evaluation.learning_curve import LearningCurve, intervals, summarise
 from antenatal.evaluation.metrics import CalibrationIntercept, CalibrationSlope
 from antenatal.evaluation.missingness_signal import indicator_comparisons, outcome_by_recording
 from antenatal.evaluation.nested_cv import CVResults, Experiment, NestedCVRunner
@@ -163,9 +163,10 @@ def run_primary_model_tables(paths: ProjectPaths, results: CVResults, spec: Stud
 def run_learning_curve(paths: ProjectPaths, context: StudyContext, spec: StudySpec) -> None:
     """Learning curve table and figure for sets B and C."""
     experiments = [Experiment(LOGISTIC, SetB()), Experiment(LOGISTIC, SetC())]
-    curve = LearningCurve(spec).run(context.development, context.folds, experiments)
-    curve.to_csv(paths.tables / "learning_curve_by_repeat.csv", index=False)
-    summary = summarise(curve)
+    result = LearningCurve(spec).run(context.development, context.folds, experiments)
+    result.by_repeat.to_csv(paths.tables / "learning_curve_by_repeat.csv", index=False)
+    result.predictions.to_parquet(paths.outputs / "learning_curve_predictions.parquet", index=False)
+    summary = summarise(result.by_repeat, intervals(result.predictions, spec))
     summary.to_csv(paths.tables / "learning_curve.csv", index=False)
     extension_figures.learning_curve(
         summary, len(context.development), _events(context), paths.figures

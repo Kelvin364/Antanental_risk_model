@@ -13,10 +13,11 @@ import pandas as pd
 
 from antenatal.audit.missingness import missingness_table
 from antenatal.config import PRIMARY, StudySpec
+from antenatal.evaluation.bootstrap import GroupBootstrap
 from antenatal.evaluation.calibration import calibration_table
 from antenatal.evaluation.comparisons import ComparisonRunner, primary_comparisons
 from antenatal.evaluation.decision_curve import decision_curve_table
-from antenatal.evaluation.metrics import score_all
+from antenatal.evaluation.metrics import AveragePrecision, RocAuc, score_all
 from antenatal.evaluation.nested_cv import CVResults, NestedCVRunner
 from antenatal.evaluation.sensitivity import DESCRIPTIONS, SensitivityRunner, core_comparisons
 from antenatal.features.screen import AvailabilityScreen
@@ -36,12 +37,21 @@ from antenatal.study import (
 SETS = ("A", "B", "C")
 
 
-def summary_by_experiment(results: CVResults) -> pd.DataFrame:
-    """Every metric on the averaged out of fold predictions of each experiment."""
+def summary_by_experiment(results: CVResults, spec: StudySpec = PRIMARY) -> pd.DataFrame:
+    """Every metric on the averaged out of fold predictions of each experiment.
+
+    The spread of PR AUC and ROC AUC across folds is reported with a group
+    bootstrap 95 percent interval beside it (R6).
+    """
+    bootstrap = GroupBootstrap(results.groups, spec.bootstrap_resamples, spec.seed)
     rows = []
     for (model, feature_set), _ in results.oof.groupby(["model", "feature_set"]):
         p = results.averaged(model, feature_set)
-        rows.append({"model": model, "feature_set": feature_set, **score_all(results.y, p)})
+        row = {"model": model, "feature_set": feature_set, **score_all(results.y, p)}
+        for metric in (AveragePrecision(), RocAuc()):
+            interval = bootstrap.single(results.y, p, metric)
+            row[f"{metric.name}_low"], row[f"{metric.name}_high"] = interval.low, interval.high
+        rows.append(row)
     folds = results.fold_metrics.groupby(["model", "feature_set"])
     spread = folds[["pr_auc", "roc_auc"]].std().add_suffix("_fold_sd").reset_index()
     return pd.DataFrame(rows).merge(spread, on=["model", "feature_set"])
@@ -65,7 +75,7 @@ def write_tables(paths: ProjectPaths, context: StudyContext, results: CVResults,
     )
     performance = runner.performance(keys)
     performance.to_csv(tables / "model_performance.csv", index=False)
-    summary_by_experiment(results).to_csv(tables / "summary_by_experiment.csv", index=False)
+    summary_by_experiment(results, spec).to_csv(tables / "summary_by_experiment.csv", index=False)
     power_columns = [
         "model",
         "comparison",

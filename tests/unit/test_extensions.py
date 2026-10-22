@@ -129,3 +129,20 @@ def test_technical_report_fills_every_field_from_files(root, tmp_path):
     summary = pd.read_csv(root / TABLES / "results_summary.csv").set_index("key")
     assert f"{summary.loc['primary_c_over_b_logistic', 'value']:+.4f}" in text
     assert "## 5. Results and limitations" in text
+
+
+def test_learning_curve_carries_bootstrap_intervals(root):
+    table = _table(root, "learning_curve")
+    for metric in ("pr_auc", "roc_auc"):
+        assert (table[f"{metric}_low"] <= table[f"{metric}_pooled"]).all()
+        assert (table[f"{metric}_pooled"] <= table[f"{metric}_high"]).all()
+        assert (table[f"{metric}_gap_low"] <= table[f"{metric}_gap_high"]).all()
+
+
+def test_fold_level_summary_carries_bootstrap_intervals(root):
+    table = _table(root, "summary_by_experiment")
+    for metric in ("pr_auc", "roc_auc"):
+        assert {f"{metric}_fold_sd", f"{metric}_low", f"{metric}_high"} <= set(table.columns)
+        assert (
+            (table[f"{metric}_low"] <= table[metric]) & (table[metric] <= table[f"{metric}_high"])
+        ).all()
