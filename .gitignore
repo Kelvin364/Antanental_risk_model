@@ -27,3 +27,13 @@ frontend/out/
 .DS_Store
 .vscode/
 .idea/
+
+# Assistant instructions and planning notes stay local
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+docs/STATUS_REPORT.md
+docs/*Roadmap*.md
+docs/*Guideline*.md
+PLAN*.md
+plans/
