@@ -114,3 +114,17 @@ def test_runner_on_development_subset(cohort, sealed):
     averaged = results.averaged("logistic_l2", "C")
     assert len(averaged) == len(small) and np.all((averaged > 0) & (averaged < 1))
     assert set(results.fold_metrics["fold"]) == set(range(5))
+
+
+@pytest.mark.parametrize("key", list(MODEL_SPECS))
+def test_every_random_estimator_is_seeded(key):
+    """R4: an estimator that draws random numbers must carry the study seed.
+
+    Deterministic configurations are exempt: the lbfgs solver of logistic
+    regression and the prior strategy of the constant prevalence baseline.
+    """
+    model = ModelFactory().build(key)[0].named_steps["model"]
+    params = model.get_params()
+    deterministic = params.get("solver") == "lbfgs" or params.get("strategy") == "prior"
+    if "random_state" in params and not deterministic:
+        assert params["random_state"] == PRIMARY.seed

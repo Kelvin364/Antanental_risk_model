@@ -143,7 +143,9 @@ def _estimator(key: str) -> ClassifierMixin:
     estimators = {
         "baseline_prevalence": lambda: DummyClassifier(strategy="prior"),
         "logistic_l2": lambda: LogisticRegression(max_iter=5000),
-        "logistic_l1": lambda: LogisticRegression(l1_ratio=1.0, solver="saga", max_iter=5000),
+        "logistic_l1": lambda: LogisticRegression(
+            l1_ratio=1.0, solver="saga", max_iter=5000, random_state=SEED
+        ),
         "lda": lambda: LinearDiscriminantAnalysis(solver="lsqr"),
         "knn": lambda: KNeighborsClassifier(),
         "naive_bayes": lambda: GaussianNB(),
