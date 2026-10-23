@@ -2,8 +2,9 @@
 
 /*
  * Colour tokens from the Figma file "Antenatal Caseload, App Screens" (color/bg, surface,
- * surface-2, line, ink, muted, accent, accent-soft, warn, warn-soft), with a dark set.
- * "green" is the design's accent: every primary action is green.
+ * surface-2, line, ink, muted, accent, accent-soft, warn, warn-soft).
+ * "green" is the design's accent: every primary action is green. The interface is light
+ * only, whatever the device's colour scheme.
  */
 :root {
   --bg: #f6f6f4;
@@ -18,40 +19,7 @@
   --banner: #f4ecd8;
   --banner-ink: #7a5800;
   --error: #a4231c;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #121614;
-    --surface: #1a201e;
-    --surface-2: #222a27;
-    --line: #2e3633;
-    --ink: #e8ecea;
-    --muted: #a3ada9;
-    --green: #3fa58a;
-    --green-ink: #08130f;
-    --green-soft: #1f2e29;
-    --banner: #3a3020;
-    --banner-ink: #f0d79a;
-    --error: #f2867f;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #121614;
-  --surface: #1a201e;
-  --surface-2: #222a27;
-  --line: #2e3633;
-  --ink: #e8ecea;
-  --muted: #a3ada9;
-  --green: #3fa58a;
-  --green-ink: #08130f;
-  --green-soft: #1f2e29;
-  --banner: #3a3020;
-  --banner-ink: #f0d79a;
-  --error: #f2867f;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 @theme inline {

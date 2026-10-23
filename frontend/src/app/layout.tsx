@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${host.variable} ${plex.variable}`}>
+    <html lang="en" data-theme="light" className={`${host.variable} ${plex.variable}`}>
       <body className="font-sans leading-normal">
         <SessionProvider>
           <AppHeader />
