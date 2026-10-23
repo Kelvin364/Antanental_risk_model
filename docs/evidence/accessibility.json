@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-23T15:43:50+00:00",
+  "recorded_at": "2026-10-23T21:16:22+00:00",
   "lighthouse": "12.8.2",
   "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
   "os": "macOS-15.5-arm64-arm-64bit",
@@ -9,7 +9,7 @@
       "path": "/sign-in/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 20,
+      "audits_passed": 22,
       "failed": []
     },
     {
@@ -17,7 +17,7 @@
       "path": "/sign-in/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 20,
+      "audits_passed": 22,
       "failed": []
     },
     {
@@ -25,7 +25,7 @@
       "path": "/about/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 19,
+      "audits_passed": 21,
       "failed": []
     },
     {
@@ -33,7 +33,7 @@
       "path": "/about/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 19,
+      "audits_passed": 21,
       "failed": []
     },
     {
@@ -41,7 +41,7 @@
       "path": "/admin/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 23,
+      "audits_passed": 25,
       "failed": []
     },
     {
@@ -49,7 +49,7 @@
       "path": "/admin/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 23,
+      "audits_passed": 25,
       "failed": []
     },
     {
@@ -57,7 +57,7 @@
       "path": "/register/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -65,7 +65,7 @@
       "path": "/register/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -73,7 +73,7 @@
       "path": "/visit-one/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -81,7 +81,7 @@
       "path": "/visit-one/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -89,7 +89,7 @@
       "path": "/visit-two/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -97,7 +97,7 @@
       "path": "/visit-two/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -105,7 +105,7 @@
       "path": "/assessment/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -113,7 +113,7 @@
       "path": "/assessment/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 24,
       "failed": []
     },
     {
@@ -121,7 +121,7 @@
       "path": "/caseload/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 23,
+      "audits_passed": 25,
       "failed": []
     },
     {
@@ -129,7 +129,7 @@
       "path": "/caseload/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 23,
+      "audits_passed": 25,
       "failed": []
     }
   ]

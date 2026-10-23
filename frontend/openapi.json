@@ -533,6 +533,17 @@
             "title": "Classification",
             "type": "string"
           },
+          "gestational_week_v2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gestational Week V2"
+          },
           "interval_high": {
             "title": "Interval High",
             "type": "number"
@@ -1563,16 +1574,14 @@
     },
     "/api/interface-text": {
       "get": {
-        "description": "The fixed banner, limitation and interval wording every screen shows.",
+        "description": "The fixed banner, limitation and interval wording, and the entry ranges for the hints.",
         "operationId": "interface_text_api_interface_text_get",
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
+                  "additionalProperties": true,
                   "title": "Response Interface Text Api Interface Text Get",
                   "type": "object"
                 }

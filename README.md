@@ -158,6 +158,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── postcss.config.mjs
+│   ├── public
 │   ├── src
 │   └── tsconfig.json
 ├── notebooks

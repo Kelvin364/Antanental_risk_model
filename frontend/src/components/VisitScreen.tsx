@@ -4,24 +4,28 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { byField, FormStatus, NumberInput, type Errors } from "@/components/fields";
-import { Screen, stepHref } from "@/components/Screen";
-import { api, Refused, type VisitCreate } from "@/lib/api";
+import { byField, FieldGrid, FormStatus, NumberInput, type Errors } from "@/components/fields";
+import { Screen, Section, stepHref } from "@/components/Screen";
+import { api, Refused, type CaseOut, type VisitCreate } from "@/lib/api";
 import { pct, toNumber, toText, VISIT } from "@/lib/fields";
 import { useCase } from "@/lib/useCase";
 
 const COPY = {
   1: {
     id: "visit1",
-    title: "Visit one",
-    lead: "First antenatal visit, at or before 28 weeks.",
-    action: "Save and continue",
+    title: "First antenatal visit",
+    lead: "The earlier of the two visits, at or before 28 weeks.",
+    section: "Measurements at visit one",
+    action: "Continue to visit two",
+    back: "register",
   },
   2: {
     id: "visit2",
-    title: "Visit two",
-    lead: "The prediction point. Must be later than visit one and at or before 28 weeks.",
-    action: "Save and assess",
+    title: "Second antenatal visit",
+    lead: "The prediction moment. Visit two must be later than visit one and within 28 weeks.",
+    section: "Measurements at visit two",
+    action: "Run assessment",
+    back: "visit1",
   },
 } as const;
 
@@ -39,9 +43,42 @@ function ScreenNote() {
     }, () => undefined);
   }, []);
   return (
-    <p id="screen-note" className="mt-2 text-xs text-muted">
+    <p id="screen-note" className="hint">
       {note}
     </p>
+  );
+}
+
+const CHANGES: { key: keyof VisitCreate; label: string; unit: string; digits: number }[] = [
+  { key: "systolic", label: "Δ systolic BP", unit: "mmHg", digits: 0 },
+  { key: "diastolic", label: "Δ diastolic BP", unit: "mmHg", digits: 0 },
+  { key: "gestational_week", label: "Δ gestational age", unit: "weeks", digits: 0 },
+  { key: "weight_kg", label: "Δ weight", unit: "kg", digits: 1 },
+];
+
+/** Visit two minus visit one for display; the model computes its own inputs on the server. */
+function ChangeSinceVisitOne({ kase, values }: { kase: CaseOut; values: Record<string, string> }) {
+  const first = kase.visits.find((v) => v.visit_number === 1);
+  if (!first) return null;
+  return (
+    <>
+      <Section title="Change since visit one (computed)" />
+      <div id="change-since-visit-one" className="card grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {CHANGES.map(({ key, label, unit, digits }) => {
+          const now = toNumber(values[key]);
+          const before = first[key];
+          const change = now === null || before === null || before === undefined ? null : now - before;
+          return (
+            <div key={key} className="flex flex-col gap-[3px]">
+              <span className="text-xs text-muted">{label}</span>
+              <span className="font-mono text-[17px] font-medium">
+                {change === null ? "not entered" : `${change >= 0 ? "+" : ""}${change.toFixed(digits)} ${unit}`}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 
@@ -78,51 +115,45 @@ export function VisitScreen({ number }: { number: 1 | 2 }) {
     }
   }
 
-  const missing = !loading && !kase;
-  return (
-    <Screen id={copy.id} title={copy.title} lead={copy.lead} kase={kase}>
-      {missing ? (
+  if (!loading && !kase) {
+    return (
+      <Screen id={copy.id} title={copy.title} lead={copy.lead} kase={kase}>
         <p className="card">
           {error ?? (caseId === null ? "No case is open." : "")}{" "}
           <Link href="/register/" className="font-semibold text-green underline">
             Register a synthetic pregnancy first.
           </Link>
         </p>
-      ) : (
-        <>
-          <div className="card">
-            {kase && <p className="mb-3 text-sm text-muted">Case: {kase.label}</p>}
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3.5">
-              {VISIT.map((field) => (
-                <NumberInput
-                  key={field.key}
-                  prefix={prefix}
-                  field={field}
-                  value={values[field.key] ?? ""}
-                  error={errors[field.key]}
-                  onChange={(v) => setValues((s) => ({ ...s, [field.key]: v }))}
-                />
-              ))}
-            </div>
-            {number === 2 && <ScreenNote />}
-          </div>
-          <div className="mt-4.5 flex flex-wrap items-center gap-2.5">
-            <button
-              id={`save-visit${number}`}
-              className="btn-primary"
-              disabled={busy || !kase}
-              onClick={save}
-            >
-              {copy.action}
-            </button>
-            <FormStatus
-              id={`status-visit${number}`}
-              errors={errors}
-              known={VISIT.map((f) => f.key)}
-            />
-          </div>
-        </>
-      )}
+      </Screen>
+    );
+  }
+  return (
+    <Screen id={copy.id} title={copy.title} lead={copy.lead} kase={kase}>
+      {kase && <p className="hint">Case: {kase.label}</p>}
+      <Section title={copy.section} />
+      <FieldGrid>
+        {VISIT.map((field) => (
+          <NumberInput
+            key={field.key}
+            prefix={prefix}
+            field={field}
+            value={values[field.key] ?? ""}
+            error={errors[field.key]}
+            onChange={(v) => setValues((s) => ({ ...s, [field.key]: v }))}
+          />
+        ))}
+      </FieldGrid>
+      {number === 2 && <ScreenNote />}
+      {number === 2 && kase && <ChangeSinceVisitOne kase={kase} values={values} />}
+      <div className="flex flex-wrap items-center gap-3">
+        <button id={`save-visit${number}`} className="btn-primary" disabled={busy || !kase} onClick={save}>
+          {copy.action}
+        </button>
+        <Link href={stepHref(copy.back, kase?.id ?? null)} className="btn-secondary">
+          Back
+        </Link>
+        <FormStatus id={`status-visit${number}`} errors={errors} known={VISIT.map((f) => f.key)} />
+      </div>
     </Screen>
   );
 }

@@ -28,22 +28,22 @@ function PasswordForm() {
   }
 
   return (
-    <form onSubmit={submit} className="card max-w-md" noValidate>
+    <form onSubmit={submit} className="card max-w-[440px]" noValidate>
       {user?.must_change_password && (
         <p id="must-change" className="mb-4 font-semibold">
           This account still has its generated first password. Choose your own before working with cases.
         </p>
       )}
-      <label htmlFor="current" className="block font-semibold">
+      <label htmlFor="current" className="field-label block">
         Current password
       </label>
       <input id="current" name="current" type="password" autoComplete="current-password"
-        className="mt-1 mb-4 w-full rounded-lg border border-line bg-surface px-3 py-2.5" />
-      <label htmlFor="new" className="block font-semibold">
+        className="field-input mt-1.5 mb-4" />
+      <label htmlFor="new" className="field-label block">
         New password, at least 12 characters
       </label>
       <input id="new" name="new" type="password" autoComplete="new-password"
-        className="mt-1 mb-4 w-full rounded-lg border border-line bg-surface px-3 py-2.5" />
+        className="field-input mt-1.5 mb-4" />
       {error && (
         <p id="password-error" role="alert" className="mb-3 text-error">
           {error}

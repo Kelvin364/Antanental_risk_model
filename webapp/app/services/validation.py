@@ -40,6 +40,15 @@ class EntryRules:
     def __init__(self, spec: StudySpec = PRIMARY) -> None:
         self._spec = spec
 
+    def ranges(self) -> dict[str, dict[str, object]]:
+        """The permitted range of every entry field, keyed by its API name, for the hints."""
+        rules = {**{k: (*v, True) for k, v in REGISTRATION_RULES.items()}, **VISIT_RULES}
+        out = {}
+        for field, (range_name, _, unit, required) in rules.items():
+            rng = self._spec.ranges.get(range_name)
+            out[field] = {"low": rng.low, "high": rng.high, "unit": unit, "required": required}
+        return out
+
     def _check(self, field: str, value: float | None, range_name: str, label: str, unit: str):
         rng = self._spec.ranges.get(range_name)
         if value is None:

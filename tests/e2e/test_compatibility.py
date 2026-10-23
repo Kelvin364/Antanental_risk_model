@@ -100,7 +100,7 @@ def test_five_screen_flow(request, launch, server, browser_name, size):
     page.locator("#rank", has_text=" of ").wait_for()
     _check_screen(page, "assessment")
     assert re.search(
-        r"95 percent interval [\d.]+ percent to [\d.]+ percent", page.inner_text("#interval")
+        r"95% interval [\d.]+% to [\d.]+%", page.inner_text("#interval")
     )
     assert "Not a diagnosis" in page.inner_text("#limit-assessment")
     assert page.inner_text("#class-label") in (

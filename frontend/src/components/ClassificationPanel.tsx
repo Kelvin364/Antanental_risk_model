@@ -45,23 +45,23 @@ export function ClassificationPanel({ a }: { a: AssessmentOut }) {
     <>
       <div className="card" id="classification">
         <div className="kicker">Classification at the fixed threshold</div>
-        <div id="class-label" className="mt-1 text-2xl font-bold sm:text-3xl">
+        <div id="class-label" className="mt-2 text-2xl font-semibold sm:text-[28px]">
           {c.label}
         </div>
-        <p id="threshold" className="mt-2">
+        <p id="threshold" className="mt-2 text-[13px] leading-[1.4] text-muted">
           The label is &ldquo;likely&rdquo; when the predicted probability is {pct(c.threshold)} or more. That
           threshold marks the highest {c.budget_percent} percent of predictions on the development records and
           was fixed before any further analysis.
         </p>
         <IntervalScale a={a} />
-        <p id="certainty">{c.certainty_statement}</p>
-        <p id="label-confidence" className="mt-2 font-semibold">
+        <p id="certainty" className="text-[13px] leading-[1.4]">{c.certainty_statement}</p>
+        <p id="label-confidence" className="mt-2 text-sm font-semibold">
           {forLabel}
         </p>
       </div>
       <div className="card" id="reliability">
         <div className="kicker">How often the label is right at this threshold</div>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
+        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.4]">
           <li id="sensitivity">
             Finds {per100(c.sensitivity)} of every 100 low birth weight births (sensitivity).
           </li>
@@ -76,7 +76,7 @@ export function ClassificationPanel({ a }: { a: AssessmentOut }) {
             Of every 100 labelled not likely, {per100(c.npv)} did not (negative predictive value).
           </li>
         </ul>
-        <p id="reliability-source" className="mt-2 text-xs text-muted">
+        <p id="reliability-source" className="hint mt-3 leading-[1.4]">
           From out of fold predictions on {c.n.toLocaleString()} development pregnancies with {c.events} low
           birth weight births, with group bootstrap intervals. Not yet checked on the held out records.
         </p>

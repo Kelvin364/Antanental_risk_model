@@ -133,6 +133,7 @@ class CaseloadRow(BaseModel):
     probability: float
     interval_low: float
     interval_high: float
+    gestational_week_v2: float | None = None
     classification: str
     certainty: str
     artefact_version: str

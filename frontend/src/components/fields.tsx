@@ -1,10 +1,15 @@
 "use client";
 
 import type { NumberField } from "@/lib/fields";
+import { useRanges } from "@/lib/useRanges";
 
 export type Errors = Record<string, string>;
 
-/** A number entry box with its unit and the API's message for it, if any. */
+/**
+ * A number entry box in the design's field style: label, monospaced input, and a
+ * hint with the unit and the range the API enforces. The API's own message for
+ * the field replaces nothing; it is shown beneath in red.
+ */
 export function NumberInput<K extends string>(props: {
   prefix: string;
   field: NumberField<K>;
@@ -15,9 +20,11 @@ export function NumberInput<K extends string>(props: {
 }) {
   const { prefix, field, error } = props;
   const id = `${prefix}-${field.key}`;
+  const range = useRanges()[field.key];
+  const hint = [field.unit, range ? `${range.low} to ${range.high}` : ""].filter(Boolean).join(" · ");
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      {field.label}
+    <label className="flex flex-col gap-1.5">
+      <span className="field-label">{field.label}</span>
       <input
         id={id}
         type="number"
@@ -26,16 +33,25 @@ export function NumberInput<K extends string>(props: {
         value={props.value}
         disabled={props.disabled}
         aria-invalid={error ? true : false}
-        aria-describedby={`err-${id}`}
+        aria-describedby={`hint-${id} err-${id}`}
         onChange={(e) => props.onChange(e.target.value)}
-        className="rounded-lg border border-line bg-bg px-2.5 py-2 text-base text-ink aria-invalid:border-error disabled:opacity-70"
+        className="field-input"
       />
-      <span className="text-xs text-muted">{field.unit}</span>
-      <span id={`err-${id}`} className="min-h-[1em] text-[13px] text-error">
-        {error}
+      <span id={`hint-${id}`} className="hint">
+        {hint}
       </span>
+      {error && (
+        <span id={`err-${id}`} className="text-xs text-error">
+          {error}
+        </span>
+      )}
     </label>
   );
+}
+
+/** Fields in the design's three column rows; one column on a phone. */
+export function FieldGrid({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">{children}</div>;
 }
 
 /** Messages that do not belong to one entry box, shown beside the action button. */
@@ -44,7 +60,7 @@ export function FormStatus({ id, errors, known }: { id: string; errors: Errors; 
     .filter(([field]) => !known.includes(field))
     .map(([, message]) => message);
   return (
-    <span id={id} role="alert" className="text-error">
+    <span id={id} role="alert" className="text-sm text-error">
       {general.join(" ")}
     </span>
   );

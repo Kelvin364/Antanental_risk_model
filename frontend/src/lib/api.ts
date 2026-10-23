@@ -47,7 +47,13 @@ export type Health = {
   reference_caseload_size: number;
 };
 
-export type InterfaceText = { banner: string; limitation: string; interval_label: string };
+export type Range = { low: number; high: number; unit: string; required: boolean };
+export type InterfaceText = {
+  banner: string;
+  limitation: string;
+  interval_label: string;
+  ranges: Record<string, Range>;
+};
 
 const client = createClient<paths>({ baseUrl: "" });
 

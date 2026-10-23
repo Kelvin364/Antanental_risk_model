@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
-/* Colour tokens carried over from the single page interface, with a dark set. */
+/*
+ * Colour tokens from the Figma file "Antenatal Caseload, App Screens" (color/bg, surface,
+ * surface-2, line, ink, muted, accent, accent-soft, warn, warn-soft), with a dark set.
+ * "green" is the design's accent: every primary action is green.
+ */
 :root {
-  --bg: #f5f4f0;
+  --bg: #f6f6f4;
   --surface: #ffffff;
-  --line: #dddcd6;
-  --ink: #16211e;
-  --muted: #5b625f;
-  --green: #145c4c;
+  --surface-2: #eff0ed;
+  --line: #e2e4e0;
+  --ink: #16181c;
+  --muted: #5f6460;
+  --green: #0f5a4e;
   --green-ink: #ffffff;
-  --green-soft: #e3eee9;
-  --banner: #f5ebd7;
-  --banner-ink: #6b4e00;
+  --green-soft: #e3efea;
+  --banner: #f4ecd8;
+  --banner-ink: #7a5800;
   --error: #a4231c;
 }
 
@@ -19,6 +24,7 @@
   :root:not([data-theme="light"]) {
     --bg: #121614;
     --surface: #1a201e;
+    --surface-2: #222a27;
     --line: #2e3633;
     --ink: #e8ecea;
     --muted: #a3ada9;
@@ -35,6 +41,7 @@
 :root[data-theme="dark"] {
   --bg: #121614;
   --surface: #1a201e;
+  --surface-2: #222a27;
   --line: #2e3633;
   --ink: #e8ecea;
   --muted: #a3ada9;
@@ -50,6 +57,7 @@
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-line: var(--line);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
@@ -59,8 +67,8 @@
   --color-banner: var(--banner);
   --color-banner-ink: var(--banner-ink);
   --color-error: var(--error);
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-host), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {
@@ -70,21 +78,30 @@ body {
 
 @layer components {
   .card {
-    @apply mb-4 rounded-xl border border-line bg-surface p-5;
+    @apply mb-0 rounded-2xl border border-line bg-surface p-5;
   }
   .btn-primary {
-    @apply cursor-pointer rounded-lg bg-green px-5 py-3 font-semibold text-green-ink disabled:cursor-wait disabled:opacity-60;
+    @apply inline-flex cursor-pointer items-center justify-center rounded-[10px] bg-green px-5 py-3.5 text-sm font-semibold text-green-ink disabled:cursor-wait disabled:opacity-60;
   }
   .btn-secondary {
-    @apply cursor-pointer rounded-lg border border-line bg-surface px-5 py-3 text-ink;
+    @apply inline-flex cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surface px-5 py-3.5 text-sm font-semibold text-ink;
   }
   .kicker {
-    @apply text-xs font-semibold tracking-widest text-muted uppercase;
+    @apply text-[11px] font-semibold tracking-[0.06em] text-muted uppercase;
   }
   .big {
-    @apply font-mono text-4xl leading-tight font-bold sm:text-5xl;
+    @apply font-mono text-[34px] leading-tight font-medium sm:text-[42px];
   }
   .limit {
-    @apply mt-5 font-mono text-[13px] text-muted;
+    @apply font-mono text-[10.5px] leading-[1.4] text-muted;
+  }
+  .field-label {
+    @apply text-xs font-medium text-ink;
+  }
+  .field-input {
+    @apply w-full rounded-[10px] border border-line bg-surface p-3 font-mono text-sm text-ink aria-invalid:border-error disabled:opacity-70;
+  }
+  .hint {
+    @apply font-mono text-[11px] text-muted;
   }
 }

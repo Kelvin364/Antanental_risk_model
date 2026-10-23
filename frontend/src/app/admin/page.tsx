@@ -6,8 +6,8 @@ import { PlainScreen } from "@/components/Screen";
 import { api, Refused, type AccountOut, type AuditOut, type GeneratedPassword } from "@/lib/api";
 import { RequireSession } from "@/lib/session";
 
-const cell = "[&>td]:border-b [&>td]:border-line [&>td]:px-2 [&>td]:py-2";
-const head = "[&>th]:border-b [&>th]:border-line [&>th]:px-2 [&>th]:py-2";
+const cell = "text-[13px] [&>td]:border-t [&>td]:border-line [&>td]:px-2 [&>td]:py-2.5";
+const head = "bg-surface-2 text-[10.5px] tracking-[0.04em] text-muted uppercase [&>th]:px-2 [&>th]:py-2.5";
 
 function Administration() {
   const [accounts, setAccounts] = useState<AccountOut[]>([]);
@@ -39,7 +39,7 @@ function Administration() {
   return (
     <>
       {error && (
-        <p id="admin-error" role="alert" className="mb-4 text-error">
+        <p id="admin-error" role="alert" className="text-error">
           {error}
         </p>
       )}
@@ -53,16 +53,16 @@ function Administration() {
       )}
       <form onSubmit={create} className="card flex flex-wrap items-end gap-3">
         <div>
-          <label htmlFor="new-username" className="block font-semibold">
+          <label htmlFor="new-username" className="field-label block">
             Username
           </label>
-          <input id="new-username" name="username" className="mt-1 rounded-lg border border-line bg-surface px-3 py-2.5" />
+          <input id="new-username" name="username" className="field-input mt-1.5 w-56" />
         </div>
         <div>
-          <label htmlFor="new-role" className="block font-semibold">
+          <label htmlFor="new-role" className="field-label block">
             Role
           </label>
-          <select id="new-role" name="role" className="mt-1 rounded-lg border border-line bg-surface px-3 py-2.5">
+          <select id="new-role" name="role" className="field-input mt-1.5 w-56">
             <option value="researcher">Researcher</option>
             <option value="administrator">Administrator</option>
           </select>
@@ -72,7 +72,7 @@ function Administration() {
         </button>
       </form>
       <div className="card overflow-x-auto">
-        <h2 className="mb-2 text-lg font-bold">Accounts</h2>
+        <h2 className="kicker mb-3">Accounts</h2>
         <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className={head}>
@@ -104,7 +104,7 @@ function Administration() {
         </table>
       </div>
       <div className="card overflow-x-auto">
-        <h2 className="mb-2 text-lg font-bold">Audit trail</h2>
+        <h2 className="kicker mb-2">Audit trail</h2>
         <p className="mb-2 text-sm text-muted">The latest 200 events. No clinical value is ever recorded here.</p>
         <table className="w-full border-collapse text-left text-sm">
           <thead>

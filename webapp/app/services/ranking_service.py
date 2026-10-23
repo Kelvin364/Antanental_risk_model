@@ -33,8 +33,8 @@ class RankingService:
                 query = query.where(SyntheticCase.owner_id == viewer.id)
             cases = session.scalars(query).all()
             latest = [(case, case.assessments[-1]) for case in cases if case.assessments]
-        latest.sort(key=lambda pair: (-pair[1].probability, pair[0].id))
-        rows = [self._row(position, case, a) for position, (case, a) in enumerate(latest, 1)]
+            latest.sort(key=lambda pair: (-pair[1].probability, pair[0].id))
+            rows = [self._row(position, case, a) for position, (case, a) in enumerate(latest, 1)]
         artefact = self._model.artefact
         return CaseloadOut(
             rows=rows,
@@ -52,8 +52,10 @@ class RankingService:
         result = self._model.classify(
             assessment.probability, assessment.interval_low, assessment.interval_high
         )
+        second = next((v for v in case.visits if v.visit_number == 2), None)
         return CaseloadRow(
             case_id=case.id,
+            gestational_week_v2=second.gestational_week if second else None,
             label=case.label,
             caseload_position=position,
             reference_rank_position=assessment.rank_position,

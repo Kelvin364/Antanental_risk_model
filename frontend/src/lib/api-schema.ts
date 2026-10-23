@@ -297,7 +297,7 @@ export interface paths {
         };
         /**
          * Interface Text
-         * @description The fixed banner, limitation and interval wording every screen shows.
+         * @description The fixed banner, limitation and interval wording, and the entry ranges for the hints.
          */
         get: operations["interface_text_api_interface_text_get"];
         put?: never;
@@ -633,6 +633,8 @@ export interface components {
             certainty: string;
             /** Classification */
             classification: string;
+            /** Gestational Week V2 */
+            gestational_week_v2?: number | null;
             /** Interval High */
             interval_high: number;
             /** Interval Low */
@@ -1270,7 +1272,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        [key: string]: string;
+                        [key: string]: unknown;
                     };
                 };
             };

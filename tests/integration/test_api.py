@@ -236,7 +236,10 @@ def test_stored_assessment_records_artefact_identity(client, settings):
 
 
 def test_interface_text_has_no_triage_language(client):
-    text = " ".join(client.get("/api/interface-text").json().values()).lower()
+    body = client.get("/api/interface-text").json()
+    assert body["ranges"]["age"] == {"low": 12, "high": 55, "unit": "years", "required": True}
+    assert body["ranges"]["pulse"]["required"] is False
+    text = " ".join(v for v in body.values() if isinstance(v, str)).lower()
     for word in ("see sooner", "routine", "high risk", "low risk", "priority"):
         assert word not in text
 

@@ -8,13 +8,19 @@ type CaseNumber = "age" | "gravidity" | "prior_deliveries" | "height_cm" | "regi
 type CaseFlag = Exclude<keyof CaseCreate, CaseNumber | "synthetic" | "label">;
 export type VisitKey = keyof VisitCreate;
 
-export const REGISTRATION: NumberField<CaseNumber>[] = [
-  { key: "age", label: "Maternal age", unit: "years" },
-  { key: "gravidity", label: "Number of pregnancies", unit: "" },
-  { key: "prior_deliveries", label: "Prior deliveries", unit: "" },
+// The design groups registration into "Mother" and "Pregnancy history".
+export const MOTHER: NumberField<CaseNumber>[] = [
+  { key: "age", label: "Age", unit: "years" },
   { key: "height_cm", label: "Height", unit: "cm" },
-  { key: "registration_weight", label: "Weight", unit: "kg" },
+  { key: "registration_weight", label: "Weight at booking", unit: "kg" },
 ];
+
+export const HISTORY: NumberField<CaseNumber>[] = [
+  { key: "gravidity", label: "Total pregnancies", unit: "gravidity" },
+  { key: "prior_deliveries", label: "Prior deliveries", unit: "count" },
+];
+
+export const REGISTRATION: NumberField<CaseNumber>[] = [...MOTHER, ...HISTORY];
 
 export const FLAGS: { key: CaseFlag; label: string }[] = [
   { key: "prior_caesarean", label: "Prior caesarean" },
@@ -29,16 +35,19 @@ export const FLAGS: { key: CaseFlag; label: string }[] = [
 ];
 
 export const VISIT: NumberField<VisitKey>[] = [
-  { key: "gestational_week", label: "Gestational week", unit: "weeks" },
-  { key: "systolic", label: "Systolic blood pressure", unit: "mmHg" },
-  { key: "diastolic", label: "Diastolic blood pressure", unit: "mmHg" },
+  { key: "gestational_week", label: "Gestational age", unit: "weeks" },
+  { key: "systolic", label: "Systolic BP", unit: "mmHg" },
+  { key: "diastolic", label: "Diastolic BP", unit: "mmHg" },
   { key: "weight_kg", label: "Weight", unit: "kg" },
-  { key: "pulse", label: "Pulse rate (optional)", unit: "per minute" },
+  { key: "pulse", label: "Pulse rate (optional)", unit: "bpm" },
   { key: "haemoglobin", label: "Haemoglobin (optional)", unit: "g/dL" },
 ];
 
 /** A probability as the screens print it, e.g. "6.3 percent". */
 export const pct = (value: number) => `${(100 * value).toFixed(1)} percent`;
+
+/** A probability in the design's compact form, e.g. "6.3%". */
+export const pctShort = (value: number, digits = 1) => `${(100 * value).toFixed(digits)}%`;
 
 /** An entry box's text as the number the API expects, or null when empty. */
 export const toNumber = (text: string | undefined) =>

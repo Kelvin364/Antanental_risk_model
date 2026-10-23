@@ -1,17 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { byField, FormStatus, NumberInput, type Errors } from "@/components/fields";
-import { Screen, stepHref } from "@/components/Screen";
+import { byField, FieldGrid, FormStatus, NumberInput, type Errors } from "@/components/fields";
+import { Screen, Section, stepHref } from "@/components/Screen";
 import { api, Refused, type CaseCreate } from "@/lib/api";
-import { FLAGS, REGISTRATION, toNumber, toText } from "@/lib/fields";
+import { FLAGS, HISTORY, MOTHER, REGISTRATION, toNumber, toText } from "@/lib/fields";
 import { useCase } from "@/lib/useCase";
 
 type Flags = Partial<Record<(typeof FLAGS)[number]["key"], boolean>>;
 
-/** Screen 1: registration characteristics, feature set A. */
+/** Screen 1: registration characteristics, feature set A, in the design's sections. */
 export function RegisterScreen() {
   const router = useRouter();
   const { caseId, kase, error } = useCase();
@@ -52,23 +53,40 @@ export function RegisterScreen() {
     }
   }
 
+  const fields = (list: typeof MOTHER) =>
+    list.map((field) => (
+      <NumberInput
+        key={field.key}
+        prefix="reg"
+        field={field}
+        value={numbers[field.key] ?? ""}
+        error={errors[field.key]}
+        disabled={saved}
+        onChange={(v) => setNumbers((n) => ({ ...n, [field.key]: v }))}
+      />
+    ));
+
   return (
     <Screen
       id="register"
-      title="Register a synthetic pregnancy"
-      lead="Registration characteristics, as in feature set A of the study."
+      title="Register the pregnancy"
+      lead="Booking details known before the second visit, as in feature set A of the study."
       kase={kase}
     >
-      {caseId !== null && error && <p className="mb-4 text-error">{error}</p>}
+      {caseId !== null && error && <p className="text-error">{error}</p>}
       {saved && (
-        <p className="mb-4 rounded-md border-l-4 border-green bg-green-soft px-3.5 py-3">
+        <p className="rounded-lg border-l-[3px] border-green bg-green-soft px-4 py-3.5 text-[13px]">
           Saved as {kase.label}. Registration values cannot be changed once saved; register another
           case to use different values.
         </p>
       )}
-      <div className="card">
-        <label className="mb-4 flex max-w-sm flex-col gap-1 text-sm">
-          Case label (optional, never a name)
+      <Section title="Mother" />
+      <FieldGrid>{fields(MOTHER)}</FieldGrid>
+      <Section title="Pregnancy history" />
+      <FieldGrid>
+        {fields(HISTORY)}
+        <label className="flex flex-col gap-1.5">
+          <span className="field-label">Case label (optional, never a name)</span>
           <input
             id="reg-label"
             type="text"
@@ -76,49 +94,43 @@ export function RegisterScreen() {
             value={label}
             disabled={saved}
             onChange={(e) => setLabel(e.target.value)}
-            className="rounded-lg border border-line bg-bg px-2.5 py-2 text-base text-ink disabled:opacity-70"
+            className="field-input"
           />
-          <span className="min-h-[1em] text-[13px] text-error">{errors.label}</span>
+          <span className="hint">{errors.label ?? "shown in the caseload"}</span>
         </label>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3.5">
-          {REGISTRATION.map((field) => (
-            <NumberInput
-              key={field.key}
-              prefix="reg"
-              field={field}
-              value={numbers[field.key] ?? ""}
-              error={errors[field.key]}
+      </FieldGrid>
+      <Section title="Medical history" />
+      <div className="grid grid-cols-1 gap-x-5 gap-y-2.5 sm:grid-cols-3">
+        {FLAGS.map((flag) => (
+          <label key={flag.key} className="flex items-center gap-2 text-[13px]">
+            <input
+              id={`reg-${flag.key}`}
+              type="checkbox"
+              className="size-4 accent-green"
+              checked={flags[flag.key] ?? false}
               disabled={saved}
-              onChange={(v) => setNumbers((n) => ({ ...n, [field.key]: v }))}
+              onChange={(e) => setFlags((f) => ({ ...f, [flag.key]: e.target.checked }))}
             />
-          ))}
-        </div>
-        <div className="mt-1.5 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-          {FLAGS.map((flag) => (
-            <label key={flag.key} className="flex items-center gap-2 text-sm">
-              <input
-                id={`reg-${flag.key}`}
-                type="checkbox"
-                checked={flags[flag.key] ?? false}
-                disabled={saved}
-                onChange={(e) => setFlags((f) => ({ ...f, [flag.key]: e.target.checked }))}
-              />
-              {flag.label}
-            </label>
-          ))}
-        </div>
-        <label className="mt-3.5 flex items-center gap-2 font-semibold">
-          <input id="synthetic" type="checkbox" checked disabled />
-          Synthetic case (required, cannot be changed)
-        </label>
-        <div id="err-synthetic" className="min-h-[1em] text-[13px] text-error">
+            {flag.label}
+          </label>
+        ))}
+      </div>
+      <label className="flex items-center gap-2 text-[13px] font-semibold">
+        <input id="synthetic" type="checkbox" className="size-4 accent-green" checked disabled />
+        Synthetic case (required, cannot be changed)
+      </label>
+      {errors.synthetic && (
+        <div id="err-synthetic" className="text-xs text-error">
           {errors.synthetic}
         </div>
-      </div>
-      <div className="mt-4.5 flex flex-wrap items-center gap-2.5">
+      )}
+      <div className="flex flex-wrap items-center gap-3">
         <button id="save-register" className="btn-primary" disabled={busy} onClick={save}>
-          {saved ? "Continue to visit one" : "Save and continue"}
+          Continue to visit one
         </button>
+        <Link href="/caseload/" className="btn-secondary">
+          View caseload
+        </Link>
         <FormStatus
           id="status-register"
           errors={errors}
