@@ -1,0 +1,48 @@
+# Decisions log
+
+One dated entry per decision that changes the plan or the proposal. Each entry says who made the decision, what it changes, and the row it adds to the proposal modification table. The source for D1 to D3 is the author's account of the supervisor meeting of 23 October 2026, as written in guideline version 2; this log records that account and adds nothing to it.
+
+Engineering choices made under the decision rules of guideline version 2 are listed at the end, with the rule applied.
+
+## D1. Authentication is required (23 October 2026)
+
+* **Decided by:** the supervisor, Emmanuel Adjei, at the meeting of 23 October 2026, as reported by the author.
+* **Decision:** no case, visit, assessment or caseload route is reachable without a signed in user. Two roles: administrator and researcher.
+* **What it changes:** the sign in screens return to the interface design (proposal Figure 3.6). Figure 3.7 gains the administrator and researcher actors and a user entity. The earlier project rule "no sign in, sign up, accounts or sessions" is withdrawn; the rule against clinical risk categories, priority labels and triage wording stays.
+* **Proposal modification table row:** "Figure 3.6 and Figure 3.7: authentication with administrator and researcher roles added, supervisor decision of 23 October 2026."
+
+## D2. Online deployment is required, synthetic cases only (23 October 2026)
+
+* **Decided by:** the supervisor, at the meeting of 23 October 2026, as reported by the author.
+* **Decision:** the application is deployed online. It accepts synthetic cases only and stores no identifiers.
+* **What it changes:** requirement R14 is revised from "transmit no record outside the local environment" to "no real patient record is entered, stored or transmitted". The cloud hosting budget line in the proposal is used. Table 3.12 gains the hosting platform once it is chosen; the database stays SQLite unless concurrency on the host requires PostgreSQL.
+* **Proposal modification table row:** "R14 revised to: no real patient record is entered, stored or transmitted. Online deployment of synthetic cases only, supervisor decision of 23 October 2026."
+
+## D3. Improve the model under a prespecified rule, then one held out evaluation (23 October 2026)
+
+* **Decided by:** the supervisor, at the meeting of 23 October 2026, as reported by the author.
+* **Decision:** run the experiments listed in `configs/experiment_plan.yaml` on development records only, choose a candidate with the selection rule written in that file before any experiment runs, and evaluate the locked candidate once on the held out partition.
+* **What it changes:** the sentence that opens the held out partition becomes "supervisor approved on 23 October, run the holdout on artefact <version>", and it applies only to a candidate locked by the selection rule. The frozen artefact 1.0.0 stays served unless a candidate passes that rule. Proposal Section 3.3.6 (model choice) and Section 3.3.7 (evaluation) gain a reference to the prespecified plan.
+* **Proposal modification table row:** "Sections 3.3.6 and 3.3.7: prespecified model improvement experiments with a written selection rule before the single held out evaluation, supervisor decision of 23 October 2026."
+
+## D4. Class weighting admitted as one prespecified experiment (23 October 2026)
+
+* **Decided by:** the author, through guideline version 2 experiment 2.2. The supervisor's confirmation is not recorded and should be obtained.
+* **Decision:** logistic regression and gradient boosting with balanced class weights are evaluated on sets B and C against their unweighted versions. Oversampling, undersampling and synthetic minority generation remain excluded.
+* **What it changes:** the earlier project rule excluded class weighting everywhere, in line with the proposal. Weighting is now an experiment only. A weighted model can be served only if it passes the selection rule, including the calibration condition, possibly paired with cross fitted recalibration.
+* **Proposal modification table row:** "Section 3.3.5: class weighting evaluated as one prespecified experiment; resampling still excluded."
+
+## D5. Guideline numbering resolved (23 October 2026)
+
+* **Decided by:** Claude Code, under decision rule 3 (amend, do not ignore), to be confirmed by the author.
+* **Decision:** guideline version 2 asks to replace "rule 6" with the authentication rule. In the project rules, rule 6 defines set C for linear models and rule 7 is the rule against sign in and accounts. The authentication sentence replaces the first sentence of rule 7; rule 6 is kept unchanged, and the rest of rule 7 (no risk categories or triage wording) is kept.
+* **What it changes:** nothing in the proposal.
+
+## Engineering choices under the decision rules
+
+| Date | Choice | Rule applied |
+| --- | --- | --- |
+| 23 October 2026 | Git tag `pre-v2` on commit `6e291f4`, and a copy of `webapp/model/` with checksums in `backups/model_v1.0.0/` (kept outside git, which already holds the same files under the tag) | Rule 1, evaluation integrity; guideline Stage 0.3 |
+| 23 October 2026 | Experiment 2.3 lists "set B plus each single visit two measurement in turn". Set B already holds every visit two measurement, so the plan reads it as set A plus each single visit two measurement, against set A | Rule 5, honesty; to be confirmed by the author |
+| 23 October 2026 | The selection rule's "Brier is not worse" is fixed as: the 95 percent interval of candidate minus artefact Brier has its lower bound at or below zero, so a candidate is refused only when its Brier is clearly worse | Rule 2, prespecification; written before any experiment ran |
+| 23 October 2026 | The three spline knots of experiment 2.4 are placed at the 10th, 50th and 90th percentiles of each training fold, the usual placement for three knots | Rule 2, prespecification; rule 1, knots come from the training fold only |

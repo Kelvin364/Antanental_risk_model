@@ -40,6 +40,9 @@ docs/*Guideline*.md
 PLAN*.md
 plans/
 
+# Local safety copies of frozen artefacts (git keeps them under the pre-v2 tag)
+backups/
+
 # Internal supervisor and status notes stay local
 docs/meeting_evidence.md
 docs/PROJECT_STATUS.md

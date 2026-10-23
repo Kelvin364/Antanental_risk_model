@@ -1,0 +1,196 @@
+# Prespecification for guideline version 2, Stage 2 experiments and the Stage 4 selection rule.
+# Written on 23 October 2026, before any experiment below was run (decision D3,
+# docs/decisions_log.md). It must not be edited after an experiment has produced results;
+# a change after that point is recorded as an amendment with its date and reason, and every
+# result it affects is reported as exploratory.
+
+version: 1
+written: "2026-10-23"
+status: prespecified
+
+design:
+  records: development partition only (3,126 pregnancies, 165 events)
+  holdout: never read by any experiment in this file
+  folds_file: partitions/folds.parquet
+  outer_folds: 5
+  repeats: 10
+  inner_folds: 3
+  seed: 20260930
+  preprocessing: fitted inside each training fold (screen, imputer, scaler, splines, calibrator)
+  tuning: inside each training fold, on grouped inner folds, scored by average precision
+  output: outputs/tables/experiments_v2.csv
+  recorded_per_experiment: [configuration, runtime_seconds, selected_parameters_per_fold, warnings, failures]
+  runtime_cap_hours_total: 8
+  reduced_rule: >
+    If an experiment cannot finish inside the cap it is rerun with three repeats, labelled
+    "reduced" in every table, and never reported as complete.
+
+statistics:
+  pooled_predictions: out of fold probability per pregnancy, averaged across repeats
+  intervals: paired group bootstrap over registration groups, 2000 resamples, seed 20260930, percentile 95 percent
+  detectable_difference: (z_0.975 + z_0.80) times the bootstrap standard error of the paired difference
+  p_value: two sided bootstrap, twice the share of resamples on the far side of zero
+  roc_auc_delong: descriptive only, with the caveat that it ignores registration groups
+  multiplicity:
+    unadjusted: [primary C over B on average precision, secondary B over A on ROC AUC]
+    holm_family: every candidate against the current artefact, and every experiment against its own reference
+  alignment: assert identical record ids in identical order before every paired comparison
+  forbidden: t tests over folds
+
+reference_artefact:
+  version: "1.0.0"
+  family: logistic_l2
+  feature_set: C
+  sha256: 7358b0b26f83aa6072f55986652d8691f111dbc6646a31a50ba46f94ff2d0c35
+  out_of_fold: outputs/oof_predictions.parquet, model logistic_l2, feature_set C
+
+metrics:
+  ranking: [average_precision, roc_auc]
+  probability: [brier, calibration_slope, calibration_intercept]
+  operating_points:
+    budgets_percent: [10, 20, 30]
+    prevalence_threshold: development prevalence 165 / 3126
+    report: [sensitivity, specificity, ppv, npv, f1, confusion_matrix]
+  net_benefit_thresholds: {from: 0.03, to: 0.12, step: 0.01}
+  recommended_threshold: none (the study ranks a caseload and gives no decision threshold)
+
+experiments:
+  - id: "2.1a"
+    name: logistic elastic net, bounded tuning
+    role: candidate
+    feature_set: C
+    configuration:
+      solver: saga
+      l1_ratio: [0.25, 0.5, 0.75]
+      C: {log_space_from: 0.003, to: 30, steps: 8}
+      record: convergence warnings per fit
+    reference: logistic_l2 on set C (current artefact configuration)
+    metric: average_precision
+    direction: higher
+
+  - id: "2.1b"
+    name: gradient boosting, bounded random search
+    role: candidate
+    feature_set: C
+    configuration:
+      search: random, 30 trials per outer training fold, seeded
+      learning_rate: {from: 0.03, to: 0.2}
+      max_iter: {up_to: 400, early_stopping: validation split taken inside the training fold}
+      max_depth: [2, 3, 4]
+      min_samples_leaf: {from: 20, to: 80}
+      max_leaf_nodes: {from: 15, to: 63}
+      l2_regularization: {from: 0, to: 3}
+      max_features: {from: 0.5, to: 1.0}
+      missing_values: native
+    reference: gradient_boosting on set C (current configuration)
+    metric: average_precision
+    direction: higher
+
+  - id: "2.2"
+    name: balanced class weights
+    role: candidate
+    note: admitted as an experiment only, decision D4; supervisor confirmation pending
+    variants:
+      - {family: logistic_l2, feature_set: B}
+      - {family: logistic_l2, feature_set: C}
+      - {family: gradient_boosting, feature_set: B}
+      - {family: gradient_boosting, feature_set: C}
+    configuration: {class_weight: balanced}
+    reference: the same family and set without weighting
+    metric: average_precision
+    direction: higher
+    also_reported: [roc_auc, brier, calibration_slope, calibration_intercept, sensitivity and ppv at 10, 20, 30 percent]
+    pairing: >
+      A weighted model whose calibration fails the selection rule is evaluated again paired
+      with the cross fitted recalibration of 2.5, and the pair is one candidate.
+    excluded: [oversampling, undersampling, synthetic minority generation]
+
+  - id: "2.3"
+    name: ablations not yet run
+    role: candidate
+    family: logistic_l2
+    variants:
+      - {name: A plus visit two gestational week, columns: "A + ga_v2", reference: A}
+      - {name: A plus visit two weight, columns: "A + weight_v2", reference: A}
+      - {name: B without haemoglobin, columns: "B - hb_v2", reference: B}
+      - {name: C without missingness indicators, columns: "C, imputer without indicators", reference: C}
+      - {name: A plus each single visit two measurement, columns: "A + one of sbp_v2, dbp_v2, weight_v2, ga_v2, pulse_v2, hb_v2", reference: A}
+    note: >
+      The guideline wrote "set B plus each single visit two measurement in turn". Set B already
+      holds every visit two measurement, so this is read as set A plus each one (decisions log).
+    metric: average_precision
+    direction: higher
+
+  - id: "2.4"
+    name: prespecified nonlinearity and interactions, one combined candidate
+    role: candidate
+    family: logistic_l2
+    feature_set: B
+    configuration:
+      splines: restricted cubic, three knots at the 10th, 50th and 90th percentiles of the training fold
+      spline_terms: [age, registration_weight, weight_v2, sbp_v2]
+      interactions: [age x gravidity, sbp_v2 x ga_v2]
+      search: none
+    reference: logistic_l2 on set B
+    metric: average_precision
+    direction: higher
+
+  - id: "2.5"
+    name: cross fitted recalibration
+    role: candidate
+    variants: [platt, isotonic]
+    applied_to: [logistic_l2 on set C, gradient_boosting on set C, any weighted model from 2.2]
+    configuration: >
+      Within each outer training fold, fit the calibrator on inner out of fold predictions and
+      apply it to the outer test fold.
+    reference: the same model uncalibrated
+    metric: [calibration_slope, calibration_intercept, brier]
+    direction: slope and intercept closer to 1 and 0, brier lower
+
+  - id: "2.6"
+    name: missing data alternatives on set C
+    role: candidate
+    variants:
+      - {name: median with indicators, family: logistic_l2, status: reference}
+      - {name: median without indicators, family: logistic_l2, status: new run}
+      - {name: iterative imputation five draws, family: logistic_l2, status: exists, source: outputs/tables/multiple_imputation.csv}
+      - {name: native handling, family: gradient_boosting, status: exists, source: outputs/tables/gbt_missing_value_handling.csv}
+    reference: median with indicators
+    metric: average_precision
+    direction: higher
+
+  - id: "2.7"
+    name: operating points and capacity
+    role: descriptive
+    applies_to: every candidate and the reference artefact
+    configuration: see metrics.operating_points and metrics.net_benefit_thresholds
+
+  - id: "2.8"
+    name: interpretation
+    role: descriptive
+    configuration:
+      standardised_coefficients: linear models, group bootstrap intervals
+      permutation_importance: both families, on each outer test fold with the fold's fitted model, average precision, 10 permutations, seed 20260930
+      label: model behaviour, not cause
+
+  - id: "2.9"
+    name: simple average of logistic and gradient boosting on set B
+    role: candidate
+    configuration: mean of the two out of fold probabilities per pregnancy
+    reference: logistic_l2 on set B
+    metric: average_precision
+    direction: higher
+    complexity: counts as a tree model with two components under rule b
+
+selection_rule:
+  applies_to: every experiment with role candidate, on development results only
+  compared_with: reference_artefact
+  a_replace_only_if_all:
+    - candidate average precision minus artefact average precision exceeds the detectable difference of that paired comparison
+    - the 95 percent interval of that difference excludes zero
+    - the candidate calibration slope interval contains 1
+    - Brier not worse, defined as the 95 percent interval of candidate minus artefact Brier having its lower bound at or below zero
+  b_tie_break_order: [fewer inputs, linear over tree, no recalibration over recalibration, no weighting over weighting]
+  b_note: a higher ROC AUC alone never justifies a more complex model
+  c_if_none_pass: artefact stays version 1.0.0 and the report states that the experiments did not improve it
+  lock: the chosen pipeline is saved as version 1.1.0 beside 1.0.0, never over it

@@ -121,6 +121,8 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── LICENSE
 ├── Makefile
 ├── README.md
+├── configs
+│   └── experiment_plan.yaml
 ├── data
 │   ├── README.md
 │   └── maternal_dataset_csv.csv
@@ -133,6 +135,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── Technical-Report.md
 │   ├── Technical-Report.pdf
 │   ├── VIDEO_SCRIPT.md
+│   ├── decisions_log.md
 │   ├── deviations.md
 │   ├── ethics_note.md
 │   ├── evidence
