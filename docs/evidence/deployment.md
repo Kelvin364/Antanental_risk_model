@@ -1,7 +1,7 @@
 # Deployment evidence
 
-Checked by `scripts/smoke_test.py` against https://antenatal-caseload.fly.dev at commit `67d6f9c` on
-2026-10-23T16:59:39+00:00, without an account (the signed in checks run once the first accounts exist).
+Checked by `scripts/smoke_test.py` against https://antenatal-caseload.fly.dev at commit `ea235f4` on
+2026-10-23T21:02:15+00:00, without an account (the signed in checks run once the first accounts exist).
 Synthetic cases only; the image holds no data file and no partition file.
 
 | Check | Result | Detail |
