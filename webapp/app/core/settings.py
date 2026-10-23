@@ -9,7 +9,7 @@ from pathlib import Path
 from antenatal.config import LIMITATION  # noqa: F401  one source for app and figures (R7)
 
 WEBAPP = Path(__file__).resolve().parents[2]
-# The Next.js static export, when it has been built; otherwise the single page.
+# The Next.js static export, built by `make frontend`.
 FRONTEND_BUILD = WEBAPP.parent / "frontend" / "out"
 
 SYNTHETIC_BANNER = "Synthetic cases only. Do not enter any real pregnancy."
@@ -31,14 +31,12 @@ class Settings:
     def from_env(cls) -> Settings:
         """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL`` and ``ANTENATAL_STATIC_DIR``.
 
-        The interface defaults to the Next.js build in frontend/out when it
-        exists, and to the single page in webapp/static when it does not.
+        The interface is the Next.js build in frontend/out. Without a build the
+        API still runs and only the interface is absent.
         """
         database = WEBAPP / "data" / "app.sqlite3"
-        built = (FRONTEND_BUILD / "index.html").exists()
-        interface = FRONTEND_BUILD if built else WEBAPP / "static"
         return cls(
             model_dir=Path(os.environ.get("ANTENATAL_MODEL_DIR", WEBAPP / "model")),
             database_url=os.environ.get("ANTENATAL_DATABASE_URL", f"sqlite:///{database}"),
-            static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", interface)),
+            static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", FRONTEND_BUILD)),
         )

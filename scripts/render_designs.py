@@ -92,6 +92,8 @@ def _walk(page: Page) -> list[Path]:
 
 
 def main() -> int:
+    if not (ROOT / "frontend" / "out" / "index.html").exists():
+        raise SystemExit("The interface is not built; run `make frontend` first.")
     OUT.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         server, url = _server(Path(tmp) / "designs.sqlite3")

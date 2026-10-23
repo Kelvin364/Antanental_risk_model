@@ -59,7 +59,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
 | Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
-| Prototype interface over the API, five screens, no risk categories (R11) | Completed: Next.js in `frontend/`; the earlier single page in `webapp/static/` is served only when the interface has not been built | [`frontend/src/`](frontend/src), [`webapp/static/index.html`](webapp/static/index.html) |
+| Prototype interface over the API, five screens, no risk categories (R11) | Completed: Next.js in `frontend/` | [`frontend/src/`](frontend/src) |
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
@@ -136,7 +136,6 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── deviations.md
 │   ├── ethics_note.md
 │   ├── evidence
-│   ├── meeting_evidence.md
 │   ├── tripod_ai_checklist.md
 │   └── tripod_ai_pending.md
 ├── frontend
@@ -167,6 +166,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── requirements-dev.txt
 ├── requirements.txt
 ├── scripts
+│   ├── accessibility_audit.py
 │   ├── benchmark_api.py
 │   ├── build_report_pdf.py
 │   ├── export_openapi.py
@@ -186,8 +186,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
     ├── __init__.py
     ├── app
     ├── data
-    ├── model
-    └── static
+    └── model
 ```
 <!-- tree:end -->
 
@@ -208,7 +207,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 **The notebooks.** `make notebook` executes both notebooks in place. They read the outputs above.
 
-**The application.** `make frontend` builds the Next.js interface into `frontend/out`, and `make serve` starts the API and serves that interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. Without a build, `make serve` falls back to the single page in `webapp/static/`. While changing the interface, `make frontend-dev` serves it with hot reloading at http://127.0.0.1:3000/ and forwards API calls to `make serve`. After a change to an API request or response, `make api-types` regenerates `frontend/openapi.json` and the typed client; continuous integration fails if either is stale. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
+**The application.** `make frontend` builds the Next.js interface into `frontend/out`, and `make serve` starts the API and serves that interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. Without a build, `make serve` runs the API only. While changing the interface, `make frontend-dev` serves it with hot reloading at http://127.0.0.1:3000/ and forwards API calls to `make serve`. After a change to an API request or response, `make api-types` regenerates `frontend/openapi.json` and the typed client; continuous integration fails if either is stale. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
 
 **The tests.** `make test` runs the unit, integration and browser suites with coverage, and `make lint` runs ruff and black. The browser tests need `make browsers` once, which downloads Chromium, Firefox and WebKit for Playwright; without them those tests are skipped. `make e2e` runs only the browser tests and rewrites `docs/evidence/compatibility.md`.
 

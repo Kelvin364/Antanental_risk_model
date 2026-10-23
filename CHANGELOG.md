@@ -16,6 +16,11 @@ All notable changes to this project. Dates are in UTC.
 
 * The latency benchmark was rerun against the current server and now names the CPU on Linux.
 
+### Removed
+
+* The plain HTML page in `webapp/static/`; the Next.js interface is the only interface.
+* The `meeting-evidence` command and its generator. The supervisor meeting notes and the project status page are kept outside the repository.
+
 ### Fixed
 
 * Loading the artefact under a scikit-learn release other than the one that saved it now stops the server at start up instead of failing at the first prediction.

@@ -39,3 +39,7 @@ docs/*Roadmap*.md
 docs/*Guideline*.md
 PLAN*.md
 plans/
+
+# Internal supervisor and status notes stay local
+docs/meeting_evidence.md
+docs/PROJECT_STATUS.md

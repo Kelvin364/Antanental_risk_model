@@ -1,10 +1,10 @@
 """Browser test fixtures: one local server, browsers launched on demand, and the result matrix.
 
 Every test here is marked ``e2e``. When Playwright or a browser is not
-installed, the affected tests are skipped, so ``make test`` still runs on a
-machine without browsers. When any e2e test ran, the session writes
-``docs/evidence/compatibility.md`` with the pass or fail matrix, the browser
-versions and the operating system.
+installed, or the interface has not been built, the affected tests are
+skipped, so ``make test`` still runs on a machine without them. When any
+e2e test ran, the session writes ``docs/evidence/compatibility.md`` with the
+pass or fail matrix, the browser versions and the operating system.
 """
 
 from __future__ import annotations
@@ -37,6 +37,8 @@ def pytest_collection_modifyitems(items):
 
 @pytest.fixture(scope="session")
 def base_url(tmp_path_factory):
+    if not (ROOT / "frontend" / "out" / "index.html").exists():
+        pytest.skip("the interface is not built; run `make frontend` first")
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]

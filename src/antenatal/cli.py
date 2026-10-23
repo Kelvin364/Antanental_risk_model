@@ -95,14 +95,6 @@ def summarise_results(paths: ProjectPaths) -> None:
     print(build_results_summary(paths).to_string(index=False))
 
 
-def meeting_evidence(paths: ProjectPaths) -> None:
-    """Write docs/meeting_evidence.md from the output tables."""
-    from antenatal.reporting.meeting_evidence import write_meeting_evidence
-
-    write_meeting_evidence(paths)
-    print("Wrote docs/meeting_evidence.md")
-
-
 def update_readme(paths: ProjectPaths) -> None:
     """Refresh the generated results and structure blocks of README.md."""
     from antenatal.reporting.readme import update_readme as update
@@ -150,7 +142,6 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,
-        "meeting-evidence": meeting_evidence,
         "update-readme": update_readme,
         "technical-report": technical_report,
     }

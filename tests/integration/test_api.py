@@ -49,7 +49,7 @@ def settings(root, tmp_path) -> Settings:
     return Settings(
         model_dir=root / "webapp" / "model",
         database_url=f"sqlite:///{tmp_path / 'app.sqlite3'}",
-        static_dir=root / "webapp" / "static",
+        static_dir=root / "frontend" / "out",
     )
 
 

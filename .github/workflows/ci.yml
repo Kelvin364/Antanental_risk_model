@@ -21,8 +21,8 @@ jobs:
         run: echo "ab95366ef22dde5d13df93f10723942f5faffda8fbf0007e8efe85e4f25c1126  data/maternal_dataset_csv.csv" | sha256sum --check
       - name: Lint
         run: |
-          ruff check src tests webapp
-          black --check src tests webapp
+          ruff check src tests webapp scripts
+          black --check src tests webapp scripts
       - name: Check the interface's API schema is current
         run: python scripts/export_openapi.py --check
       - name: Test with coverage

@@ -3,8 +3,8 @@
 One repeat and 100 bootstrap resamples keep the run short. The full study
 uses ten repeats and 2,000 resamples through the same code. The sequence is
 the one ``run-all`` uses: derive the cohort, seal the partition, run the
-analysis, run the Stage 5 extensions, freeze both artefacts, summarise the
-results and write the meeting evidence.
+analysis, run the Stage 5 extensions, freeze both artefacts and summarise the
+results.
 """
 
 import json
@@ -18,7 +18,6 @@ from antenatal.cli import main
 from antenatal.config import PRIMARY
 from antenatal.extensions import run_extensions
 from antenatal.paths import ProjectPaths
-from antenatal.reporting.meeting_evidence import write_meeting_evidence
 from antenatal.reporting.results_summary import build_results_summary
 from antenatal.study import SECONDARY_PLAN, freeze_artefact
 
@@ -41,7 +40,6 @@ def project(tmp_path_factory, root):
     freeze_artefact(paths, QUICK)
     freeze_artefact(paths, QUICK, SECONDARY_PLAN)
     build_results_summary(paths)
-    write_meeting_evidence(paths)
     return paths
 
 
@@ -110,11 +108,3 @@ def test_secondary_artefact_sits_beside_the_primary(project):
     secondary = FittedPipelineArtefact.load(project.model / "secondary_set_b")
     assert (primary.feature_set, secondary.feature_set) == ("C", "B")
     assert "not served" in secondary.role
-
-
-def test_meeting_evidence_written(project):
-    text = (project.root / "docs" / "meeting_evidence.md").read_text()
-    assert (
-        "## Not yet complete" in text
-        and "| Held out partition (sealed, not opened) | 782 | 41 |" in text
-    )
