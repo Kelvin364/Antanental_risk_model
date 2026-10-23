@@ -101,7 +101,7 @@ def test_meeting_evidence_is_generated_from_tables(root, tmp_path):
 
     paths = ProjectPaths.from_root(root)
     text = write_meeting_evidence(paths)
-    assert "## Not yet complete" in text and "Stage 4" in text and "Stage 6" in text
+    assert "## Not yet complete" in text and "Stage 4" in text
     assert "| Held out partition (sealed, not opened) | 782 | 41 |" in text
     summary = pd.read_csv(root / TABLES / "results_summary.csv")
     assert summary["source"].str.startswith("outputs/tables/").all()

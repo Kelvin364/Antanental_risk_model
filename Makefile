@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 
 .PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
-	frontend api-types frontend-dev
+	frontend api-types frontend-dev benchmark accessibility docker
 
 install:
 	python3.12 -m venv .venv
@@ -52,3 +52,14 @@ api-types:
 # Hot reloading interface on :3000, forwarding /api to `make serve` on :8000.
 frontend-dev:
 	cd frontend && npm run dev
+
+# Evidence: API start up, latency and memory, and Lighthouse accessibility scores.
+benchmark:
+	$(PYTHON) scripts/benchmark_api.py
+
+accessibility:
+	$(PYTHON) scripts/accessibility_audit.py
+
+# The interface and API in one container at http://127.0.0.1:8000/.
+docker:
+	docker compose up --build

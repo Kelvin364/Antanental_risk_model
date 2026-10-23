@@ -9,6 +9,12 @@ All notable changes to this project. Dates are in UTC.
 * The Next.js interface in `frontend/` (App Router, TypeScript, Tailwind): the five screens as separate routes over the existing API, a typed client generated from the API's OpenAPI schema, validation messages taken from the API only, and a footer reporting the artefact version from `/health`. FastAPI serves its static export; the single page remains the fallback.
 * `scripts/export_openapi.py`, with a `--check` mode in continuous integration, and an interface build job.
 * The cross browser tests and the design screens were rerun against the new interface.
+* `scripts/accessibility_audit.py` and `docs/evidence/accessibility.md`: Lighthouse accessibility scores for the five screens at phone and desktop sizes.
+* `make benchmark`, `make accessibility` and `make docker`. The container image was built and run for the first time; its health check passes and cases persist across a restart.
+
+### Changed
+
+* The latency benchmark was rerun against the current server and now names the CPU on Linux.
 
 ### Fixed
 
@@ -17,8 +23,6 @@ All notable changes to this project. Dates are in UTC.
 ### Not yet done
 
 * Stage 4: the single evaluation of the held out partition. The code is written and tested on synthetic data and runs only after the supervisor has reviewed the analysis plan.
-* Stage 6 remainder: accessibility scores, and a latency benchmark rerun.
-* The container image: the Dockerfile and compose file have never been built or run. The Dockerfile now builds the interface in a Node stage.
 
 ## 1.0.0 (2026-10-21)
 

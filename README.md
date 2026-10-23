@@ -66,8 +66,9 @@ In plain words: adding the first visit to the second did not improve prediction 
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
 | Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
-| Next.js interface (Stage 6): App Router, TypeScript, Tailwind, typed client generated from the OpenAPI schema, static export served by FastAPI | Completed; accessibility scores not yet measured | [`frontend/`](frontend), [`scripts/export_openapi.py`](scripts/export_openapi.py), [`tests/e2e/`](tests/e2e) |
-| Docker image | Not implemented: Dockerfile and compose file are written but have never been built or run | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
+| Next.js interface (Stage 6): App Router, TypeScript, Tailwind, typed client generated from the OpenAPI schema, static export served by FastAPI | Completed | [`frontend/`](frontend), [`scripts/export_openapi.py`](scripts/export_openapi.py), [`tests/e2e/`](tests/e2e) |
+| Accessibility of the five screens: Lighthouse accessibility scores at phone and desktop sizes | Completed | [`scripts/accessibility_audit.py`](scripts/accessibility_audit.py), [`docs/evidence/accessibility.md`](docs/evidence/accessibility.md) |
+| Docker image: interface built in a Node stage, API and interface served by one container, cases kept on a named volume | Completed: built and run with `docker compose up --build`, health check passing | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
 | Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
 | Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
@@ -211,7 +212,9 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 
 **The tests.** `make test` runs the unit, integration and browser suites with coverage, and `make lint` runs ruff and black. The browser tests need `make browsers` once, which downloads Chromium, Firefox and WebKit for Playwright; without them those tests are skipped. `make e2e` runs only the browser tests and rewrites `docs/evidence/compatibility.md`.
 
-**The benchmarks.** `.venv/bin/python scripts/benchmark_api.py` starts its own server, sends 500 sequential and 50 concurrent predictions and writes `docs/evidence/performance.md`.
+**The benchmarks.** `make benchmark` starts its own server, sends 500 sequential and 50 concurrent predictions and writes `docs/evidence/performance.md`. `make accessibility` starts its own server, records one synthetic case and runs the Lighthouse accessibility audit on each screen at phone and desktop sizes, writing `docs/evidence/accessibility.md`; it needs `make frontend` and `make browsers` first, and fetches the pinned Lighthouse through `npx` so it never enters the interface's dependencies.
+
+**The container.** `make docker` (that is, `docker compose up --build`) builds the interface and the API into one image and serves both at http://127.0.0.1:8000/. Cases are kept on the `app-state` volume; `docker compose down -v` removes them. On WSL without systemd, start the engine first with `sudo dockerd &`, or enable systemd by putting `systemd=true` under `[boot]` in `/etc/wsl.conf`.
 
 ## Designs
 

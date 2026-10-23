@@ -131,6 +131,10 @@ def machine() -> dict[str, object]:
             ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True
         )
         cpu = brand.stdout.strip() or cpu
+    elif sys.platform == "linux":
+        info = Path("/proc/cpuinfo").read_text(errors="ignore").splitlines()
+        names = [line.split(":", 1)[1].strip() for line in info if line.startswith("model name")]
+        cpu = names[0] if names else cpu
     return {
         "cpu": cpu,
         "logical_cores": psutil.cpu_count(logical=True),

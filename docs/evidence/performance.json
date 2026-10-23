@@ -1,26 +1,26 @@
 {
-  "recorded_at": "2026-10-22T09:59:33+00:00",
+  "recorded_at": "2026-10-22T21:44:34+00:00",
   "machine": {
-    "cpu": "Apple M3",
-    "logical_cores": 8,
-    "ram_gb": 8.0,
-    "os": "macOS-15.5-arm64-arm-64bit",
-    "python": "3.12.13"
+    "cpu": "12th Gen Intel(R) Core(TM) i5-1235U",
+    "logical_cores": 12,
+    "ram_gb": 7.6,
+    "os": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.12.15"
   },
-  "startup_seconds": 1.75,
-  "peak_rss_mb": 209.5,
+  "startup_seconds": 2.11,
+  "peak_rss_mb": 267.7,
   "sequential": {
     "requests": 500,
-    "p50_ms": 2.6,
-    "p95_ms": 2.9,
-    "max_ms": 6.9
+    "p50_ms": 11.9,
+    "p95_ms": 24.1,
+    "max_ms": 51.1
   },
   "concurrent": {
     "requests": 50,
-    "p50_ms": 102.0,
-    "p95_ms": 138.3,
-    "max_ms": 139.0,
-    "wall_seconds": 0.14
+    "p50_ms": 789.7,
+    "p95_ms": 1056.7,
+    "max_ms": 1065.2,
+    "wall_seconds": 1.1
   },
   "warm_up_requests": 1
 }
