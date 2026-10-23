@@ -125,4 +125,40 @@ class SetCWithout(SetC):
         return [c for c in super().columns(screen, family) if c not in removed]
 
 
+class SetAPlus(SetA):
+    """Ablation 2.3: set A plus one visit two measurement."""
+
+    def __init__(self, measure: str) -> None:
+        self.measure = measure
+        self.name = f"A_plus_{measure}"
+        self.description = f"Set A plus the visit two {measure}"
+
+    def columns(self, screen: ScreenResult, family: str) -> list[str]:
+        return super().columns(screen, family) + [visit_column(self.measure, 2)]
+
+
+class SetBWithout(SetB):
+    """Ablation 2.3: set B without one visit two measurement."""
+
+    def __init__(self, measure: str) -> None:
+        self.measure = measure
+        self.name = f"B_without_{measure}"
+        self.description = f"Set B without the visit two {measure}"
+
+    def columns(self, screen: ScreenResult, family: str) -> list[str]:
+        return [c for c in super().columns(screen, family) if c != visit_column(self.measure, 2)]
+
+
+class SetBExtras(SetB):
+    """Experiment 2.10: set B plus the usable visit two extras of amendment 1."""
+
+    name = "B_extras"
+    description = "Set B plus the usable visit two extras"
+
+    def columns(self, screen: ScreenResult, family: str) -> list[str]:
+        from antenatal.features.extras import EXTRA_COLUMNS
+
+        return super().columns(screen, family) + list(EXTRA_COLUMNS)
+
+
 PRIMARY_SETS: tuple[FeatureSet, ...] = (SetA(), SetB(), SetC())

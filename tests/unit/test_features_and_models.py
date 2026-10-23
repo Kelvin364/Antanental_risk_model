@@ -90,8 +90,16 @@ def test_factory_builds_unweighted_pipelines(key):
         assert pipeline.named_steps["impute"].add_indicator == spec.indicator
     assert ("scale" in pipeline.named_steps) == spec.scaled
     model = pipeline.named_steps["model"]
-    assert getattr(model, "class_weight", None) is None
-    assert all(name.startswith("model__") for name in grid)
+    assert getattr(model, "class_weight", None) == spec.params.get("class_weight")
+    names = [n for draw in grid for n in draw] if isinstance(grid, list) else list(grid)
+    assert all(name.startswith("model__") for name in names)
+
+
+def test_no_study_model_is_weighted():
+    """Weighting exists only in the Stage 2 experiment models (decision D4)."""
+    from antenatal.models.factory import BASE_SPECS, ITERATIVE_SPECS
+
+    assert all("class_weight" not in spec.params for spec in BASE_SPECS + ITERATIVE_SPECS)
 
 
 def test_gradient_boosting_handles_missing_values_natively():

@@ -109,6 +109,13 @@ def audit_holdout(paths: ProjectPaths) -> None:
         raise SystemExit("integrity audit failed")
 
 
+def run_experiments_v2(paths: ProjectPaths) -> None:
+    """Guideline version 2 Stage 2: the prespecified experiments and the selection rule."""
+    from antenatal.stage2 import run
+
+    print(run(paths, PRIMARY))
+
+
 def summarise_results(paths: ProjectPaths) -> None:
     """Collect every headline number, with its source file, into results_summary.csv."""
     from antenatal.reporting.results_summary import build_results_summary
@@ -162,6 +169,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "freeze-classification": freeze_classification,
         "audit-holdout": audit_holdout,
+        "run-experiments-v2": run_experiments_v2,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,

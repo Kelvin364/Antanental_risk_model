@@ -89,7 +89,7 @@ def _checks(base: str, username: str, password: str) -> list[tuple[str, bool, st
     return _public_checks(base) + _signed_in_checks(base, username, password)
 
 
-def _record(base: str, results: list[tuple[str, bool, str]]) -> None:
+def _record(base: str, results: list[tuple[str, bool, str]], signed_in: bool = True) -> None:
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True
     ).stdout.strip()
@@ -97,10 +97,15 @@ def _record(base: str, results: list[tuple[str, bool, str]]) -> None:
         f"| {name} | {'pass' if ok else 'fail'} | {detail} |" for name, ok, detail in results
     )
     passed = sum(ok for _, ok, _ in results)
+    who = (
+        "signed in as a researcher account"
+        if signed_in
+        else "without an account (the signed in checks run once the first accounts exist)"
+    )
     (ROOT / "docs" / "evidence" / "deployment.md").write_text(f"""# Deployment evidence
 
 Checked by `scripts/smoke_test.py` against {base} at commit `{commit}` on
-{datetime.now(UTC).isoformat(timespec="seconds")}, signed in as a researcher account.
+{datetime.now(UTC).isoformat(timespec="seconds")}, {who}.
 Synthetic cases only; the image holds no data file and no partition file.
 
 | Check | Result | Detail |
@@ -115,15 +120,24 @@ locally (`tests/integration/test_api.py::test_tampered_artefact_refuses_to_start
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--base-url", required=True)
-    parser.add_argument("--username", required=True, help="a researcher account")
-    parser.add_argument("--password", required=True)
+    parser.add_argument("--username", help="a researcher account")
+    parser.add_argument("--password")
+    parser.add_argument(
+        "--public-only", action="store_true", help="only the checks without sign in"
+    )
     parser.add_argument("--record", action="store_true", help="write docs/evidence/deployment.md")
     args = parser.parse_args()
-    results = _checks(args.base_url.rstrip("/"), args.username, args.password)
+    base = args.base_url.rstrip("/")
+    if args.public_only:
+        results = _public_checks(base)
+    elif args.username and args.password:
+        results = _checks(base, args.username, args.password)
+    else:
+        parser.error("pass --username and --password of a researcher, or --public-only")
     for name, ok, detail in results:
         print(f"{'pass' if ok else 'FAIL'}  {name}  {detail}")
     if args.record:
-        _record(args.base_url, results)
+        _record(args.base_url, results, signed_in=not args.public_only)
     return 0 if all(ok for _, ok, _ in results) else 1
 
 

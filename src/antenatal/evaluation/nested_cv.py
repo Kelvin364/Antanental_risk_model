@@ -12,11 +12,15 @@ repeat, so they can be averaged per record for the paired group bootstrap.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
+from sklearn.base import clone
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold
 from sklearn.pipeline import Pipeline
 
@@ -49,6 +53,7 @@ class FittedModel:
     pipeline: Pipeline
     columns: list[str]
     params: dict[str, object]
+    convergence_warnings: int = 0
 
 
 @dataclass
@@ -101,18 +106,28 @@ class NestedCVRunner:
         """Screen, choose columns, tune by inner grouped folds and refit on ``train``."""
         self._guard.check(train)
         screen = self._screen.fit(train)
-        family = self._factory.spec(experiment.model).family
-        columns = experiment.feature_set.columns(screen, family)
+        spec = self._factory.spec(experiment.model)
+        columns = experiment.feature_set.columns(screen, spec.family)
         x = self._builder.matrix(train, columns)
         y = train["lbw"].to_numpy()
         pipeline, grid = self._factory.build(experiment.model)
-        if not grid:
-            return FittedModel(pipeline.fit(x, y), columns, {})
-        inner = StratifiedGroupKFold(self._spec.inner_folds, shuffle=True, random_state=seed)
-        splits = list(inner.split(x, y, train["group_key"]))
-        search = GridSearchCV(pipeline, grid, scoring="average_precision", cv=splits, refit=True)
-        search.fit(x, y)
-        return FittedModel(search.best_estimator_, columns, search.best_params_)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", ConvergenceWarning)
+            model, params = pipeline, {}
+            inner = StratifiedGroupKFold(self._spec.inner_folds, shuffle=True, random_state=seed)
+            splits = list(inner.split(x, y, train["group_key"]))
+            if grid:
+                search = GridSearchCV(pipeline, grid, scoring="average_precision", cv=splits)
+                model, params = search.fit(x, y).best_estimator_, search.best_params_
+            else:
+                model.fit(x, y)
+            if spec.calibration:
+                # Cross fitted: the calibrator learns from inner out of fold predictions only.
+                model = CalibratedClassifierCV(
+                    clone(model), method=spec.calibration, cv=splits, ensemble=False
+                ).fit(x, y)
+        count = sum(issubclass(w.category, ConvergenceWarning) for w in caught)
+        return FittedModel(model, columns, params, count)
 
     def _fold(self, development, train_idx, test_idx, experiment, repeat, fold):
         train, test = development.iloc[train_idx], development.iloc[test_idx]
@@ -141,6 +156,7 @@ class NestedCVRunner:
             "n_features": len(fitted.columns),
             **score_all(y_test, probability),
             "params": repr(fitted.params),
+            "convergence_warnings": fitted.convergence_warnings,
         }
         return oof, metrics
 

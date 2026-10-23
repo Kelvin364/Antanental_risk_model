@@ -28,6 +28,7 @@ class Interval:
     high: float
     se: float
     resamples: int
+    p_value: float = float("nan")
 
     @property
     def excludes_zero(self) -> bool:
@@ -62,7 +63,12 @@ class GroupBootstrap:
         values = np.asarray(draws, dtype=float)
         values = values[~np.isnan(values)]
         low, high = np.percentile(values, [2.5, 97.5])
-        return Interval(estimate, float(low), float(high), float(values.std(ddof=1)), len(values))
+        # Two sided bootstrap p value for a difference: twice the smaller share of
+        # resamples on either side of zero, capped at 1.
+        p_value = min(1.0, 2 * min(float((values <= 0).mean()), float((values >= 0).mean())))
+        return Interval(
+            estimate, float(low), float(high), float(values.std(ddof=1)), len(values), p_value
+        )
 
     def single(self, y: np.ndarray, p: np.ndarray, metric: MetricStrategy) -> Interval:
         """Interval for one metric of one set of predictions."""

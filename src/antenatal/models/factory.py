@@ -10,14 +10,15 @@ Missing values are treated in one of three ways, set per model:
   by the multiple imputation sensitivity analysis.
 
 Scaling follows for models that need it, then the estimator. Every step is
-fitted inside the training data only and serialised together. No class
-weighting and no resampling is used anywhere, so probabilities stay on the
-natural scale.
+fitted inside the training data only and serialised together. The study models
+use no class weighting and no resampling. The Stage 2 experiment models of
+``configs/experiment_plan.yaml`` (elastic net, a bounded random search for the
+trees, class weights, splines and recalibration) are defined below, each
+exactly as prespecified, and never replace a study model except through the
+Stage 4 selection rule.
 """
 
 from __future__ import annotations
-
-from dataclasses import dataclass, field
 
 from sklearn.base import ClassifierMixin
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -32,35 +33,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-from antenatal.config import PRIMARY
 from antenatal.features.sets import LINEAR, TREE
-
-SEED = PRIMARY.seed
-MEDIAN, NATIVE, ITERATIVE = "median", "native", "iterative"
-IMPUTATIONS = 5
-LOGISTIC_GRID = {"C": [0.01, 0.1, 1.0, 10.0]}
-BOOSTING_GRID = {"learning_rate": [0.05, 0.1], "max_depth": [2, 3], "l2_regularization": [0.0, 1.0]}
-
-
-@dataclass(frozen=True)
-class ModelSpec:
-    """One model: label, how it reads features, missing value treatment, scaling and grid."""
-
-    key: str
-    label: str
-    family: str
-    scaled: bool
-    grid: dict[str, list] = field(default_factory=dict)
-    imputer: str = MEDIAN
-    indicator: bool = True
-    estimator: str = ""
-    imputation_seed: int = SEED
-
-    @property
-    def estimator_key(self) -> str:
-        """The estimator this model uses; defaults to its own key."""
-        return self.estimator or self.key
-
+from antenatal.models.experiment_specs import EXPERIMENT_SPECS
+from antenatal.models.spec import (  # noqa: F401  re-exported for existing imports
+    BOOSTING_GRID,
+    IMPUTATIONS,
+    ITERATIVE,
+    LOGISTIC_GRID,
+    MEDIAN,
+    NATIVE,
+    SEED,
+    ModelSpec,
+)
+from antenatal.models.transforms import SplineInteractions
 
 BASE_SPECS: tuple[ModelSpec, ...] = (
     ModelSpec("baseline_prevalence", "B0 constant prevalence", LINEAR, False),
@@ -123,7 +108,9 @@ ITERATIVE_SPECS: tuple[ModelSpec, ...] = tuple(
 )
 
 
-MODEL_SPECS: dict[str, ModelSpec] = {spec.key: spec for spec in BASE_SPECS + ITERATIVE_SPECS}
+MODEL_SPECS: dict[str, ModelSpec] = {
+    spec.key: spec for spec in BASE_SPECS + ITERATIVE_SPECS + EXPERIMENT_SPECS
+}
 
 FAMILY_SCREEN: tuple[str, ...] = (
     "logistic_l2",
@@ -156,6 +143,12 @@ def _estimator(key: str) -> ClassifierMixin:
         "gradient_boosting": lambda: HistGradientBoostingClassifier(
             max_iter=200, early_stopping=True, validation_fraction=0.2, random_state=SEED
         ),
+        "logistic_elastic_net": lambda: LogisticRegression(
+            solver="saga", max_iter=5000, random_state=SEED
+        ),
+        "gradient_boosting_search": lambda: HistGradientBoostingClassifier(
+            max_iter=400, early_stopping=True, validation_fraction=0.15, random_state=SEED
+        ),
     }
     return estimators[key]()
 
@@ -182,10 +175,15 @@ class ModelFactory:
         """Return the pipeline and its grid, with grid keys prefixed for the estimator step."""
         spec = MODEL_SPECS[key]
         steps = []
+        if spec.pre == "splines":
+            steps.append(("splines", SplineInteractions()))
         if spec.imputer != NATIVE:
             steps.append(("impute", _imputer(spec)))
         if spec.scaled:
             steps.append(("scale", StandardScaler()))
-        steps.append(("model", _estimator(spec.estimator_key)))
-        grid = {f"model__{name}": values for name, values in spec.grid.items()}
+        steps.append(("model", _estimator(spec.estimator_key).set_params(**spec.params)))
+        if isinstance(spec.grid, list):
+            grid = [{f"model__{k}": v for k, v in draw.items()} for draw in spec.grid]
+        else:
+            grid = {f"model__{name}": values for name, values in spec.grid.items()}
         return Pipeline(steps), grid

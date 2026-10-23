@@ -4,6 +4,14 @@ How to run the system online on Fly.io, keep the local environment as a working 
 and recover from a bad release (decision D7). Synthetic cases only: the image holds no
 data file and no partition file, so the held out records can never be online.
 
+## Current deployment
+
+The app `antenatal-caseload` runs in the Fly organisation of Rwihimba Kelvin (slug
+`personal`), region `jnb` (Johannesburg), at https://antenatal-caseload.fly.dev/. Its
+volume `app_state` (1 GB) is encrypted, and Fly keeps five daily snapshots of it.
+Steps 1 to 3 below are done; steps 4 to 6 (first administrator, a researcher, and the
+signed in smoke test) are for the account owner.
+
 ## First online deployment (once)
 
 1. Install the Fly command line tool (`brew install flyctl` on macOS) and sign in with

@@ -92,6 +92,7 @@ class ComparisonRunner:
                         "bootstrap_se": interval.se,
                         "detectable_difference": detectable_difference(interval.se),
                         "excludes_zero": interval.excludes_zero,
+                        "p_value": interval.p_value,
                         "n": len(y),
                         "events": int(y.sum()),
                     }
