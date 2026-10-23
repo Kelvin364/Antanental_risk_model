@@ -145,3 +145,30 @@ def freeze_artefact(
     )
     artefact.save(paths.model / plan.subdirectory if plan.subdirectory else paths.model)
     return artefact
+
+
+def freeze_classification(paths: ProjectPaths, spec: StudySpec = PRIMARY):
+    """Fix the classification threshold of the served artefact from its out of fold predictions.
+
+    Reads only development records and the stored out of fold predictions of
+    the served configuration; nothing is refitted (decision D6).
+    """
+    from antenatal.artefact.artefact import CHECKSUM_FILE
+    from antenatal.artefact.classification import derive_rule
+
+    context = load_context(paths, spec)
+    results = load_results(paths, context)
+    artefact = FittedPipelineArtefact.load(paths.model, verify=True)
+    sha = (paths.model / CHECKSUM_FILE).read_text().split()[0]
+    source = f"{OOF_FILE}, {SERVED_MODEL} on set {SERVED_SET.name}, averaged across repeats"
+    rule = derive_rule(
+        results.y,
+        results.averaged(SERVED_MODEL, SERVED_SET.name),
+        results.groups,
+        artefact.version,
+        sha,
+        source,
+        spec,
+    )
+    rule.save(paths.model)
+    return rule

@@ -1,8 +1,9 @@
 """The Caseload screen: assessed synthetic cases ordered by predicted probability.
 
 Each case shows its position within the recorded synthetic caseload and its
-rank within the reference caseload of development pregnancies. No band, tier
-or priority label is produced (R11).
+rank within the reference caseload of development pregnancies, and its label
+at the fixed classification threshold (decision D6). No band, tier or priority
+label is produced.
 """
 
 from __future__ import annotations
@@ -29,19 +30,7 @@ class RankingService:
             cases = session.scalars(select(SyntheticCase)).all()
             latest = [(case, case.assessments[-1]) for case in cases if case.assessments]
         latest.sort(key=lambda pair: (-pair[1].probability, pair[0].id))
-        rows = [
-            CaseloadRow(
-                case_id=case.id,
-                label=case.label,
-                caseload_position=position,
-                reference_rank_position=assessment.rank_position,
-                probability=assessment.probability,
-                interval_low=assessment.interval_low,
-                interval_high=assessment.interval_high,
-                artefact_version=assessment.artefact_version,
-            )
-            for position, (case, assessment) in enumerate(latest, start=1)
-        ]
+        rows = [self._row(position, case, a) for position, (case, a) in enumerate(latest, 1)]
         artefact = self._model.artefact
         return CaseloadOut(
             rows=rows,
@@ -49,7 +38,25 @@ class RankingService:
             prevalence=artefact.prevalence,
             events=artefact.events,
             artefact_version=artefact.version,
+            classification_threshold=self._model.rule.threshold,
             interval_label=INTERVAL_LABEL,
             limitation=LIMITATION,
             banner=SYNTHETIC_BANNER,
+        )
+
+    def _row(self, position: int, case: SyntheticCase, assessment) -> CaseloadRow:
+        result = self._model.classify(
+            assessment.probability, assessment.interval_low, assessment.interval_high
+        )
+        return CaseloadRow(
+            case_id=case.id,
+            label=case.label,
+            caseload_position=position,
+            reference_rank_position=assessment.rank_position,
+            probability=assessment.probability,
+            interval_low=assessment.interval_low,
+            interval_high=assessment.interval_high,
+            classification=result.label,
+            certainty=result.certainty,
+            artefact_version=assessment.artefact_version,
         )

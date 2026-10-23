@@ -182,6 +182,13 @@ experiments:
     direction: higher
     complexity: counts as a tree model with two components under rule b
 
+classification:
+  added: "2026-10-23, decision D6, before any experiment ran"
+  threshold_rule: predicted probability marking the highest 20 percent of the locked model's out of fold predictions
+  current: webapp/model/classification.json (artefact 1.0.0, threshold 0.0688)
+  holdout: sensitivity, specificity and predictive values at the same fixed threshold, with group bootstrap intervals
+  relocking: a newly locked model gets its threshold by the same rule before the holdout run
+
 selection_rule:
   applies_to: every experiment with role candidate, on development results only
   compared_with: reference_artefact

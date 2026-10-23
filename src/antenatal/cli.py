@@ -88,6 +88,17 @@ def freeze_secondary_artefact(paths: ProjectPaths) -> None:
     )
 
 
+def freeze_classification(paths: ProjectPaths) -> None:
+    """Fix the classification threshold of the served artefact (decision D6)."""
+    from antenatal.study import freeze_classification as freeze
+
+    rule = freeze(paths, PRIMARY)
+    print(
+        f"Threshold {rule.threshold:.4f} (highest {rule.budget_percent} percent) for artefact "
+        f"{rule.artefact_version}, saved to {paths.model}"
+    )
+
+
 def summarise_results(paths: ProjectPaths) -> None:
     """Collect every headline number, with its source file, into results_summary.csv."""
     from antenatal.reporting.results_summary import build_results_summary
@@ -139,6 +150,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "run-extensions": run_extensions,
         "freeze-artefact": freeze_artefact,
         "freeze-secondary-artefact": freeze_secondary_artefact,
+        "freeze-classification": freeze_classification,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,

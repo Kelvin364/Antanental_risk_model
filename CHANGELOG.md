@@ -6,15 +6,18 @@ All notable changes to this project. Dates are in UTC.
 
 ### Added
 
-* The Next.js interface in `frontend/` (App Router, TypeScript, Tailwind): the five screens as separate routes over the existing API, a typed client generated from the API's OpenAPI schema, validation messages taken from the API only, and a footer reporting the artefact version from `/health`. FastAPI serves its static export; the single page remains the fallback.
+* The Next.js interface in `frontend/` (App Router, TypeScript, Tailwind): the five screens as separate routes over the existing API, a typed client generated from the API's OpenAPI schema, validation messages taken from the API only, and a footer reporting the artefact version from `/health`. FastAPI serves its static export.
 * `scripts/export_openapi.py`, with a `--check` mode in continuous integration, and an interface build job.
 * The cross browser tests and the design screens were rerun against the new interface.
 * `scripts/accessibility_audit.py` and `docs/evidence/accessibility.md`: Lighthouse accessibility scores for the five screens at phone and desktop sizes.
 * `make benchmark`, `make accessibility` and `make docker`. The container image was built and run for the first time; its health check passes and cases persist across a restart.
+* A label on every assessment, "Likely" or "Not likely low birth weight", at a threshold fixed from out of fold predictions by `python -m antenatal freeze-classification` (decision D6). The assessment shows the threshold's sensitivity, specificity and predictive values with intervals and whether the case's interval crosses the threshold; the caseload shows each label. The threshold is saved with the artefact's checksum and the server refuses one fixed for another artefact.
 
 ### Changed
 
 * The latency benchmark was rerun against the current server and now names the CPU on Linux.
+* The step navigation wraps at phone width instead of scrolling sideways and hiding the current step.
+* The limitation line reads "Not a diagnosis and not a recommendation for care"; every figure footer was redrawn.
 
 ### Removed
 

@@ -24,6 +24,9 @@
             ],
             "title": "Assessed At"
           },
+          "classification": {
+            "$ref": "#/components/schemas/ClassificationOut"
+          },
           "events": {
             "title": "Events",
             "type": "integer"
@@ -72,7 +75,8 @@
           "events",
           "artefact_version",
           "artefact_sha256",
-          "limitation"
+          "limitation",
+          "classification"
         ],
         "title": "AssessmentOut",
         "type": "object"
@@ -379,6 +383,10 @@
             "title": "Banner",
             "type": "string"
           },
+          "classification_threshold": {
+            "title": "Classification Threshold",
+            "type": "number"
+          },
           "events": {
             "title": "Events",
             "type": "integer"
@@ -413,6 +421,7 @@
           "prevalence",
           "events",
           "artefact_version",
+          "classification_threshold",
           "interval_label",
           "limitation",
           "banner"
@@ -434,6 +443,14 @@
           "caseload_position": {
             "title": "Caseload Position",
             "type": "integer"
+          },
+          "certainty": {
+            "title": "Certainty",
+            "type": "string"
+          },
+          "classification": {
+            "title": "Classification",
+            "type": "string"
           },
           "interval_high": {
             "title": "Interval High",
@@ -464,9 +481,100 @@
           "probability",
           "interval_low",
           "interval_high",
+          "classification",
+          "certainty",
           "artefact_version"
         ],
         "title": "CaseloadRow",
+        "type": "object"
+      },
+      "ClassificationOut": {
+        "description": "The label at the fixed threshold and how far it can be trusted (decision D6).",
+        "properties": {
+          "budget_percent": {
+            "title": "Budget Percent",
+            "type": "integer"
+          },
+          "certainty": {
+            "title": "Certainty",
+            "type": "string"
+          },
+          "certainty_statement": {
+            "title": "Certainty Statement",
+            "type": "string"
+          },
+          "events": {
+            "title": "Events",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "likely": {
+            "title": "Likely",
+            "type": "boolean"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "npv": {
+            "$ref": "#/components/schemas/Estimate"
+          },
+          "ppv": {
+            "$ref": "#/components/schemas/Estimate"
+          },
+          "sensitivity": {
+            "$ref": "#/components/schemas/Estimate"
+          },
+          "specificity": {
+            "$ref": "#/components/schemas/Estimate"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "likely",
+          "certainty",
+          "certainty_statement",
+          "threshold",
+          "budget_percent",
+          "sensitivity",
+          "specificity",
+          "ppv",
+          "npv",
+          "n",
+          "events"
+        ],
+        "title": "ClassificationOut",
+        "type": "object"
+      },
+      "Estimate": {
+        "description": "A proportion with its 95 percent group bootstrap interval.",
+        "properties": {
+          "estimate": {
+            "title": "Estimate",
+            "type": "number"
+          },
+          "high": {
+            "title": "High",
+            "type": "number"
+          },
+          "low": {
+            "title": "Low",
+            "type": "number"
+          }
+        },
+        "required": [
+          "estimate",
+          "low",
+          "high"
+        ],
+        "title": "Estimate",
         "type": "object"
       },
       "HTTPValidationError": {

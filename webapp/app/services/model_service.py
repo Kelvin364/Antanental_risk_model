@@ -18,7 +18,8 @@ from antenatal.artefact.artefact import (
     Assessment,
     FittedPipelineArtefact,
 )
-from webapp.app.schemas.cases import CaseCreate, VisitCreate
+from antenatal.artefact.classification import Classification, ClassificationRule, classify
+from webapp.app.schemas.cases import CaseCreate, ClassificationOut, Estimate, VisitCreate
 
 VISIT_FIELDS = {
     "gestational_week": "ga",
@@ -62,6 +63,7 @@ class ModelService:
         self.artefact = FittedPipelineArtefact.load(self._dir, verify=True)
         self.sha256 = (self._dir / CHECKSUM_FILE).read_text().split()[0]
         self.version_record = json.loads((self._dir / VERSION_FILE).read_text())
+        self.rule = ClassificationRule.load(self._dir, self.sha256)
 
     @property
     def version(self) -> str:
@@ -71,6 +73,26 @@ class ModelService:
     def predict(self, values: dict[str, float | None]) -> Assessment:
         """Probability, interval and reference rank for cleaned study values."""
         return self.artefact.assess(values)
+
+    def classify(self, probability: float, low: float, high: float) -> Classification:
+        """The label at the fixed threshold and where the interval sits against it."""
+        return classify(self.rule, probability, low, high)
+
+    def classification_out(self, probability: float, low: float, high: float) -> ClassificationOut:
+        """The label with the threshold's sensitivity, specificity and predictive values."""
+        result, rule = self.classify(probability, low, high), self.rule
+        performance = {k: Estimate(**v) for k, v in rule.performance.items()}
+        return ClassificationOut(
+            label=result.label,
+            likely=result.likely,
+            certainty=result.certainty,
+            certainty_statement=result.certainty_statement,
+            threshold=rule.threshold,
+            budget_percent=rule.budget_percent,
+            n=rule.n,
+            events=rule.events,
+            **performance,
+        )
 
     def health(self) -> dict[str, object]:
         """What ``/health`` reports."""
@@ -84,4 +106,5 @@ class ModelService:
             "events": self.artefact.events,
             "n_features": len(self.artefact.feature_names),
             "reference_caseload_size": len(self.artefact.reference_probabilities),
+            "classification_threshold": self.rule.threshold,
         }

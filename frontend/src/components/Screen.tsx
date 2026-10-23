@@ -35,11 +35,11 @@ function Steps({ current, kase }: { current: Step; kase: CaseOut | null }) {
   const furthest = reached(kase);
   return (
     <nav aria-label="Steps" className="border-b border-line bg-surface">
-      <ol className="mx-auto flex max-w-[980px] list-none gap-1 overflow-x-auto px-4">
+      <ol className="mx-auto flex max-w-[980px] list-none flex-wrap gap-x-1 px-4">
         {STEPS.map((step, i) => {
           const open = i <= furthest || step.id === "caseload";
           const here = step.id === current;
-          const style = `block border-b-[3px] px-2.5 py-3 whitespace-nowrap ${
+          const style = `block border-b-[3px] px-1.5 py-2.5 text-sm whitespace-nowrap sm:px-2.5 sm:py-3 sm:text-base ${
             here ? "border-green font-semibold text-ink" : "border-transparent text-muted"
           }`;
           const text = (

@@ -38,6 +38,14 @@ Engineering choices made under the decision rules of guideline version 2 are lis
 * **Decision:** guideline version 2 asks to replace "rule 6" with the authentication rule. In the project rules, rule 6 defines set C for linear models and rule 7 is the rule against sign in and accounts. The authentication sentence replaces the first sentence of rule 7; rule 6 is kept unchanged, and the rest of rule 7 (no risk categories or triage wording) is kept.
 * **What it changes:** nothing in the proposal.
 
+## D6. The application labels each case at a fixed threshold, with its confidence (23 October 2026)
+
+* **Decided by:** the author, in this session, choosing a yes or no label with its confidence over a probability without a label.
+* **Decision:** each assessment shows "Likely low birth weight" or "Not likely low birth weight". The threshold is the predicted probability that marks the highest 20 percent of the served model's out of fold predictions on development records, the middle of the proposal's ranking budgets: 0.0688 for artefact 1.0.0 (`webapp/model/classification.json`, written by `python -m antenatal freeze-classification`). Beside the label the application shows the threshold's sensitivity, specificity and predictive values with group bootstrap intervals, and whether the case's own 95 percent interval lies above, below or across the threshold.
+* **What it changes:** requirement R11 ("rank and probability with interval, no category") becomes "rank, probability with interval, and a label at a prespecified threshold shown with how often the label is right". The limitation line now reads "Not a diagnosis and not a recommendation for care". Triage, priority and "see sooner" wording stays excluded. Stage 4 evaluates the label at the same fixed threshold on the held out partition. A locked model of a later version gets its own threshold by the same rule before the holdout run.
+* **Proposal modification table row:** "R11 and Table 3.10 screen 4: a label at a prespecified threshold (highest 20 percent of out of fold predictions) is shown with its sensitivity, specificity and predictive values and the case's interval position, author decision of 23 October 2026."
+* **Supervisor confirmation:** not recorded; to be obtained.
+
 ## Engineering choices under the decision rules
 
 | Date | Choice | Rule applied |

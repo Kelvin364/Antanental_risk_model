@@ -18,7 +18,7 @@ It contains four things that fit together:
 1. **The `antenatal` package** (`src/antenatal`). It loads the file after checking its SHA 256, derives the cohort exactly as Table 3.5 of the proposal states, seals a held out partition before any modelling step, runs repeated nested grouped cross validation on development records only, and writes every table and figure.
 2. **Two notebooks** (`notebooks/`) that explain the audit and the results in plain English. They compute nothing of their own; they read the package outputs.
 3. **A frozen model artefact** (`webapp/model/`): L2 logistic regression on set C, fitted once on the 3,126 development records, saved with a checksum and a version record. A set B artefact sits beside it and is not served.
-4. **A prototype interface** (`webapp/`, `frontend/`): a FastAPI service and a Next.js interface that score synthetic cases with that artefact and show a rank, a probability and its confidence interval, never a clinical risk category.
+4. **A prototype interface** (`webapp/`, `frontend/`): a FastAPI service and a Next.js interface that score synthetic cases with that artefact and show a rank, a probability with its confidence interval, and a label at a fixed threshold ("Likely" or "Not likely low birth weight") together with how often that label is right and whether the case's interval crosses the threshold.
 
 ## Results
 
@@ -59,9 +59,11 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
 | Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
-| Prototype interface over the API, five screens, no risk categories (R11) | Completed: Next.js in `frontend/` | [`frontend/src/`](frontend/src) |
+| Prototype interface over the API, five screens (R11) | Completed: Next.js in `frontend/` | [`frontend/src/`](frontend/src) |
+| Classification at a fixed threshold with its confidence (decision D6): label, sensitivity, specificity and predictive values with intervals, and whether each case's interval crosses the threshold | Completed on development records; not yet checked on the held out partition | [`classification.py`](src/antenatal/artefact/classification.py), [`webapp/model/classification.json`](webapp/model/classification.json) |
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
+| Classification threshold command: `python -m antenatal freeze-classification` fixes the threshold from out of fold predictions and saves it beside the artefact | Completed | [`study.py`](src/antenatal/study.py) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |

@@ -1,0 +1,37 @@
+{
+  "threshold": 0.06881078362416543,
+  "budget_percent": 20,
+  "artefact_version": "1.0.0",
+  "artefact_sha256": "7358b0b26f83aa6072f55986652d8691f111dbc6646a31a50ba46f94ff2d0c35",
+  "source": "oof_predictions.parquet, logistic_l2 on set C, averaged across repeats",
+  "n": 3126,
+  "events": 165,
+  "counts": {
+    "true_positives": 57,
+    "false_positives": 569,
+    "false_negatives": 108,
+    "true_negatives": 2392
+  },
+  "performance": {
+    "sensitivity": {
+      "estimate": 0.34545454545454546,
+      "low": 0.27659261576971217,
+      "high": 0.4203839751013318
+    },
+    "specificity": {
+      "estimate": 0.8078351908139142,
+      "low": 0.7936158880323642,
+      "high": 0.8223200074618947
+    },
+    "ppv": {
+      "estimate": 0.09105431309904154,
+      "low": 0.06983472029588535,
+      "high": 0.11525974025974026
+    },
+    "npv": {
+      "estimate": 0.9568,
+      "low": 0.9486661812152468,
+      "high": 0.9645736253268402
+    }
+  }
+}

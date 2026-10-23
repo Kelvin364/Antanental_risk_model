@@ -10,4 +10,4 @@ The five images in `web/` are screenshots of the running interface, not drawings
 | `web/04-assessment.png` | Rank position and predicted probability with its interval |
 | `web/05-caseload.png` | Caseload ordered by predicted probability |
 
-The earlier Figma screens, which included sign up and sign in screens and triage wording, were removed because both are out of scope. The prototype has no accounts and no clinical risk categories.
+The earlier Figma screens, which included sign up and sign in screens and triage wording, were removed. Sign in returns with the authentication work of decision D1, and the assessment now shows a label at a fixed threshold (decision D6); no triage wording is shown.

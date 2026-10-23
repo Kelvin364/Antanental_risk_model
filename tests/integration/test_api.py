@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 
 import pandas as pd
@@ -94,7 +95,12 @@ def test_add_visits_and_assess(client):
     body = response.json()
     assert body["interval_low"] < body["probability"] < body["interval_high"]
     assert body["reference_caseload_size"] == 3126 and body["artefact_version"] == "1.0.0"
-    assert "Not a clinical risk category" in body["limitation"]
+    assert "Not a diagnosis" in body["limitation"]
+    rule = body["classification"]
+    assert rule["likely"] == (body["probability"] >= rule["threshold"])
+    assert (
+        rule["sensitivity"]["low"] <= rule["sensitivity"]["estimate"] <= rule["sensitivity"]["high"]
+    )
     stored = client.get(f"/api/cases/{case_id}").json()
     assert stored["latest_assessment"]["probability"] == body["probability"]
 
@@ -248,3 +254,26 @@ def test_interface_export_is_served_beside_the_api(settings, tmp_path):
         assert client.get(f"/{page}").text == f"<p>{page}</p>"
     assert client.get("/health").json()["status"] == "ok"
     assert client.get("/api/caseload").json()["rows"] == []
+
+
+def test_caseload_and_health_carry_the_classification(client):
+    _complete_case(client)
+    client.post("/api/cases/1/assessment")
+    threshold = client.get("/health").json()["classification_threshold"]
+    caseload = client.get("/api/caseload").json()
+    assert caseload["classification_threshold"] == threshold
+    row = caseload["rows"][0]
+    expected = "Likely low birth weight" if row["probability"] >= threshold else "Not likely"
+    assert row["classification"].startswith(expected)
+
+
+def test_threshold_for_another_artefact_refuses_to_start(settings, tmp_path):
+    from antenatal.artefact.classification import ClassificationMismatch
+
+    shutil.copytree(settings.model_dir, tmp_path / "model")
+    path = tmp_path / "model" / "classification.json"
+    rule = json.loads(path.read_text())
+    rule["artefact_sha256"] = "0" * 64
+    path.write_text(json.dumps(rule))
+    with pytest.raises(ClassificationMismatch):
+        create_app(Settings(tmp_path / "model", settings.database_url, settings.static_dir))

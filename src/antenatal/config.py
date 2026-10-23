@@ -74,7 +74,7 @@ SENTINEL_TOKENS: frozenset[str] = frozenset(
 
 LIMITATION = (
     "Research estimate from a study on one Tanzanian dataset. Not validated for any pregnancy. "
-    "Not a clinical risk category and not a recommendation for care."
+    "Not a diagnosis and not a recommendation for care."
 )
 """The fixed limitation line shown on every interface screen and every figure (R7)."""
 

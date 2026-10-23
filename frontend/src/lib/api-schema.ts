@@ -199,6 +199,7 @@ export interface components {
             artefact_version: string;
             /** Assessed At */
             assessed_at?: string | null;
+            classification: components["schemas"]["ClassificationOut"];
             /** Events */
             events: number;
             /** Interval High */
@@ -401,6 +402,8 @@ export interface components {
             artefact_version: string;
             /** Banner */
             banner: string;
+            /** Classification Threshold */
+            classification_threshold: number;
             /** Events */
             events: number;
             /** Interval Label */
@@ -425,6 +428,10 @@ export interface components {
             case_id: number;
             /** Caseload Position */
             caseload_position: number;
+            /** Certainty */
+            certainty: string;
+            /** Classification */
+            classification: string;
             /** Interval High */
             interval_high: number;
             /** Interval Low */
@@ -435,6 +442,44 @@ export interface components {
             probability: number;
             /** Reference Rank Position */
             reference_rank_position: number;
+        };
+        /**
+         * ClassificationOut
+         * @description The label at the fixed threshold and how far it can be trusted (decision D6).
+         */
+        ClassificationOut: {
+            /** Budget Percent */
+            budget_percent: number;
+            /** Certainty */
+            certainty: string;
+            /** Certainty Statement */
+            certainty_statement: string;
+            /** Events */
+            events: number;
+            /** Label */
+            label: string;
+            /** Likely */
+            likely: boolean;
+            /** N */
+            n: number;
+            npv: components["schemas"]["Estimate"];
+            ppv: components["schemas"]["Estimate"];
+            sensitivity: components["schemas"]["Estimate"];
+            specificity: components["schemas"]["Estimate"];
+            /** Threshold */
+            threshold: number;
+        };
+        /**
+         * Estimate
+         * @description A proportion with its 95 percent group bootstrap interval.
+         */
+        Estimate: {
+            /** Estimate */
+            estimate: number;
+            /** High */
+            high: number;
+            /** Low */
+            low: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {

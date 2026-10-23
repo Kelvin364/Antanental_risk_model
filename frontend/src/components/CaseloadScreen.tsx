@@ -8,7 +8,7 @@ import { api, Refused, type CaseloadOut } from "@/lib/api";
 import { pct } from "@/lib/fields";
 import { useCase } from "@/lib/useCase";
 
-/** Screen 5: assessed synthetic cases ordered by predicted probability, with no bands. */
+/** Screen 5: assessed synthetic cases ordered by predicted probability, with each label. */
 export function CaseloadScreen() {
   const { kase } = useCase();
   const [data, setData] = useState<CaseloadOut | null>(null);
@@ -32,6 +32,7 @@ export function CaseloadScreen() {
             <tr className="[&>th]:border-b [&>th]:border-line [&>th]:px-2 [&>th]:py-2.5">
               <th>Position</th>
               <th>Case</th>
+              <th>Classification</th>
               <th>Probability</th>
               <th>95 percent interval</th>
               <th>Rank among reference</th>
@@ -50,6 +51,12 @@ export function CaseloadScreen() {
                     {row.label}
                   </Link>
                 </td>
+                <td>
+                  {row.classification}
+                  {row.certainty === "interval_crosses" && (
+                    <span className="block text-xs text-muted">uncertain: interval crosses the threshold</span>
+                  )}
+                </td>
                 <td>{pct(row.probability)}</td>
                 <td>
                   {pct(row.interval_low)} to {pct(row.interval_high)}
@@ -65,8 +72,9 @@ export function CaseloadScreen() {
         {data && data.rows.length === 0 && <p id="caseload-empty">No assessed cases yet.</p>}
         {data && (
           <p id="caseload-reference" className="mt-2 text-xs text-muted">
-            {data.interval_label} Reference: {pct(data.prevalence)} low birth weight, {data.events}{" "}
-            events, artefact version {data.artefact_version}.
+            {data.interval_label} Labels use the fixed threshold of {pct(data.classification_threshold)}.
+            Reference: {pct(data.prevalence)} low birth weight, {data.events} events, artefact version{" "}
+            {data.artefact_version}.
           </p>
         )}
       </div>

@@ -126,6 +126,9 @@ class CaseService:
             artefact_version=row.artefact_version,
             artefact_sha256=row.artefact_sha256,
             limitation=LIMITATION,
+            classification=self._model.classification_out(
+                row.probability, row.interval_low, row.interval_high
+            ),
             assessed_at=row.assessed_at,
         )
 

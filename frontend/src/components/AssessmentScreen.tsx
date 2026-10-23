@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 
+import { ClassificationPanel } from "@/components/ClassificationPanel";
 import { Screen, stepHref } from "@/components/Screen";
 import { pct } from "@/lib/fields";
 import { useCase } from "@/lib/useCase";
 
-/** Screen 4: rank position and predicted probability with its interval (Table 3.10). */
+/**
+ * Screen 4: the label at the fixed threshold with its confidence, then rank position and
+ * predicted probability with its interval (Table 3.10, decision D6).
+ */
 export function AssessmentScreen() {
   const { kase, error, loading } = useCase();
   const a = kase?.latest_assessment ?? null;
@@ -16,7 +20,7 @@ export function AssessmentScreen() {
     <Screen
       id="assessment"
       title="Assessment"
-      lead="The model orders the caseload. It does not decide care."
+      lead="The model labels and orders the caseload. It does not decide care."
       kase={kase}
     >
       {!loading && !a ? (
@@ -29,6 +33,7 @@ export function AssessmentScreen() {
       ) : (
         <>
           {kase && <p className="mb-3 text-sm text-muted">Case: {kase.label}</p>}
+          {a && <ClassificationPanel a={a} />}
           <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
             <div className="card">
               <div className="kicker">Rank position</div>

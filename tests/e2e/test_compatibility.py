@@ -4,7 +4,8 @@ Each run registers a synthetic pregnancy, records two visits, reads the
 assessment and opens the caseload, saving one screenshot per screen to
 ``docs/evidence/compatibility/``. It checks the synthetic banner on every
 screen, the locked synthetic box, that the assessment shows a rank and an
-interval from the API, and that no triage wording appears.
+interval from the API, that the classification and its confidence are shown,
+and that no triage wording appears.
 """
 
 from __future__ import annotations
@@ -95,11 +96,19 @@ def test_five_screen_flow(request, launch, base_url, browser_name, size):
     assert re.search(
         r"95 percent interval [\d.]+ percent to [\d.]+ percent", page.inner_text("#interval")
     )
-    assert "Not a clinical risk category" in page.inner_text("#limit-assessment")
+    assert "Not a diagnosis" in page.inner_text("#limit-assessment")
+    assert page.inner_text("#class-label") in (
+        "Likely low birth weight",
+        "Not likely low birth weight",
+    )
+    assert "95 percent interval" in page.inner_text("#certainty")
+    assert re.search(
+        r"Of every 100 labelled likely, \d+ \(95 percent interval", page.inner_text("#ppv")
+    )
     _snap(page, browser_name, label, 4, "assessment")
     page.click("#to-caseload")
     page.wait_for_selector("#caseload:not([hidden])")
     page.wait_for_selector("#caseload-body tr")
     _check_screen(page, "caseload")
-    assert "Not a clinical risk category" in page.inner_text("#limit-caseload")
+    assert "Not a diagnosis" in page.inner_text("#limit-caseload")
     _snap(page, browser_name, label, 5, "caseload")

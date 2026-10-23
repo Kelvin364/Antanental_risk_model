@@ -21,7 +21,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 | Sensitivity analyses S1 to S6 | Test the comparison under changed rules | Completed | `outputs/tables/sensitivity_analyses.csv` |
 | Interface screens 1 to 5 (Table 3.10) | Register, two visits, assessment, caseload | Completed in Next.js over the API | `frontend/src/` |
 | Entry rules (R9, R10) | Ranges, timing and the synthetic flag | Completed | `docs/evidence/input_tests.md` |
-| No clinical risk category (R11) | Rank and probability with interval only | Completed | `tests/integration/test_api.py` |
+| Label at a fixed threshold with its confidence (R11 revised, decision D6) | Rank, probability with interval, and a label with its sensitivity, specificity and predictive values | Completed on development records | `webapp/model/classification.json` |
 | Next.js interface, cross browser, accessibility and performance tests | Production interface and evidence | Completed: five routes over the API, served by FastAPI | `frontend/`, `docs/evidence/compatibility.md`, `docs/evidence/accessibility.md`, `docs/evidence/performance.md` |
 | Container image | One command deployment | Completed: built and run with `docker compose up --build`; health check passes and cases persist across a restart | `Dockerfile`, `docker-compose.yml` |
 
@@ -45,7 +45,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 
 **Data model.** `python -m antenatal load-db` writes the research side of the proposal's data model into the application's SQLite file: pregnancy records with their eligibility and exclusion reason, cleaned visit measurements unique on record and visit number, the frozen model configurations, and every outer fold result unique on model, feature set, repeat and fold. The prototype's synthetic cases, visits and assessments sit in the same file. No table records which records are held out.
 
-**Prototype.** A FastAPI application whose routers validate and route, whose services decide, and whose database stores synthetic cases, visits and assessments. Scoring goes only through the frozen artefact, whose checksum is verified when the application starts; a changed file stops the server. The interface shows rank, probability, the labelled interval, prevalence, event count, artefact version and a fixed limitation line, and never a risk category.
+**Prototype.** A FastAPI application whose routers validate and route, whose services decide, and whose database stores synthetic cases, visits and assessments. Scoring goes only through the frozen artefact, whose checksum is verified when the application starts; a changed file stops the server. The interface shows rank, probability, the labelled interval, prevalence, event count, artefact version and a fixed limitation line. It labels a case "Likely low birth weight" when the probability reaches the threshold fixed at the highest 20 percent of out of fold predictions, shows how often that label is right with group bootstrap intervals, and says whether the case's own interval crosses the threshold.
 
 ## 3. Testing approaches and results
 

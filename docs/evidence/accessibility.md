@@ -1,8 +1,8 @@
 # Accessibility evidence
 
-Measured by `scripts/accessibility_audit.py` on 2026-10-22T21:48:20+00:00 with Lighthouse
+Measured by `scripts/accessibility_audit.py` on 2026-10-23T14:57:33+00:00 with Lighthouse
 12.8.2 (accessibility category only, which runs the axe-core rules) in
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 on Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35. The script started its own server with a temporary
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 on macOS-15.5-arm64-arm-64bit. The script started its own server with a temporary
 database, recorded one synthetic case with both visits and an assessment through the API,
 and audited each screen with that case open. The phone run uses Lighthouse's default
 mobile emulation and the desktop run its desktop preset. The raw results are in

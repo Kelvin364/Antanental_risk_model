@@ -71,6 +71,31 @@ class VisitOut(VisitCreate):
     visit_number: int
 
 
+class Estimate(BaseModel):
+    """A proportion with its 95 percent group bootstrap interval."""
+
+    estimate: float
+    low: float
+    high: float
+
+
+class ClassificationOut(BaseModel):
+    """The label at the fixed threshold and how far it can be trusted (decision D6)."""
+
+    label: str
+    likely: bool
+    certainty: str
+    certainty_statement: str
+    threshold: float
+    budget_percent: int
+    sensitivity: Estimate
+    specificity: Estimate
+    ppv: Estimate
+    npv: Estimate
+    n: int
+    events: int
+
+
 class AssessmentOut(BaseModel):
     """What the Assessment screen shows (Table 3.10, screen 4)."""
 
@@ -85,6 +110,7 @@ class AssessmentOut(BaseModel):
     artefact_version: str
     artefact_sha256: str
     limitation: str
+    classification: ClassificationOut
     assessed_at: datetime | None = None
 
 
@@ -107,6 +133,8 @@ class CaseloadRow(BaseModel):
     probability: float
     interval_low: float
     interval_high: float
+    classification: str
+    certainty: str
     artefact_version: str
 
 
@@ -118,6 +146,7 @@ class CaseloadOut(BaseModel):
     prevalence: float
     events: int
     artefact_version: str
+    classification_threshold: float
     interval_label: str
     limitation: str
     banner: str
