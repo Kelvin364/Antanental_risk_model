@@ -1,0 +1,157 @@
+predictor,split,group,n,missing_percent
+age,outcome,low birth weight,165,1.8
+age,outcome,not low birth weight,2961,1.7
+age,age_band,20 to 34,2171,0.0
+age,age_band,35 or over,388,0.0
+age,age_band,age missing,54,100.0
+age,age_band,under 20,513,0.0
+gravidity,outcome,low birth weight,165,0.0
+gravidity,outcome,not low birth weight,2961,0.0
+gravidity,age_band,20 to 34,2171,0.0
+gravidity,age_band,35 or over,388,0.0
+gravidity,age_band,age missing,54,0.0
+gravidity,age_band,under 20,513,0.0
+prior_deliveries,outcome,low birth weight,165,0.0
+prior_deliveries,outcome,not low birth weight,2961,0.0
+prior_deliveries,age_band,20 to 34,2171,0.0
+prior_deliveries,age_band,35 or over,388,0.0
+prior_deliveries,age_band,age missing,54,0.0
+prior_deliveries,age_band,under 20,513,0.0
+height_cm,outcome,low birth weight,165,0.0
+height_cm,outcome,not low birth weight,2961,0.2
+height_cm,age_band,20 to 34,2171,0.1
+height_cm,age_band,35 or over,388,0.5
+height_cm,age_band,age missing,54,0.0
+height_cm,age_band,under 20,513,0.2
+registration_weight,outcome,low birth weight,165,2.4
+registration_weight,outcome,not low birth weight,2961,0.9
+registration_weight,age_band,20 to 34,2171,0.9
+registration_weight,age_band,35 or over,388,0.5
+registration_weight,age_band,age missing,54,0.0
+registration_weight,age_band,under 20,513,1.8
+prior_caesarean,outcome,low birth weight,165,0.0
+prior_caesarean,outcome,not low birth weight,2961,0.0
+prior_caesarean,age_band,20 to 34,2171,0.0
+prior_caesarean,age_band,35 or over,388,0.0
+prior_caesarean,age_band,age missing,54,0.0
+prior_caesarean,age_band,under 20,513,0.0
+prior_hypertension_pregnancy,outcome,low birth weight,165,0.0
+prior_hypertension_pregnancy,outcome,not low birth weight,2961,0.0
+prior_hypertension_pregnancy,age_band,20 to 34,2171,0.0
+prior_hypertension_pregnancy,age_band,35 or over,388,0.0
+prior_hypertension_pregnancy,age_band,age missing,54,0.0
+prior_hypertension_pregnancy,age_band,under 20,513,0.0
+chronic_hypertension,outcome,low birth weight,165,0.0
+chronic_hypertension,outcome,not low birth weight,2961,0.0
+chronic_hypertension,age_band,20 to 34,2171,0.0
+chronic_hypertension,age_band,35 or over,388,0.0
+chronic_hypertension,age_band,age missing,54,0.0
+chronic_hypertension,age_band,under 20,513,0.0
+diabetes,outcome,low birth weight,165,0.0
+diabetes,outcome,not low birth weight,2961,0.0
+diabetes,age_band,20 to 34,2171,0.0
+diabetes,age_band,35 or over,388,0.0
+diabetes,age_band,age missing,54,0.0
+diabetes,age_band,under 20,513,0.0
+hiv,outcome,low birth weight,165,0.0
+hiv,outcome,not low birth weight,2961,0.0
+hiv,age_band,20 to 34,2171,0.0
+hiv,age_band,35 or over,388,0.0
+hiv,age_band,age missing,54,0.0
+hiv,age_band,under 20,513,0.0
+tuberculosis,outcome,low birth weight,165,0.0
+tuberculosis,outcome,not low birth weight,2961,0.0
+tuberculosis,age_band,20 to 34,2171,0.0
+tuberculosis,age_band,35 or over,388,0.0
+tuberculosis,age_band,age missing,54,0.0
+tuberculosis,age_band,under 20,513,0.0
+sickle_cell,outcome,low birth weight,165,0.0
+sickle_cell,outcome,not low birth weight,2961,0.0
+sickle_cell,age_band,20 to 34,2171,0.0
+sickle_cell,age_band,35 or over,388,0.0
+sickle_cell,age_band,age missing,54,0.0
+sickle_cell,age_band,under 20,513,0.0
+smoking,outcome,low birth weight,165,0.0
+smoking,outcome,not low birth weight,2961,0.0
+smoking,age_band,20 to 34,2171,0.0
+smoking,age_band,35 or over,388,0.0
+smoking,age_band,age missing,54,0.0
+smoking,age_band,under 20,513,0.0
+intimate_partner_violence,outcome,low birth weight,165,0.0
+intimate_partner_violence,outcome,not low birth weight,2961,0.0
+intimate_partner_violence,age_band,20 to 34,2171,0.0
+intimate_partner_violence,age_band,35 or over,388,0.0
+intimate_partner_violence,age_band,age missing,54,0.0
+intimate_partner_violence,age_band,under 20,513,0.0
+sbp_v1,outcome,low birth weight,165,0.0
+sbp_v1,outcome,not low birth weight,2961,0.0
+sbp_v1,age_band,20 to 34,2171,0.0
+sbp_v1,age_band,35 or over,388,0.0
+sbp_v1,age_band,age missing,54,0.0
+sbp_v1,age_band,under 20,513,0.0
+dbp_v1,outcome,low birth weight,165,0.0
+dbp_v1,outcome,not low birth weight,2961,0.0
+dbp_v1,age_band,20 to 34,2171,0.0
+dbp_v1,age_band,35 or over,388,0.0
+dbp_v1,age_band,age missing,54,0.0
+dbp_v1,age_band,under 20,513,0.0
+weight_v1,outcome,low birth weight,165,0.0
+weight_v1,outcome,not low birth weight,2961,0.2
+weight_v1,age_band,20 to 34,2171,0.2
+weight_v1,age_band,35 or over,388,0.5
+weight_v1,age_band,age missing,54,0.0
+weight_v1,age_band,under 20,513,0.0
+ga_v1,outcome,low birth weight,165,0.0
+ga_v1,outcome,not low birth weight,2961,0.0
+ga_v1,age_band,20 to 34,2171,0.0
+ga_v1,age_band,35 or over,388,0.0
+ga_v1,age_band,age missing,54,0.0
+ga_v1,age_band,under 20,513,0.0
+pulse_v1,outcome,low birth weight,165,12.7
+pulse_v1,outcome,not low birth weight,2961,18.9
+pulse_v1,age_band,20 to 34,2171,19.5
+pulse_v1,age_band,35 or over,388,20.1
+pulse_v1,age_band,age missing,54,24.1
+pulse_v1,age_band,under 20,513,12.9
+hb_v1,outcome,low birth weight,165,12.1
+hb_v1,outcome,not low birth weight,2961,9.5
+hb_v1,age_band,20 to 34,2171,8.9
+hb_v1,age_band,35 or over,388,11.9
+hb_v1,age_band,age missing,54,11.1
+hb_v1,age_band,under 20,513,10.7
+sbp_v2,outcome,low birth weight,165,0.0
+sbp_v2,outcome,not low birth weight,2961,0.0
+sbp_v2,age_band,20 to 34,2171,0.0
+sbp_v2,age_band,35 or over,388,0.0
+sbp_v2,age_band,age missing,54,0.0
+sbp_v2,age_band,under 20,513,0.0
+dbp_v2,outcome,low birth weight,165,0.0
+dbp_v2,outcome,not low birth weight,2961,0.0
+dbp_v2,age_band,20 to 34,2171,0.0
+dbp_v2,age_band,35 or over,388,0.0
+dbp_v2,age_band,age missing,54,0.0
+dbp_v2,age_band,under 20,513,0.0
+weight_v2,outcome,low birth weight,165,0.0
+weight_v2,outcome,not low birth weight,2961,0.3
+weight_v2,age_band,20 to 34,2171,0.4
+weight_v2,age_band,35 or over,388,0.0
+weight_v2,age_band,age missing,54,0.0
+weight_v2,age_band,under 20,513,0.4
+ga_v2,outcome,low birth weight,165,0.0
+ga_v2,outcome,not low birth weight,2961,0.0
+ga_v2,age_band,20 to 34,2171,0.0
+ga_v2,age_band,35 or over,388,0.0
+ga_v2,age_band,age missing,54,0.0
+ga_v2,age_band,under 20,513,0.0
+pulse_v2,outcome,low birth weight,165,11.5
+pulse_v2,outcome,not low birth weight,2961,19.0
+pulse_v2,age_band,20 to 34,2171,19.5
+pulse_v2,age_band,35 or over,388,20.9
+pulse_v2,age_band,age missing,54,22.2
+pulse_v2,age_band,under 20,513,12.9
+hb_v2,outcome,low birth weight,165,63.0
+hb_v2,outcome,not low birth weight,2961,61.1
+hb_v2,age_band,20 to 34,2171,61.4
+hb_v2,age_band,35 or over,388,60.1
+hb_v2,age_band,age missing,54,81.5
+hb_v2,age_band,under 20,513,59.3

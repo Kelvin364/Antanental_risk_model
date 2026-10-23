@@ -116,6 +116,14 @@ def run_experiments_v2(paths: ProjectPaths) -> None:
     print(run(paths, PRIMARY))
 
 
+def audit_report(paths: ProjectPaths) -> None:
+    """Guideline version 2 Stage 1: write docs/implementation_audit.md and its tables."""
+    from antenatal.reporting.audit_report import write_audit_report
+
+    write_audit_report(paths, PRIMARY)
+    print("Wrote docs/implementation_audit.md")
+
+
 def summarise_results(paths: ProjectPaths) -> None:
     """Collect every headline number, with its source file, into results_summary.csv."""
     from antenatal.reporting.results_summary import build_results_summary
@@ -170,6 +178,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-classification": freeze_classification,
         "audit-holdout": audit_holdout,
         "run-experiments-v2": run_experiments_v2,
+        "audit-report": audit_report,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,

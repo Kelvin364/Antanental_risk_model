@@ -99,9 +99,7 @@ def test_five_screen_flow(request, launch, server, browser_name, size):
     page.wait_for_selector("#assessment:not([hidden])")
     page.locator("#rank", has_text=" of ").wait_for()
     _check_screen(page, "assessment")
-    assert re.search(
-        r"95% interval [\d.]+% to [\d.]+%", page.inner_text("#interval")
-    )
+    assert re.search(r"95% interval [\d.]+% to [\d.]+%", page.inner_text("#interval"))
     assert "Not a diagnosis" in page.inner_text("#limit-assessment")
     assert page.inner_text("#class-label") in (
         "Likely low birth weight",

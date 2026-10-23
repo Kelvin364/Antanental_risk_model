@@ -1,0 +1,8 @@
+check,count
+Records in the file,8817
+Duplicate sequence numbers in the file,0
+Exact duplicate rows ignoring the sequence number,1
+Records in the analysis cohort,3908
+Registration groups in the analysis cohort,3905
+Groups holding more than one record,3
+"Largest group, records",2
