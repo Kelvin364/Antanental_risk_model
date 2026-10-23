@@ -88,6 +88,17 @@ make serve
   git under the tag `pre-v2`. A newer locked model is saved beside it, never over it.
 * The local environment keeps working while the online one is repaired.
 
+## Check that the deployed model answers
+
+```
+fly ssh console --app antenatal-caseload --pty=false -C "python -m webapp.app.selfcheck"
+```
+
+It scores one reference synthetic case with the deployed model and prints
+`"matches_development_machine_to_1e-9": true` when the answer equals the development
+machine's. It starts no server and uses no database. Do not start a second server on the
+machine: with 512 MB it runs out of memory and the live server is killed.
+
 ## Monitor
 
 * `fly status` and `fly logs`. Fly's health check calls `/health` every 30 seconds; it

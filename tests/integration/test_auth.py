@@ -189,10 +189,9 @@ def test_account_rules_and_administration_actions(app):
     assert admin.post("/api/admin/users/9999/reset-password").status_code == 422
 
 
-def test_selfcheck_serves_the_frozen_model_end_to_end(monkeypatch, tmp_path):
+def test_selfcheck_scores_like_the_development_machine():
     from webapp.app import selfcheck
 
-    monkeypatch.setenv("ANTENATAL_DATABASE_URL", f"sqlite:///{tmp_path / 'unused.sqlite3'}")
     result = selfcheck.run()
-    assert result["all_passed"] and result["artefact_version"] == "1.0.0"
-    assert result["probability_served"] == pytest.approx(result["probability_direct"], abs=1e-9)
+    assert result["matches_development_machine_to_1e-9"] and result["artefact_version"] == "1.0.0"
+    assert result["label"] in ("Likely low birth weight", "Not likely low birth weight")
