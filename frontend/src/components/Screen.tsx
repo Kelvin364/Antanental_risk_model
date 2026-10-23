@@ -71,7 +71,7 @@ function Steps({ current, kase }: { current: Step; kase: CaseOut | null }) {
   );
 }
 
-function Banner() {
+export function Banner() {
   const [text, setText] = useState(BANNER);
   useEffect(() => {
     api.interfaceText().then((t) => setText(t.banner), () => undefined);
@@ -107,5 +107,19 @@ export function Screen(props: {
         </section>
       </main>
     </>
+  );
+}
+
+/** A page outside the five steps (sign in, account, administration, about), with the banner. */
+export function PlainScreen(props: { id: string; title: string; lead: string; children: React.ReactNode }) {
+  return (
+    <main className="mx-auto max-w-[980px] px-4 pt-5 pb-12">
+      <Banner />
+      <section id={props.id}>
+        <h1 className="mb-1 text-[26px] font-bold">{props.title}</h1>
+        <p className="mb-4.5 text-muted">{props.lead}</p>
+        {props.children}
+      </section>
+    </main>
   );
 }

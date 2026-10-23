@@ -49,7 +49,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 
 ## 3. Testing approaches and results
 
-The test suite ran 250 tests in 210.1 seconds with 0 failures: 201 unit tests, 43 integration tests and 6 browser tests. Line coverage of the package and the application was 97.2 percent of 2,983 statements. Ruff reported no findings and black reported no changes needed.
+The test suite ran 278 tests in 213.6 seconds with 0 failures: 206 unit tests, 66 integration tests and 6 browser tests. Line coverage of the package and the application was 96.9 percent of 3,426 statements. Ruff reported no findings and black reported no changes needed.
 
 | Approach | What it checks |
 | --- | --- |
@@ -81,7 +81,7 @@ The input variation run gave 12 of 12 inputs behaving as expected:
 
 ## 4. Code quality practices
 
-The package separates data access, parsing, cohort rules, partitioning, features, models, evaluation, the artefact and reporting into their own modules, and every constant lives in one frozen `StudySpec`. Abstraction and polymorphism are used where there is more than one implementation: `FeatureSet` with its subclasses, and `MetricStrategy` with one subclass per metric. Every public class and function has a docstring and type hints. No function exceeds 50 lines and no file exceeds 300 lines, checked by a script. Ruff and black run locally and in the continuous integration workflow, every output file carries a checksum in `outputs/manifest.json`, and the README results and tree are generated and checked by a test. The history holds 72 commits, each with an imperative message stating what changed and why.
+The package separates data access, parsing, cohort rules, partitioning, features, models, evaluation, the artefact and reporting into their own modules, and every constant lives in one frozen `StudySpec`. Abstraction and polymorphism are used where there is more than one implementation: `FeatureSet` with its subclasses, and `MetricStrategy` with one subclass per metric. Every public class and function has a docstring and type hints. No function exceeds 50 lines and no file exceeds 300 lines, checked by a script. Ruff and black run locally and in the continuous integration workflow, every output file carries a checksum in `outputs/manifest.json`, and the README results and tree are generated and checked by a test. The history holds 74 commits, each with an imperative message stating what changed and why.
 
 ## 5. Results and limitations
 

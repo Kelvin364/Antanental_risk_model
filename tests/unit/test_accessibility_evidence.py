@@ -2,7 +2,16 @@
 
 import json
 
-SCREENS = {"Register", "Visit one", "Visit two", "Assessment", "Caseload"}
+SCREENS = {
+    "Sign in",
+    "About",
+    "Administration",
+    "Register",
+    "Visit one",
+    "Visit two",
+    "Assessment",
+    "Caseload",
+}
 
 
 def test_accessibility_evidence_is_complete(root):

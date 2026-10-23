@@ -1,7 +1,7 @@
 """Regenerate the design images in designs/web/ from the live interface.
 
 Usage: ``python scripts/render_designs.py`` (needs ``make browsers`` once).
-The script starts its own server with a temporary database, walks the five
+The script starts its own server with a temporary database, signs in, walks the five
 screens in Chromium at 1366 by 768 with a synthetic case, and saves
 ``01-register.png`` to ``05-caseload.png``. It stops with an error if any
 screen shows triage wording, so a design image can never carry it.
@@ -20,6 +20,9 @@ import urllib.request
 from pathlib import Path
 
 from playwright.sync_api import Page, sync_playwright
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence_account import create_account  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "designs" / "web"
@@ -68,8 +71,12 @@ def _fill(page: Page, prefix: str, values: dict[str, str]) -> None:
         page.fill(f"#{prefix}-{field}", value)
 
 
-def _walk(page: Page) -> list[Path]:
-    shots = []
+def _walk(page: Page, username: str, password: str) -> list[Path]:
+    page.wait_for_selector("#sign-in-screen")
+    page.fill("#username", username)
+    shots = [_capture(page, "sign-in-screen", "00-sign-in")]
+    page.fill("#password", password)
+    page.click("#sign-in")
     page.wait_for_selector("#register:not([hidden])")
     _fill(page, "reg", REGISTER)
     shots.append(_capture(page, "register", "01-register"))
@@ -83,7 +90,7 @@ def _walk(page: Page) -> list[Path]:
     shots.append(_capture(page, "visit2", "03-visit-two"))
     page.click("#save-visit2")
     page.wait_for_selector("#assessment:not([hidden])")
-    page.wait_for_function("document.querySelector('#rank').textContent.includes(' of ')")
+    page.locator("#rank", has_text=" of ").wait_for()
     shots.append(_capture(page, "assessment", "04-assessment"))
     page.click("#to-caseload")
     page.wait_for_selector("#caseload-body tr")
@@ -96,13 +103,15 @@ def main() -> int:
         raise SystemExit("The interface is not built; run `make frontend` first.")
     OUT.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
-        server, url = _server(Path(tmp) / "designs.sqlite3")
+        database = Path(tmp) / "designs.sqlite3"
+        server, url = _server(database)
         try:
+            account = create_account(f"sqlite:///{database}", url, "designer")
             with sync_playwright() as session:
                 browser = session.chromium.launch()
                 page = browser.new_page(viewport={"width": 1366, "height": 768})
-                page.goto(url)
-                shots = _walk(page)
+                page.goto(f"{url}/register/")
+                shots = _walk(page, account.username, account.password)
                 browser.close()
         finally:
             server.terminate()

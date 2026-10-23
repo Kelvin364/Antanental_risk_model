@@ -1,10 +1,58 @@
 {
-  "recorded_at": "2026-10-23T14:57:33+00:00",
+  "recorded_at": "2026-10-23T15:43:50+00:00",
   "lighthouse": "12.8.2",
   "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
   "os": "macOS-15.5-arm64-arm-64bit",
   "results": [
     {
+      "screen": "Sign in",
+      "path": "/sign-in/",
+      "size": "phone",
+      "score": 100,
+      "audits_passed": 20,
+      "failed": []
+    },
+    {
+      "screen": "Sign in",
+      "path": "/sign-in/",
+      "size": "desktop",
+      "score": 100,
+      "audits_passed": 20,
+      "failed": []
+    },
+    {
+      "screen": "About",
+      "path": "/about/",
+      "size": "phone",
+      "score": 100,
+      "audits_passed": 19,
+      "failed": []
+    },
+    {
+      "screen": "About",
+      "path": "/about/",
+      "size": "desktop",
+      "score": 100,
+      "audits_passed": 19,
+      "failed": []
+    },
+    {
+      "screen": "Administration",
+      "path": "/admin/",
+      "size": "phone",
+      "score": 100,
+      "audits_passed": 23,
+      "failed": []
+    },
+    {
+      "screen": "Administration",
+      "path": "/admin/",
+      "size": "desktop",
+      "score": 100,
+      "audits_passed": 23,
+      "failed": []
+    },
+    {
       "screen": "Register",
       "path": "/register/",
       "size": "phone",
@@ -57,7 +105,7 @@
       "path": "/assessment/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 21,
+      "audits_passed": 22,
       "failed": []
     },
     {
@@ -65,7 +113,7 @@
       "path": "/assessment/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 21,
+      "audits_passed": 22,
       "failed": []
     },
     {
@@ -73,7 +121,7 @@
       "path": "/caseload/",
       "size": "phone",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 23,
       "failed": []
     },
     {
@@ -81,7 +129,7 @@
       "path": "/caseload/",
       "size": "desktop",
       "score": 100,
-      "audits_passed": 22,
+      "audits_passed": 23,
       "failed": []
     }
   ]

@@ -68,12 +68,18 @@ def _check_screen(page, section: str) -> None:
 
 @pytest.mark.parametrize("size", SIZES, ids=lambda s: f"{s[0]}x{s[1]}")
 @pytest.mark.parametrize("browser_name", BROWSERS)
-def test_five_screen_flow(request, launch, base_url, browser_name, size):
+def test_five_screen_flow(request, launch, server, browser_name, size):
     width, height = size
     label = f"{width}x{height}"
     request.node.compatibility_key = (browser_name, label)
     page = launch(browser_name).new_page(viewport={"width": width, "height": height})
-    page.goto(base_url)
+    base_url, account = server
+    page.goto(f"{base_url}/register/")
+    page.wait_for_selector("#sign-in-screen")
+    assert "Synthetic cases only" in page.locator("#banner").inner_text()
+    page.fill("#username", account.username)
+    page.fill("#password", account.password)
+    page.click("#sign-in")
     page.wait_for_selector("#register:not([hidden])")
     _check_screen(page, "register")
     assert page.is_checked("#synthetic") and page.is_disabled("#synthetic")
@@ -91,7 +97,7 @@ def test_five_screen_flow(request, launch, base_url, browser_name, size):
     _snap(page, browser_name, label, 3, "visit-two")
     page.click("#save-visit2")
     page.wait_for_selector("#assessment:not([hidden])")
-    page.wait_for_function("document.querySelector('#rank').textContent.includes(' of ')")
+    page.locator("#rank", has_text=" of ").wait_for()
     _check_screen(page, "assessment")
     assert re.search(
         r"95 percent interval [\d.]+ percent to [\d.]+ percent", page.inner_text("#interval")

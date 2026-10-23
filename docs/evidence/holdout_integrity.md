@@ -1,6 +1,6 @@
 # Held out partition integrity
 
-Written by `python -m antenatal audit-holdout` on 2026-10-23T15:22:50+00:00.
+Written by `python -m antenatal audit-holdout` on 2026-10-23T15:46:15+00:00.
 The supervisor's one absolute rule is that the held out records never reach training
 (decision D7). Each check below reads identifiers, predictor values or stored outputs
 only; none reads a held out outcome, fits a model or scores the held out records.

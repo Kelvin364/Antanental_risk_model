@@ -22,6 +22,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
 EVIDENCE = ROOT / "docs" / "evidence"
 RESULTS: dict[tuple[str, str], str] = {}
 VERSIONS: dict[str, str] = {}
@@ -36,7 +37,8 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture(scope="session")
-def base_url(tmp_path_factory):
+def server(tmp_path_factory):
+    """A running server and a signed in evidence account on a temporary database."""
     if not (ROOT / "frontend" / "out" / "index.html").exists():
         pytest.skip("the interface is not built; run `make frontend` first")
     with socket.socket() as sock:
@@ -45,7 +47,7 @@ def base_url(tmp_path_factory):
     database = tmp_path_factory.mktemp("e2e") / "app.sqlite3"
     env = {**os.environ, "ANTENATAL_DATABASE_URL": f"sqlite:///{database}"}
     command = [sys.executable, "-m", "uvicorn", "webapp.app.main:app", "--port", str(port)]
-    server = subprocess.Popen(
+    process = subprocess.Popen(
         command, cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     url = f"http://127.0.0.1:{port}"
@@ -55,9 +57,11 @@ def base_url(tmp_path_factory):
             break
         except OSError:
             time.sleep(0.1)
-    yield url
-    server.terminate()
-    server.wait(timeout=30)
+    from evidence_account import create_account
+
+    yield url, create_account(f"sqlite:///{database}", url)
+    process.terminate()
+    process.wait(timeout=30)
 
 
 @pytest.fixture(scope="session")

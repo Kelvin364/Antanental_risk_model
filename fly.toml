@@ -1,0 +1,36 @@
+# Fly.io configuration for the online system (decision D7). Synthetic cases only.
+# The image is built on Fly's builders (`fly deploy --remote-only`), so Docker is
+# not needed locally. The raw data and the partition files are never in the image.
+app = "antenatal-caseload"
+primary_region = "jnb"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  ANTENATAL_DATABASE_URL = "sqlite:////app/state/app.sqlite3"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  # Stop when idle and start on the next request: the main cost control.
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    timeout = "5s"
+
+[[mounts]]
+  source = "app_state"
+  destination = "/app/state"
+
+[[vm]]
+  # The benchmark's peak resident memory was 267.7 MB, so 512 MB fits one worker.
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

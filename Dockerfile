@@ -23,8 +23,11 @@ RUN pip install --no-cache-dir --no-deps .
 COPY webapp ./webapp
 COPY --from=interface /frontend/out ./frontend/out
 
+COPY deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN useradd --create-home appuser && mkdir -p /app/state && chown appuser /app/state
-USER appuser
+
+# The entrypoint hands /app/state to appuser and drops root before the server starts.
 EXPOSE 8000
 HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"
-CMD ["uvicorn", "webapp.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["uvicorn", "webapp.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]

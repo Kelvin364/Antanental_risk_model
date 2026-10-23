@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 
 .PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
-	frontend api-types frontend-dev benchmark accessibility docker audit
+	frontend api-types frontend-dev benchmark accessibility docker audit deploy backup-online
 
 install:
 	python3.12 -m venv .venv
@@ -67,3 +67,12 @@ docker:
 # Evidence that the held out records never reached training (decision D7).
 audit:
 	$(PYTHON) -m antenatal audit-holdout
+
+# Online deployment on Fly.io and its backup to the local environment (docs/OPERATIONS.md).
+deploy:
+	fly deploy --remote-only
+
+backup-online:
+	mkdir -p backups
+	fly ssh console -C "python -c \"import sqlite3; sqlite3.connect('/app/state/app.sqlite3').backup(sqlite3.connect('/app/state/backup.sqlite3'))\""
+	fly ssh sftp get /app/state/backup.sqlite3 backups/online.sqlite3

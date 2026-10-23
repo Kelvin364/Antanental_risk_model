@@ -14,6 +14,7 @@ from sqlalchemy.orm import sessionmaker
 from webapp.app.core.settings import INTERVAL_LABEL, LIMITATION, SYNTHETIC_BANNER
 from webapp.app.db.models import SyntheticCase
 from webapp.app.schemas.cases import CaseloadOut, CaseloadRow
+from webapp.app.services.auth_service import CurrentUser
 from webapp.app.services.model_service import ModelService
 
 
@@ -24,10 +25,13 @@ class RankingService:
         self._sessions = sessions
         self._model = model
 
-    def caseload(self) -> CaseloadOut:
+    def caseload(self, viewer: CurrentUser) -> CaseloadOut:
         """Every assessed case, highest probability first."""
         with self._sessions() as session:
-            cases = session.scalars(select(SyntheticCase)).all()
+            query = select(SyntheticCase)
+            if not viewer.is_administrator:
+                query = query.where(SyntheticCase.owner_id == viewer.id)
+            cases = session.scalars(query).all()
             latest = [(case, case.assessments[-1]) for case in cases if case.assessments]
         latest.sort(key=lambda pair: (-pair[1].probability, pair[0].id))
         rows = [self._row(position, case, a) for position, (case, a) in enumerate(latest, 1)]

@@ -27,6 +27,9 @@ from pathlib import Path
 
 import psutil
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence_account import create_account  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 SEQUENTIAL, CONCURRENT = 500, 50
 PAYLOAD = json.dumps(
@@ -87,11 +90,9 @@ class MemorySampler(threading.Thread):
         self._stop.set()
 
 
-def predict_once(base: str) -> float:
-    """One POST /api/predict; returns the latency in milliseconds."""
-    request = urllib.request.Request(
-        f"{base}/api/predict", data=PAYLOAD, headers={"Content-Type": "application/json"}
-    )
+def predict_once(base: str, headers: dict[str, str]) -> float:
+    """One signed in POST /api/predict; returns the latency in milliseconds."""
+    request = urllib.request.Request(f"{base}/api/predict", data=PAYLOAD, headers=headers)
     start = time.perf_counter()
     with urllib.request.urlopen(request, timeout=30) as response:
         response.read()
@@ -157,15 +158,19 @@ def run() -> dict[str, object]:
     port = free_port()
     base = f"http://127.0.0.1:{port}"
     with tempfile.TemporaryDirectory() as tmp:
-        server, startup = start_server(port, Path(tmp) / "bench.sqlite3")
+        database = Path(tmp) / "bench.sqlite3"
+        server, startup = start_server(port, database)
         sampler = MemorySampler(server.pid)
         sampler.start()
         try:
-            predict_once(base)
-            sequential = [predict_once(base) for _ in range(SEQUENTIAL)]
+            headers = create_account(f"sqlite:///{database}", base).headers()
+            predict_once(base, headers)
+            sequential = [predict_once(base, headers) for _ in range(SEQUENTIAL)]
             with ThreadPoolExecutor(max_workers=CONCURRENT) as pool:
                 start = time.perf_counter()
-                concurrent = list(pool.map(lambda _: predict_once(base), range(CONCURRENT)))
+                concurrent = list(
+                    pool.map(lambda _: predict_once(base, headers), range(CONCURRENT))
+                )
                 wall = time.perf_counter() - start
         finally:
             sampler.stop()

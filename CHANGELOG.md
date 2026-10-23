@@ -13,8 +13,13 @@ All notable changes to this project. Dates are in UTC.
 * `make benchmark`, `make accessibility` and `make docker`. The container image was built and run for the first time; its health check passes and cases persist across a restart.
 * A label on every assessment, "Likely" or "Not likely low birth weight", at a threshold fixed from out of fold predictions by `python -m antenatal freeze-classification` (decision D6). The assessment shows the threshold's sensitivity, specificity and predictive values with intervals and whether the case's interval crosses the threshold; the caseload shows each label. The threshold is saved with the artefact's checksum and the server refuses one fixed for another artefact.
 
+* Sign in with administrator and researcher roles (decision D1): scrypt password hashes, server side sessions in HttpOnly SameSite cookies, a CSRF token on every change, lockout after five failures, a per address sign in limit, an audit trail without clinical values, and researchers limited to their own cases. Sign in, account, administration and about pages; the first administrator comes from `python -m webapp.app.admin create-admin`.
+* `TrainingGuard`, required by every model fit, and `make audit` with ten recorded checks that the held out records never reached training (decision D7).
+* Fly.io deployment files, `scripts/smoke_test.py`, `docs/OPERATIONS.md`, `make deploy`, `make backup-online` and an optional CI deploy job.
+
 ### Changed
 
+* Security headers, including a content security policy, a 64 KB request cap, and a container start script that hands the state volume to the app user.
 * The latency benchmark was rerun against the current server and now names the CPU on Linux.
 * The step navigation wraps at phone width instead of scrolling sideways and hiding the current step.
 * The limitation line reads "Not a diagnosis and not a recommendation for care"; every figure footer was redrawn.

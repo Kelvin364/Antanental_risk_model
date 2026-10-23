@@ -60,6 +60,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
 | Prototype interface over the API, five screens (R11) | Completed: Next.js in `frontend/` | [`frontend/src/`](frontend/src) |
+| Sign in with administrator and researcher roles, enforced on the server: scrypt password hashes, server side sessions in HttpOnly SameSite cookies, CSRF tokens, lockout after five failures, per address rate limit, audit trail, researchers see only their own cases (decision D1) | Completed | [`auth_service.py`](webapp/app/services/auth_service.py), [`tests/integration/test_auth.py`](tests/integration/test_auth.py) |
 | Classification at a fixed threshold with its confidence (decision D6): label, sensitivity, specificity and predictive values with intervals, and whether each case's interval crosses the threshold | Completed on development records; not yet checked on the held out partition | [`classification.py`](src/antenatal/artefact/classification.py), [`webapp/model/classification.json`](webapp/model/classification.json) |
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
@@ -72,6 +73,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Next.js interface (Stage 6): App Router, TypeScript, Tailwind, typed client generated from the OpenAPI schema, static export served by FastAPI | Completed | [`frontend/`](frontend), [`scripts/export_openapi.py`](scripts/export_openapi.py), [`tests/e2e/`](tests/e2e) |
 | Accessibility of the five screens: Lighthouse accessibility scores at phone and desktop sizes | Completed | [`scripts/accessibility_audit.py`](scripts/accessibility_audit.py), [`docs/evidence/accessibility.md`](docs/evidence/accessibility.md) |
 | Docker image: interface built in a Node stage, API and interface served by one container, cases kept on a named volume | Completed: built and run with `docker compose up --build`, health check passing | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
+| Online deployment on Fly.io with the local environment as backup (decision D7) | Prepared and smoke tested locally (11 of 11 checks); the live deployment waits for the Fly account | [`fly.toml`](fly.toml), [`docs/OPERATIONS.md`](docs/OPERATIONS.md), [`scripts/smoke_test.py`](scripts/smoke_test.py) |
 | Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
 | Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
 | Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
@@ -129,12 +131,15 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── data
 │   ├── README.md
 │   └── maternal_dataset_csv.csv
+├── deploy
+│   └── entrypoint.sh
 ├── designs
 │   ├── README.md
 │   └── web
 ├── docker-compose.yml
 ├── docs
 │   ├── ARCHITECTURE.md
+│   ├── OPERATIONS.md
 │   ├── Technical-Report.md
 │   ├── Technical-Report.pdf
 │   ├── VIDEO_SCRIPT.md
@@ -144,6 +149,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── evidence
 │   ├── tripod_ai_checklist.md
 │   └── tripod_ai_pending.md
+├── fly.toml
 ├── frontend
 │   ├── next-env.d.ts
 │   ├── next.config.ts
@@ -175,11 +181,13 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── accessibility_audit.py
 │   ├── benchmark_api.py
 │   ├── build_report_pdf.py
+│   ├── evidence_account.py
 │   ├── export_openapi.py
 │   ├── input_variation.py
 │   ├── package_attempt2.py
 │   ├── record_test_results.py
-│   └── render_designs.py
+│   ├── render_designs.py
+│   └── smoke_test.py
 ├── src
 │   └── antenatal
 ├── tests

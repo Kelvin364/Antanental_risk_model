@@ -55,31 +55,22 @@ def _duplicates(development: pd.DataFrame, held: pd.DataFrame, columns: list[str
     return int(key(held).isin(set(key(development))).sum())
 
 
-def run_audit(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> pd.DataFrame:
-    """Every integrity check as one row: check, result, value, evidence."""
-    context = load_context(paths, spec)
-    development, partition = context.development, context.partition
-    artefact = FittedPipelineArtefact.load(paths.model, verify=True)
-    columns = artefact.feature_names
-    held = partition.holdout_predictors(context.cohort, columns)
-    guard = partition.guard()
-    rows = [
+def _split_checks(development, held, partition, guard) -> list[dict[str, object]]:
+    """The split is the sealed one, and no record or registration group is on both sides."""
+    inside = int(development["record_id"].isin(guard.blocked).sum())
+    shared = len(set(development["group_key"]) & set(held["group_key"]))
+    return [
         _row(
             "Held out file matches its recorded SHA 256",
             True,
             partition.sha256[:16],
             "partitions/holdout.sha256, verified on load",
         ),
-        _row(
-            "Development records that are held out",
-            int(development["record_id"].isin(guard.blocked).sum()) == 0,
-            int(development["record_id"].isin(guard.blocked).sum()),
-            "Partition.development",
-        ),
+        _row("Development records that are held out", inside == 0, inside, "Partition.development"),
         _row(
             "Registration groups shared by both partitions",
-            not set(development["group_key"]) & set(held["group_key"]),
-            len(set(development["group_key"]) & set(held["group_key"])),
+            shared == 0,
+            shared,
             "group_key of both partitions",
         ),
         _row(
@@ -89,12 +80,16 @@ def run_audit(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> pd.DataFrame:
             "TrainingGuard, required by every model fit",
         ),
     ]
+
+
+def _output_checks(paths, context, artefact, guard) -> list[dict[str, object]]:
+    """No stored prediction scored a held out record, and the served reference is development."""
+    rows = []
     for name in STORED_PREDICTIONS:
         stored = pd.read_parquet(paths.outputs / name, columns=["record_id"])
         leaked = int(stored["record_id"].isin(guard.blocked).sum())
         rows.append(_row(f"Held out records in {name}", leaked == 0, leaked, f"outputs/{name}"))
-    results = load_results(paths, context)
-    reference = results.averaged(SERVED_MODEL, SERVED_SET.name)
+    reference = load_results(paths, context).averaged(SERVED_MODEL, SERVED_SET.name)
     same = len(reference) == len(artefact.reference_probabilities) and np.allclose(
         np.sort(reference), np.sort(artefact.reference_probabilities), atol=1e-12
     )
@@ -106,6 +101,19 @@ def run_audit(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> pd.DataFrame:
             "webapp/model/lbw_model.joblib",
         )
     )
+    return rows
+
+
+def run_audit(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> pd.DataFrame:
+    """Every integrity check as one row: check, result, value, evidence."""
+    context = load_context(paths, spec)
+    development, partition = context.development, context.partition
+    artefact = FittedPipelineArtefact.load(paths.model, verify=True)
+    columns = artefact.feature_names
+    held = partition.holdout_predictors(context.cohort, columns)
+    guard = partition.guard()
+    rows = _split_checks(development, held, partition, guard)
+    rows += _output_checks(paths, context, artefact, guard)
     duplicates = _duplicates(development, held, columns)
     rows.append(
         _row(

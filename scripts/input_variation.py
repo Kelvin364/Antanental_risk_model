@@ -1,7 +1,8 @@
 """Run twelve input variations against a running API and record what happened.
 
 Usage: start the server (``make serve``), then
-``python scripts/input_variation.py --base-url http://127.0.0.1:8000``.
+``python scripts/input_variation.py --base-url http://127.0.0.1:8000 --username U --password P``
+with an account whose first password has been changed.
 Writes ``docs/evidence/input_tests.csv`` and ``docs/evidence/input_tests.md``
 and exits with status 1 if any observed behaviour differs from the expected one.
 """
@@ -9,6 +10,7 @@ and exits with status 1 if any observed behaviour differs from the expected one.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -187,8 +189,17 @@ def write(rows: list[dict], base_url: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
+    parser.add_argument("--username", default=os.environ.get("ANTENATAL_EVIDENCE_USER"))
+    parser.add_argument("--password", default=os.environ.get("ANTENATAL_EVIDENCE_PASSWORD"))
     args = parser.parse_args()
+    if not (args.username and args.password):
+        parser.error("sign in is required: pass --username and --password of a researcher")
     with httpx.Client(base_url=args.base_url, timeout=30) as client:
+        signed = client.post(
+            "/api/auth/sign-in", json={"username": args.username, "password": args.password}
+        )
+        signed.raise_for_status()
+        client.headers["X-CSRF-Token"] = signed.json()["csrf_token"]
         rows = [run_one(client, v) for v in VARIATIONS]
     write(rows, args.base_url)
     return 0 if all(r["result"] == "pass" for r in rows) else 1

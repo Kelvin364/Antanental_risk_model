@@ -1,6 +1,6 @@
 # Compatibility evidence
 
-Recorded by `pytest tests/e2e` on 2026-10-23T15:27:23+00:00 on macOS-15.5-arm64-arm-64bit with Playwright. Each cell is the full five screen flow (register, visit one, visit two, assessment, caseload) at that window size. Screenshots are in `compatibility/`, one per screen per browser per size.
+Recorded by `pytest tests/e2e` on 2026-10-23T15:53:53+00:00 on macOS-15.5-arm64-arm-64bit with Playwright. Each cell is the full five screen flow (register, visit one, visit two, assessment, caseload) at that window size. Screenshots are in `compatibility/`, one per screen per browser per size.
 
 | Browser | Version | 390x844 | 1366x768 |
 | --- | --- | --- | --- |

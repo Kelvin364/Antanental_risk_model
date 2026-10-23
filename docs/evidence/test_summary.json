@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-10-23T15:01:57+00:00",
-  "tests": 250,
+  "recorded_at": "2026-10-23T15:53:54+00:00",
+  "tests": 278,
   "failures": 0,
   "skipped": 0,
-  "seconds": 210.1,
+  "seconds": 213.6,
   "by_suite": {
     "e2e": {
       "tests": 6,
@@ -11,18 +11,18 @@
       "skipped": 0
     },
     "integration": {
-      "tests": 43,
+      "tests": 66,
       "failed": 0,
       "skipped": 0
     },
     "unit": {
-      "tests": 201,
+      "tests": 206,
       "failed": 0,
       "skipped": 0
     }
   },
-  "line_coverage_percent": 97.2,
-  "statements": 2983,
+  "line_coverage_percent": 96.9,
+  "statements": 3426,
   "ruff_clean": true,
   "black_clean": true
 }

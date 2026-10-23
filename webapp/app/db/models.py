@@ -1,9 +1,11 @@
-"""Database tables for synthetic cases (Figure 3.7, interface side).
+"""Database tables for users, sessions, the audit trail and synthetic cases (Figure 3.7).
 
 Synthetic cases are stored apart from cohort data. The synthetic flag is a
 database check constraint, so no row can exist without it. Each assessment
 records the artefact version and checksum that produced it and the size of the
-reference caseload its rank was computed against (R16).
+reference caseload its rank was computed against (R16). Every case belongs to
+the user who registered it (decision D1). Sessions store only a hash of the
+cookie token, and the audit trail never stores clinical values.
 """
 
 from __future__ import annotations
@@ -31,6 +33,51 @@ class Base(DeclarativeBase):
     """Declarative base of every table."""
 
 
+class User(Base):
+    """A signed in user: an administrator or a researcher (decision D1)."""
+
+    __tablename__ = "users"
+    __table_args__ = (
+        CheckConstraint("role in ('administrator', 'researcher')", name="known_role"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(40), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(200))
+    role: Mapped[str] = mapped_column(String(20))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    must_change_password: Mapped[bool] = mapped_column(Boolean, default=True)
+    failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class UserSession(Base):
+    """A signed in session; the cookie holds the token, the table only its SHA 256."""
+
+    __tablename__ = "user_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    token_sha256: Mapped[str] = mapped_column(String(64), unique=True)
+    csrf_token: Mapped[str] = mapped_column(String(64))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    user: Mapped[User] = relationship()
+
+
+class AuditEvent(Base):
+    """One security relevant event. No clinical value is ever stored here."""
+
+    __tablename__ = "audit_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    event: Mapped[str] = mapped_column(String(40))
+    username: Mapped[str] = mapped_column(String(40))
+    detail: Mapped[str] = mapped_column(String(200), default="")
+
+
 class SyntheticCase(Base):
     """A synthetic pregnancy with the registration fields of set A."""
 
@@ -38,6 +85,7 @@ class SyntheticCase(Base):
     __table_args__ = (CheckConstraint("synthetic = 1", name="synthetic_flag_always_true"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     label: Mapped[str] = mapped_column(String(80))
     synthetic: Mapped[bool] = mapped_column(Boolean, nullable=False)
     age: Mapped[float] = mapped_column(Float)

@@ -2,7 +2,10 @@
 
 Every write goes through ``EntryRules`` first. An assessment is computed by
 ``ModelService`` and stored with the artefact version and checksum that
-produced it and the reference caseload size its rank refers to (R16).
+produced it and the reference caseload size its rank refers to (R16). A
+researcher reaches only the cases they registered; an administrator reaches
+all. Someone else's case is reported as not found, so its existence is not
+revealed (decision D1).
 """
 
 from __future__ import annotations
@@ -13,6 +16,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from webapp.app.core.settings import INTERVAL_LABEL, LIMITATION
 from webapp.app.db.models import Assessment, SyntheticCase, SyntheticVisit
 from webapp.app.schemas.cases import AssessmentOut, CaseCreate, CaseOut, VisitCreate, VisitOut
+from webapp.app.services.auth_service import CurrentUser
 from webapp.app.services.model_service import ModelService, study_values
 from webapp.app.services.validation import EntryRefused, EntryRules
 
@@ -51,28 +55,30 @@ class CaseService:
         self._model = model
         self._rules = rules
 
-    def _get(self, session: Session, case_id: int) -> SyntheticCase:
+    def _get(self, session: Session, case_id: int, viewer: CurrentUser) -> SyntheticCase:
         case = session.get(SyntheticCase, case_id)
-        if case is None:
+        if case is None or (case.owner_id != viewer.id and not viewer.is_administrator):
             raise CaseNotFound(f"No synthetic case with id {case_id}")
         return case
 
-    def create(self, payload: CaseCreate) -> CaseOut:
+    def create(self, payload: CaseCreate, viewer: CurrentUser) -> CaseOut:
         """Store a new synthetic case after the flag and range checks."""
         self._rules.check_case(payload)
         with self._sessions() as session:
             count = session.scalar(select(SyntheticCase.id).order_by(SyntheticCase.id.desc()))
             data = payload.model_dump()
             data["label"] = payload.label or f"Synthetic case {(count or 0) + 1}"
-            case = SyntheticCase(**data)
+            case = SyntheticCase(**data, owner_id=viewer.id)
             session.add(case)
             session.commit()
-            return self.describe(case.id)
+            return self.describe(case.id, viewer)
 
-    def save_visit(self, case_id: int, number: int, payload: VisitCreate) -> CaseOut:
+    def save_visit(
+        self, case_id: int, number: int, payload: VisitCreate, viewer: CurrentUser
+    ) -> CaseOut:
         """Insert or replace visit ``number``; visit two needs visit one first."""
         with self._sessions() as session:
-            case = self._get(session, case_id)
+            case = self._get(session, case_id, viewer)
             visits = {v.visit_number: v for v in case.visits}
             if number == 2 and 1 not in visits:
                 raise StepOutOfOrder("Record visit one before visit two")
@@ -85,12 +91,12 @@ class CaseService:
                 setattr(row, field, value)
             session.add(row)
             session.commit()
-        return self.describe(case_id)
+        return self.describe(case_id, viewer)
 
-    def assess(self, case_id: int) -> AssessmentOut:
+    def assess(self, case_id: int, viewer: CurrentUser) -> AssessmentOut:
         """Score a case with both visits, store the assessment and return it."""
         with self._sessions() as session:
-            case = self._get(session, case_id)
+            case = self._get(session, case_id, viewer)
             visits = {v.visit_number: _visit_schema(v) for v in case.visits}
             if set(visits) != {1, 2}:
                 raise StepOutOfOrder("Both visits must be recorded before an assessment")
@@ -132,10 +138,10 @@ class CaseService:
             assessed_at=row.assessed_at,
         )
 
-    def describe(self, case_id: int) -> CaseOut:
+    def describe(self, case_id: int, viewer: CurrentUser) -> CaseOut:
         """A case with its visits and latest assessment."""
         with self._sessions() as session:
-            case = self._get(session, case_id)
+            case = self._get(session, case_id, viewer)
             latest = case.assessments[-1] if case.assessments else None
             return CaseOut(
                 id=case.id,

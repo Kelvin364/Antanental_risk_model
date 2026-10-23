@@ -81,14 +81,26 @@ The proposal's data model (Section 3.4.4) has a research side and an interface s
 | `visit_measurements` | VISIT_MEASUREMENT | `load-db`, cleaned visit one and two values | record and visit number |
 | `model_configurations` | MODEL_CONFIGURATION and PIPELINE_ARTEFACT | `load-db`, from each `version.json` and `model_params.json` | version |
 | `evaluation_results` | EVALUATION_RESULT | `load-db`, from `outputs/tables/cv_fold_metrics.csv` | model, feature set, repeat and fold |
-| `synthetic_cases` | SYNTHETIC_CASE | the prototype | synthetic flag always true |
+| `users` | USER, the administrator and researcher actors (decision D1) | the prototype; the first administrator by `python -m webapp.app.admin create-admin` | username |
+| `user_sessions` | Signed in sessions; only the SHA 256 of each cookie token | the prototype | token hash |
+| `audit_events` | Sign ins, failures, account changes, assessments; never clinical values | the prototype | none |
+| `synthetic_cases` | SYNTHETIC_CASE, owned by the user who registered it | the prototype | synthetic flag always true |
 | `synthetic_visits` | SYNTHETIC_VISIT | the prototype | case and visit number |
 | `assessments` | ASSESSMENT | the prototype | references the artefact version and checksum |
 
 Exclusion reasons are columns of `pregnancy_records` (EXCLUSION_LOG), and partition assignments stay in `partitions/` (PARTITION_ASSIGNMENT), so no table records which records are held out. `load-db` drops and rebuilds its four tables, so it can be repeated.
 
 In the prototype, routers validate and route, services decide, the package
-computes, and the database stores.
+computes, and the database stores. Every case, visit, assessment and caseload route
+depends on `working_user`, which resolves the session cookie, checks the CSRF token
+on every change and requires a changed first password; administration routes also
+require the administrator role. A researcher reaches only their own cases. Security
+headers, a 64 KB request cap and a sign in rate limit wrap every response
+(`webapp/app/core/security.py`).
+
+Every model fit in the package carries a `TrainingGuard` from the sealed partition and
+refuses any frame containing a held out record; `make audit` records the ten checks of
+`docs/evidence/holdout_integrity.md` (decision D7).
 
 ## Request flow for one assessment
 

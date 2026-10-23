@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 
 from antenatal.artefact.artefact import FittedPipelineArtefact
 from antenatal.data.loader import ChecksumMismatch
+from tests.integration.accounts import sign_in_as
 from webapp.app.core.settings import Settings
 from webapp.app.main import create_app
 from webapp.app.schemas.cases import CaseCreate, VisitCreate
@@ -56,7 +57,7 @@ def settings(root, tmp_path) -> Settings:
 
 @pytest.fixture
 def client(settings) -> TestClient:
-    return TestClient(create_app(settings))
+    return sign_in_as(TestClient(create_app(settings)), "tester")
 
 
 def _complete_case(client: TestClient, case: dict = CASE) -> int:
@@ -253,7 +254,7 @@ def test_interface_export_is_served_beside_the_api(settings, tmp_path):
         assert client.get(f"/{page}/").text == f"<p>{page}</p>"
         assert client.get(f"/{page}").text == f"<p>{page}</p>"
     assert client.get("/health").json()["status"] == "ok"
-    assert client.get("/api/caseload").json()["rows"] == []
+    assert client.get("/api/caseload").status_code == 401  # the API route, not a page
 
 
 def test_caseload_and_health_carry_the_classification(client):

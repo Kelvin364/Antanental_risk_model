@@ -29,10 +29,14 @@ from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from benchmark_api import PAYLOAD, free_port, start_server  # noqa: E402
+from evidence_account import create_account  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 LIGHTHOUSE = "lighthouse@12.8.2"
 SCREENS = (
+    ("Sign in", "/sign-in/"),
+    ("About", "/about/"),
+    ("Administration", "/admin/"),
     ("Register", "/register/"),
     ("Visit one", "/visit-one/"),
     ("Visit two", "/visit-two/"),
@@ -43,27 +47,25 @@ SCREENS = (
 SIZES = (("phone", []), ("desktop", ["--preset=desktop"]))
 
 
-def call(base: str, method: str, path: str, body: dict | None = None) -> dict:
-    """One JSON request to the API."""
+def call(base: str, headers: dict, method: str, path: str, body: dict | None = None) -> dict:
+    """One signed in JSON request to the API."""
     data = json.dumps(body).encode() if body is not None else None
-    request = urllib.request.Request(
-        f"{base}{path}", data=data, method=method, headers={"Content-Type": "application/json"}
-    )
+    request = urllib.request.Request(f"{base}{path}", data=data, method=method, headers=headers)
     with urllib.request.urlopen(request, timeout=30) as response:
         return json.loads(response.read())
 
 
-def record_case(base: str) -> int:
+def record_case(base: str, headers: dict) -> int:
     """Register the benchmark's synthetic case, save both visits and assess it."""
     payload = json.loads(PAYLOAD)
-    case = call(base, "POST", "/api/cases", {**payload["case"], "label": "Audit case"})
-    call(base, "PUT", f"/api/cases/{case['id']}/visits/1", payload["visit_one"])
-    call(base, "PUT", f"/api/cases/{case['id']}/visits/2", payload["visit_two"])
-    call(base, "POST", f"/api/cases/{case['id']}/assessment")
+    case = call(base, headers, "POST", "/api/cases", {**payload["case"], "label": "Audit case"})
+    call(base, headers, "PUT", f"/api/cases/{case['id']}/visits/1", payload["visit_one"])
+    call(base, headers, "PUT", f"/api/cases/{case['id']}/visits/2", payload["visit_two"])
+    call(base, headers, "POST", f"/api/cases/{case['id']}/assessment")
     return case["id"]
 
 
-def lighthouse(url: str, flags: list[str], chrome: str) -> dict:
+def lighthouse(url: str, flags: list[str], chrome: str, cookie: str) -> dict:
     """The accessibility score and every failed audit of one page."""
     npx = shutil.which("npx")
     if npx is None:
@@ -77,6 +79,7 @@ def lighthouse(url: str, flags: list[str], chrome: str) -> dict:
         "--output=json",
         "--quiet",
         "--chrome-flags=--headless=new --no-sandbox",
+        f"--extra-headers={json.dumps({'Cookie': cookie})}",
         *flags,
     ]
     env = {**os.environ, "CHROME_PATH": chrome}
@@ -117,12 +120,15 @@ def run() -> dict[str, object]:
     base = f"http://127.0.0.1:{port}"
     rows = []
     with tempfile.TemporaryDirectory() as tmp:
-        server, _ = start_server(port, Path(tmp) / "audit.sqlite3")
+        database = Path(tmp) / "audit.sqlite3"
+        server, _ = start_server(port, database)
         try:
-            case_id = record_case(base)
+            headers = create_account(f"sqlite:///{database}", base).headers()
+            case_id = record_case(base, headers)
             for screen, path in SCREENS:
                 for size, flags in SIZES:
-                    result = lighthouse(f"{base}{path}?case={case_id}", flags, chrome)
+                    url = f"{base}{path}?case={case_id}"
+                    result = lighthouse(url, flags, chrome, headers["Cookie"])
                     rows.append({"screen": screen, "path": path, "size": size, **result})
                     print(f"{screen:<11} {size:<7} {result['score']}", flush=True)
         finally:
@@ -139,6 +145,21 @@ def run() -> dict[str, object]:
     }
 
 
+def failed_audits(rows: list[dict]) -> str:
+    """Every failed audit with the screens and sizes it failed on, as a Markdown list."""
+    failures = sorted({(f["id"], f["title"]) for r in rows for f in r["failed"]})
+    if not failures:
+        return "None. Every weighted audit passed on every screen at both sizes."
+    return "\n".join(
+        f"* `{fid}`: {title} (on "
+        + ", ".join(
+            f"{r['screen']} {r['size']}" for r in rows if fid in {f["id"] for f in r["failed"]}
+        )
+        + ")"
+        for fid, title in failures
+    )
+
+
 def write(result: dict[str, object]) -> None:
     out = ROOT / "docs" / "evidence"
     out.mkdir(parents=True, exist_ok=True)
@@ -150,18 +171,7 @@ def write(result: dict[str, object]) -> None:
         f"| {scores[(screen, 'desktop')]['score']} |"
         for screen, _ in SCREENS
     )
-    failures = sorted({(f["id"], f["title"]) for r in rows for f in r["failed"]})
-    if failures:
-        found = "\n".join(
-            f"* `{fid}`: {title} (on "
-            + ", ".join(
-                f"{r['screen']} {r['size']}" for r in rows if fid in {f["id"] for f in r["failed"]}
-            )
-            + ")"
-            for fid, title in failures
-        )
-    else:
-        found = "None. Every weighted audit passed on every screen at both sizes."
+    found = failed_audits(rows)
     lowest = min(r["score"] for r in rows)
     text = f"""# Accessibility evidence
 

@@ -11,13 +11,20 @@ export type VisitCreate = components["schemas"]["VisitCreate"];
 export type CaseOut = components["schemas"]["CaseOut"];
 export type AssessmentOut = components["schemas"]["AssessmentOut"];
 export type CaseloadOut = components["schemas"]["CaseloadOut"];
+export type SignedIn = components["schemas"]["SignedIn"];
+export type AccountOut = components["schemas"]["AccountOut"];
+export type GeneratedPassword = components["schemas"]["GeneratedPassword"];
+export type AuditOut = components["schemas"]["AuditOut"];
 
 /** One refused value, with the API's reason. */
 export type FieldError = { field: string; message: string };
 
-/** Thrown when the API refuses a request; carries every refused field. */
+/** Thrown when the API refuses a request; carries every refused field and the status. */
 export class Refused extends Error {
-  constructor(public readonly errors: FieldError[]) {
+  constructor(
+    public readonly errors: FieldError[],
+    public readonly status = 0,
+  ) {
     super(errors.map((e) => e.message).join(" "));
   }
 }
@@ -44,6 +51,19 @@ export type InterfaceText = { banner: string; limitation: string; interval_label
 
 const client = createClient<paths>({ baseUrl: "" });
 
+// The session cookie is HttpOnly, so the page never sees it. Every change also
+// carries the session's CSRF token, which the server compares with its own copy.
+let csrfToken = "";
+export const setCsrfToken = (token: string) => {
+  csrfToken = token;
+};
+client.use({
+  onRequest({ request }) {
+    if (request.method !== "GET" && csrfToken) request.headers.set("X-CSRF-Token", csrfToken);
+    return request;
+  },
+});
+
 type Detail = { field?: string; message?: string; loc?: (string | number)[]; msg?: string };
 
 // The service answers a refusal with {field, message} items (entry rules,
@@ -51,13 +71,14 @@ type Detail = { field?: string; message?: string; loc?: (string | number)[]; msg
 function refusal(body: unknown, status: number): Refused {
   const detail = (body as { detail?: unknown } | undefined)?.detail;
   if (!Array.isArray(detail)) {
-    return new Refused([{ field: "form", message: `The service refused the request (${status})` }]);
+    return new Refused([{ field: "form", message: `The service refused the request (${status})` }], status);
   }
   return new Refused(
     (detail as Detail[]).map((d) => ({
       field: d.field ?? String(d.loc?.at(-1) ?? "form"),
       message: d.message ?? d.msg ?? "Refused",
     })),
+    status,
   );
 }
 
@@ -97,4 +118,33 @@ export const api = {
   caseload: () => unwrap(client.GET("/api/caseload")),
   predict: (body: { case: CaseCreate; visit_one: VisitCreate; visit_two: VisitCreate }) =>
     unwrap(client.POST("/api/predict", { body })),
+  me: () => unwrap(client.GET("/api/auth/me")),
+  signIn: (username: string, password: string) =>
+    unwrap(client.POST("/api/auth/sign-in", { body: { username, password } })),
+  signOut: async () => {
+    await client.POST("/api/auth/sign-out");
+  },
+  changePassword: async (current_password: string, new_password: string) => {
+    const { error, response } = await client.POST("/api/auth/password", {
+      body: { current_password, new_password },
+    });
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
+  users: () => unwrap(client.GET("/api/admin/users")),
+  createUser: (username: string, role: string) =>
+    unwrap(client.POST("/api/admin/users", { body: { username, role } })),
+  resetPassword: (userId: number) =>
+    unwrap(
+      client.POST("/api/admin/users/{user_id}/reset-password", {
+        params: { path: { user_id: userId } },
+      }),
+    ),
+  setActive: async (userId: number, active: boolean) => {
+    const { error, response } = await client.POST("/api/admin/users/{user_id}/active", {
+      params: { path: { user_id: userId } },
+      body: { active },
+    });
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
+  audit: () => unwrap(client.GET("/api/admin/audit")),
 };
