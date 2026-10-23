@@ -109,7 +109,9 @@ def test_runner_on_development_subset(cohort, sealed):
     development = sealed[1].development(cohort)
     small = development.iloc[:800].reset_index(drop=True)
     folds = grouped_outer_folds(small, PRIMARY.variant("small", repeats=2))
-    results = NestedCVRunner(n_jobs=1).run(small, folds, [Experiment("logistic_l2", SetC())])
+    results = NestedCVRunner(sealed[1].guard(), n_jobs=1).run(
+        small, folds, [Experiment("logistic_l2", SetC())]
+    )
     assert len(results.oof) == 2 * len(small)
     averaged = results.averaged("logistic_l2", "C")
     assert len(averaged) == len(small) and np.all((averaged > 0) & (averaged < 1))

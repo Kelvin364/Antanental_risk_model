@@ -99,6 +99,16 @@ def freeze_classification(paths: ProjectPaths) -> None:
     )
 
 
+def audit_holdout(paths: ProjectPaths) -> None:
+    """Check that the held out partition never reached training (decision D7)."""
+    from antenatal.evaluation.integrity import write_audit
+
+    table = write_audit(paths, PRIMARY)
+    print(table.to_string(index=False))
+    if (table["result"] == "fail").any():
+        raise SystemExit("integrity audit failed")
+
+
 def summarise_results(paths: ProjectPaths) -> None:
     """Collect every headline number, with its source file, into results_summary.csv."""
     from antenatal.reporting.results_summary import build_results_summary
@@ -151,6 +161,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "freeze-artefact": freeze_artefact,
         "freeze-secondary-artefact": freeze_secondary_artefact,
         "freeze-classification": freeze_classification,
+        "audit-holdout": audit_holdout,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,

@@ -89,7 +89,7 @@ experiments:
   - id: "2.2"
     name: balanced class weights
     role: candidate
-    note: admitted as an experiment only, decision D4; supervisor confirmation pending
+    note: admitted as an experiment, decision D4, within the supervisor's guidance D7
     variants:
       - {family: logistic_l2, feature_set: B}
       - {family: logistic_l2, feature_set: C}

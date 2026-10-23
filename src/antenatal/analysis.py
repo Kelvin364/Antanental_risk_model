@@ -139,7 +139,9 @@ def run_analysis(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> None:
     """Run the nested cross validation, the comparisons, the sensitivity analyses and figures."""
     started = time.time()
     context = load_context(paths, spec)
-    results = NestedCVRunner(spec).run(context.development, context.folds, experiments())
+    results = NestedCVRunner(context.partition.guard(), spec).run(
+        context.development, context.folds, experiments()
+    )
     tables = write_tables(paths, context, results, spec)
     draw(paths, context, tables, results)
     runner = SensitivityRunner(context.raw, context.partition, spec)

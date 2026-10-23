@@ -163,7 +163,9 @@ def run_primary_model_tables(paths: ProjectPaths, results: CVResults, spec: Stud
 def run_learning_curve(paths: ProjectPaths, context: StudyContext, spec: StudySpec) -> None:
     """Learning curve table and figure for sets B and C."""
     experiments = [Experiment(LOGISTIC, SetB()), Experiment(LOGISTIC, SetC())]
-    result = LearningCurve(spec).run(context.development, context.folds, experiments)
+    result = LearningCurve(context.partition.guard(), spec).run(
+        context.development, context.folds, experiments
+    )
     result.by_repeat.to_csv(paths.tables / "learning_curve_by_repeat.csv", index=False)
     result.predictions.to_parquet(paths.outputs / "learning_curve_predictions.parquet", index=False)
     summary = summarise(result.by_repeat, intervals(result.predictions, spec))
@@ -181,7 +183,7 @@ def run_extensions(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> None:
     """Every Stage 5 analysis, in the order agreed with the supervisor."""
     context = load_context(paths, spec)
     run_learning_curve(paths, context, spec)
-    extra = NestedCVRunner(spec).run(
+    extra = NestedCVRunner(context.partition.guard(), spec).run(
         context.development, context.folds, extension_experiments(context)
     )
     extra.oof.to_parquet(paths.outputs / EXTENSION_OOF, index=False)

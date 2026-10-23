@@ -20,7 +20,7 @@ from joblib import Parallel, delayed
 from sklearn.model_selection import GridSearchCV, StratifiedGroupKFold
 from sklearn.pipeline import Pipeline
 
-from antenatal.cohort.partition import FoldAssignment
+from antenatal.cohort.partition import FoldAssignment, TrainingGuard
 from antenatal.config import PRIMARY, StudySpec
 from antenatal.evaluation.metrics import score_all
 from antenatal.features.builder import FeatureBuilder
@@ -89,7 +89,8 @@ class CVResults:
 class NestedCVRunner:
     """Runs experiments over a fixed fold assignment."""
 
-    def __init__(self, spec: StudySpec = PRIMARY, n_jobs: int = -1) -> None:
+    def __init__(self, guard: TrainingGuard, spec: StudySpec = PRIMARY, n_jobs: int = -1) -> None:
+        self._guard = guard
         self._spec = spec
         self._factory = ModelFactory()
         self._screen = AvailabilityScreen(spec)
@@ -98,6 +99,7 @@ class NestedCVRunner:
 
     def fit(self, train: pd.DataFrame, experiment: Experiment, seed: int) -> FittedModel:
         """Screen, choose columns, tune by inner grouped folds and refit on ``train``."""
+        self._guard.check(train)
         screen = self._screen.fit(train)
         family = self._factory.spec(experiment.model).family
         columns = experiment.feature_set.columns(screen, family)
@@ -154,6 +156,7 @@ class NestedCVRunner:
         repeats: list[int] | None = None,
     ) -> CVResults:
         """Run every experiment on every (repeat, fold) and collect the results."""
+        self._guard.check(development)
         development = self._builder.derive(development).reset_index(drop=True)
         tasks = [
             (experiment, repeat, fold, train, test)

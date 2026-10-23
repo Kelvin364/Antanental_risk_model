@@ -49,7 +49,7 @@ class SensitivityRunner:
         self._raw = raw
         self._partition = partition
         self._spec = spec
-        self._runner = NestedCVRunner(spec)
+        self._runner = NestedCVRunner(partition.guard(), spec)
 
     def _evaluate(
         self, name: str, development: pd.DataFrame, experiments, comparisons

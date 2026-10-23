@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 
 .PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
-	frontend api-types frontend-dev benchmark accessibility docker
+	frontend api-types frontend-dev benchmark accessibility docker audit
 
 install:
 	python3.12 -m venv .venv
@@ -63,3 +63,7 @@ accessibility:
 # The interface and API in one container at http://127.0.0.1:8000/.
 docker:
 	docker compose up --build
+
+# Evidence that the held out records never reached training (decision D7).
+audit:
+	$(PYTHON) -m antenatal audit-holdout

@@ -8,7 +8,10 @@ analysis cohort. It is written to file with a SHA 256 before any screen, model
 choice or cross validation step, and the writer refuses to overwrite it.
 
 The ``Partition`` object only exposes development records. The held out
-records can be read only through ``evaluation.holdout.HoldoutEvaluator``.
+records can be read only through ``evaluation.holdout.HoldoutEvaluator``, and
+their predictors (never their outcome) through ``holdout_predictors`` for the
+integrity audit. ``TrainingGuard`` is required by every model fit and refuses
+any training frame that contains a held out record (decision D7).
 """
 
 from __future__ import annotations
@@ -37,6 +40,31 @@ class PartitionTampered(RuntimeError):
     """Raised when the held out file no longer matches its recorded SHA 256."""
 
 
+class HoldoutLeak(RuntimeError):
+    """Raised when a frame about to be used for training contains a held out record."""
+
+
+@dataclass(frozen=True)
+class TrainingGuard:
+    """Refuses training data that contains any held out record (decision D7)."""
+
+    blocked: frozenset[int]
+    armed: bool = True
+
+    @classmethod
+    def unarmed(cls) -> TrainingGuard:
+        """For tests on synthetic data without a sealed partition; never used by the study."""
+        return cls(frozenset(), armed=False)
+
+    def check(self, frame: pd.DataFrame) -> None:
+        """Raise ``HoldoutLeak`` if any record of ``frame`` is a held out record."""
+        if not self.armed:
+            return
+        leaked = int(frame["record_id"].isin(self.blocked).sum())
+        if leaked:
+            raise HoldoutLeak(f"{leaked} held out records reached a training step; refused")
+
+
 def _digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -52,6 +80,19 @@ class Partition:
     def holdout_size(self) -> int:
         """Number of sealed held out records, without exposing which they are."""
         return len(self.holdout_ids)
+
+    def guard(self) -> TrainingGuard:
+        """The guard every model fit must carry."""
+        return TrainingGuard(self.holdout_ids)
+
+    def holdout_predictors(self, cohort: Cohort, columns: list[str]) -> pd.DataFrame:
+        """Held out predictor values for the integrity audit; the outcome is never returned."""
+        forbidden = {"lbw", "birth_weight_kg", "live_birth", "multiple_delivery"}
+        if forbidden & set(columns):
+            raise ValueError("the integrity audit may not read outcome columns")
+        frame = cohort.analysis
+        held = frame[frame["record_id"].isin(self.holdout_ids)]
+        return held[["record_id", "group_key", *columns]].reset_index(drop=True)
 
     def development(self, cohort: Cohort) -> pd.DataFrame:
         """Analysis cohort records that are not in the held out partition."""

@@ -64,6 +64,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Automated tests and continuous integration workflow | Partial: the workflow file is written but has not run on GitHub yet | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | TRIPOD+AI checklist | Partial: some items pending | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
 | Classification threshold command: `python -m antenatal freeze-classification` fixes the threshold from out of fold predictions and saves it beside the artefact | Completed | [`study.py`](src/antenatal/study.py) |
+| Held out partition guarded in code and audited: every model fit refuses held out records, and `make audit` records ten checks (decision D7) | Completed: 10 of 10 checks pass | [`integrity.py`](src/antenatal/evaluation/integrity.py), [`docs/evidence/holdout_integrity.md`](docs/evidence/holdout_integrity.md) |
 | Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |

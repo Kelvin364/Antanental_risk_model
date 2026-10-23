@@ -27,7 +27,7 @@ Engineering choices made under the decision rules of guideline version 2 are lis
 
 ## D4. Class weighting admitted as one prespecified experiment (23 October 2026)
 
-* **Decided by:** the author, through guideline version 2 experiment 2.2. The supervisor's confirmation is not recorded and should be obtained.
+* **Decided by:** the author, through guideline version 2 experiment 2.2, and within what the supervisor allows under D7.
 * **Decision:** logistic regression and gradient boosting with balanced class weights are evaluated on sets B and C against their unweighted versions. Oversampling, undersampling and synthetic minority generation remain excluded.
 * **What it changes:** the earlier project rule excluded class weighting everywhere, in line with the proposal. Weighting is now an experiment only. A weighted model can be served only if it passes the selection rule, including the calibration condition, possibly paired with cross fitted recalibration.
 * **Proposal modification table row:** "Section 3.3.5: class weighting evaluated as one prespecified experiment; resampling still excluded."
@@ -44,7 +44,18 @@ Engineering choices made under the decision rules of guideline version 2 are lis
 * **Decision:** each assessment shows "Likely low birth weight" or "Not likely low birth weight". The threshold is the predicted probability that marks the highest 20 percent of the served model's out of fold predictions on development records, the middle of the proposal's ranking budgets: 0.0688 for artefact 1.0.0 (`webapp/model/classification.json`, written by `python -m antenatal freeze-classification`). Beside the label the application shows the threshold's sensitivity, specificity and predictive values with group bootstrap intervals, and whether the case's own 95 percent interval lies above, below or across the threshold.
 * **What it changes:** requirement R11 ("rank and probability with interval, no category") becomes "rank, probability with interval, and a label at a prespecified threshold shown with how often the label is right". The limitation line now reads "Not a diagnosis and not a recommendation for care". Triage, priority and "see sooner" wording stays excluded. Stage 4 evaluates the label at the same fixed threshold on the held out partition. A locked model of a later version gets its own threshold by the same rule before the holdout run.
 * **Proposal modification table row:** "R11 and Table 3.10 screen 4: a label at a prespecified threshold (highest 20 percent of out of fold predictions) is shown with its sensitivity, specificity and predictive values and the case's interval position, author decision of 23 October 2026."
-* **Supervisor confirmation:** not recorded; to be obtained.
+* **Supervisor position:** within what the supervisor allows under D7.
+
+## D7. One absolute rule: held out records never reach training; host online with a local backup (23 October 2026)
+
+* **Decided by:** the supervisor, as reported by the author.
+* **Decision:** the only thing not allowed is for the held out records to enter the training pipeline in any form, so that no model can learn or adapt to the test data. Everything else in the plan may be done, with care in how it is shown that the test data was not compromised. The whole system is hosted online, and the local environment is kept as a working backup.
+* **What it changes:**
+  * Class weighting (D4) and the label at a threshold (D6) are within what the supervisor allows; resampling methods are allowed too, inside training folds only.
+  * The held out rule is now enforced in code, not only by convention. Every model fit requires a `TrainingGuard` that refuses any frame containing a held out record, and `python -m antenatal audit-holdout` writes ten checks to `docs/evidence/holdout_integrity.md`. The checks cover record and group overlap, stored predictions, the served reference caseload, identical predictor vectors and the count of held out evaluations. None reads a held out outcome.
+  * To keep the test uncompromised in the second way it can be, by being used to choose, the held out records are still evaluated once on a locked model. Any later evaluation is labelled exploratory and counted by the audit.
+  * Deployment moves from optional to required, with `make serve` and `make docker` kept as the local backup.
+* **Proposal modification table row:** "Section 3.3.7: the held out partition is guarded in code and audited by ten recorded checks; Section 3.5: the system is hosted online with a local backup, supervisor decision of 23 October 2026."
 
 ## Engineering choices under the decision rules
 

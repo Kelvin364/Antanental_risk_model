@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 
-from antenatal.cohort.partition import FoldAssignment
+from antenatal.cohort.partition import FoldAssignment, TrainingGuard
 from antenatal.config import PRIMARY, StudySpec
 from antenatal.evaluation.bootstrap import GroupBootstrap
 from antenatal.evaluation.metrics import AveragePrecision, RocAuc, average_precision, roc_auc
@@ -51,9 +51,9 @@ class LearningCurveResult:
 class LearningCurve:
     """Runs the learning curve for a list of experiments."""
 
-    def __init__(self, spec: StudySpec = PRIMARY, n_jobs: int = -1) -> None:
+    def __init__(self, guard: TrainingGuard, spec: StudySpec = PRIMARY, n_jobs: int = -1) -> None:
         self._spec = spec
-        self._runner = NestedCVRunner(spec, n_jobs=1)
+        self._runner = NestedCVRunner(guard, spec, n_jobs=1)
         self._n_jobs = n_jobs
 
     def _task(self, development, train_idx, test_idx, experiment, repeat, fraction):

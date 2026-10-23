@@ -120,7 +120,7 @@ def freeze_artefact(
     results = load_results(paths, context)
     development = results.development
     experiment = Experiment(plan.model, plan.feature_set)
-    fitted = NestedCVRunner(spec).fit(development, experiment, spec.seed)
+    fitted = NestedCVRunner(context.partition.guard(), spec).fit(development, experiment, spec.seed)
     x_train = FeatureBuilder.matrix(development, fitted.columns)
     events = int(development["lbw"].sum())
     artefact = FittedPipelineArtefact(
