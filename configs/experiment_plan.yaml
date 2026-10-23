@@ -201,3 +201,44 @@ selection_rule:
   b_note: a higher ROC AUC alone never justifies a more complex model
   c_if_none_pass: artefact stays version 1.0.0 and the report states that the experiments did not improve it
   lock: the chosen pipeline is saved as version 1.1.0 beside 1.0.0, never over it
+
+amendments:
+  - id: 1
+    date: "2026-10-23"
+    written_before_any_experiment: true
+    reason: >
+      Keep the research comparison fair when models are tuned, add the one source of new
+      information found in the file, and fix the benchmarks before results exist.
+    changes:
+      - experiment: "2.1a and 2.1b"
+        change: >
+          The bounded tuning runs identically on sets A, B and C. The primary comparison
+          (C over B, average precision) and the secondary comparison (B over A, ROC AUC)
+          are repeated with the tuned models as a sensitivity analysis.
+      - experiment: "2.2"
+        change: A weighted model is paired with Platt recalibration from 2.5; the pair is one candidate.
+      - experiment: "2.5"
+        change: Platt and isotonic are applied to logistic_l2 and gradient_boosting on set C.
+      - experiment: "2.10"
+        name: set B plus usable visit two extras
+        role: candidate
+        family: [logistic_l2, gradient_boosting]
+        columns_added:
+          - exposure_to_second_handsmoke (yes or no)
+          - use_of_alcohol (yes or no)
+          - problems_in_current_pregnancy (yes or no)
+          - malaria_rapid_test_result_v1 (positive or negative; typing variants mapped; other values missing)
+          - fetal_auscaltation_v2 (present or not present)
+          - body_temperature_v2 (degrees Celsius, kept within 34 to 42, else missing)
+          - respiratory_rate_v2 (breaths per minute, kept within 8 to 40, else missing)
+        chosen_by: availability in development records only; no association with the outcome was examined
+        never_used: [preterm_labour_1, labour_at_term_1, total_antenatal_visits, Risk, any delivery or postnatal field]
+        reference: the same family on set B
+        metric: average_precision
+        direction: higher
+      - benchmarks:
+          - prevalence-only model (baseline_prevalence)
+          - clinical rule B3, visit two blood pressure of 140/90 or above, at its own single operating point
+        use: reported beside every candidate; never a selection criterion
+      - deferred:
+          - a later prediction time (visit three or four); it changes the cohort and is not part of this run
