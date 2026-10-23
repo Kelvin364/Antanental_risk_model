@@ -25,6 +25,7 @@ STORED_PREDICTIONS = (
     "oof_predictions.parquet",
     "oof_extensions.parquet",
     "learning_curve_predictions.parquet",
+    "oof_experiments_v2.parquet",
 )
 
 

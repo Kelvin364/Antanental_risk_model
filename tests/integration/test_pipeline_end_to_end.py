@@ -108,3 +108,26 @@ def test_secondary_artefact_sits_beside_the_primary(project):
     secondary = FittedPipelineArtefact.load(project.model / "secondary_set_b")
     assert (primary.feature_set, secondary.feature_set) == ("C", "B")
     assert "not served" in secondary.role
+
+
+def test_stage2_runs_every_prespecified_experiment_and_labels_short_runs(project):
+    from antenatal.evaluation.integrity import run_audit
+    from antenatal.stage2 import candidate_keys, run
+
+    outcome = run(project, QUICK)
+    runs = pd.read_csv(project.tables / "experiments_v2_runs.csv")
+    assert len(runs) == 28 and set(runs["status"]) == {"reduced"}  # one repeat, never "complete"
+    candidates = pd.read_csv(project.tables / "candidates_v2.csv")
+    assert len(candidates) == len(candidate_keys())
+    assert outcome["outcome"] in {"b", "c"}
+    comparisons = pd.read_csv(project.tables / "experiments_v2.csv")
+    assert comparisons["p_holm"].notna().any() and (comparisons["n"] == 3126).all()
+    for name in (
+        "operating_points_v2.csv",
+        "net_benefit_v2.csv",
+        "missing_data_v2.csv",
+        "coefficients_v2.csv",
+        "permutation_importance_v2.csv",
+    ):
+        assert (project.tables / name).exists()
+    assert (run_audit(project, QUICK)["result"] == "pass").all()

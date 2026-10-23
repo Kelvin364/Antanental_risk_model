@@ -40,5 +40,5 @@ def test_repository_audit_passes_every_check(root):
     from antenatal.paths import ProjectPaths
 
     table = run_audit(ProjectPaths.from_root(root))
-    assert (table["result"] == "pass").all() and len(table) == 10
+    assert (table["result"] == "pass").all() and len(table) == 11
     assert not (root / "partitions" / "holdout_access.log").exists()

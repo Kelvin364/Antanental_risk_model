@@ -1,6 +1,6 @@
 # Held out partition integrity
 
-Written by `python -m antenatal audit-holdout` on 2026-10-23T15:46:15+00:00.
+Written by `python -m antenatal audit-holdout` on 2026-10-23T17:17:51+00:00.
 The supervisor's one absolute rule is that the held out records never reach training
 (decision D7). Each check below reads identifiers, predictor values or stored outputs
 only; none reads a held out outcome, fits a model or scores the held out records.
@@ -14,11 +14,12 @@ only; none reads a held out outcome, fits a model or scores the held out records
 | Held out records in oof_predictions.parquet | pass | 0 | `outputs/oof_predictions.parquet` |
 | Held out records in oof_extensions.parquet | pass | 0 | `outputs/oof_extensions.parquet` |
 | Held out records in learning_curve_predictions.parquet | pass | 0 | `outputs/learning_curve_predictions.parquet` |
+| Held out records in oof_experiments_v2.parquet | pass | 0 | `outputs/oof_experiments_v2.parquet` |
 | Served reference caseload equals development out of fold predictions | pass | 3126 | `webapp/model/lbw_model.joblib` |
 | Held out records with a predictor vector identical to a development record | pass | 0 | `25 predictors of the served model` |
 | Held out evaluations recorded | pass | 0 | `partitions/holdout_access.log` |
 
-10 of 10 checks passed.
+11 of 11 checks passed.
 
 What the checks mean. The first three show the split itself is clean: the file is the
 sealed one, no record and no registration group is on both sides. The guard check shows

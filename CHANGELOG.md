@@ -15,7 +15,8 @@ All notable changes to this project. Dates are in UTC.
 
 * Sign in with administrator and researcher roles (decision D1): scrypt password hashes, server side sessions in HttpOnly SameSite cookies, a CSRF token on every change, lockout after five failures, a per address sign in limit, an audit trail without clinical values, and researchers limited to their own cases. Sign in, account, administration and about pages; the first administrator comes from `python -m webapp.app.admin create-admin`.
 * `TrainingGuard`, required by every model fit, and `make audit` with ten recorded checks that the held out records never reached training (decision D7).
-* Fly.io deployment files, `scripts/smoke_test.py`, `docs/OPERATIONS.md`, `make deploy`, `make backup-online` and an optional CI deploy job.
+* Stage 2 of guideline version 2: `python -m antenatal run-experiments-v2` runs the 28 prespecified experiments and writes `experiments_v2.csv`, `candidates_v2.csv`, `operating_points_v2.csv`, `net_benefit_v2.csv`, `missing_data_v2.csv`, `coefficients_v2.csv`, `permutation_importance_v2.csv` and `selection_v2.json`. No candidate passed the selection rule; artefact 1.0.0 stays.
+* The online system at https://antenatal-caseload.fly.dev/; Fly.io deployment files, `scripts/smoke_test.py`, `docs/OPERATIONS.md`, `make deploy`, `make backup-online` and an optional CI deploy job.
 
 ### Changed
 
