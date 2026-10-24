@@ -59,9 +59,11 @@ def test_prespecified_rows_are_unadjusted_and_the_rest_are_holm_adjusted(table):
     assert table[table["metric"] != "roc_auc"]["delong_p_value"].isna().all()
 
 
-def test_the_summary_is_filled_and_says_the_holdout_is_not_run(table, root):
+def test_the_summary_is_filled_including_the_held_out_section(table, root):
     text = _text(table, ProjectPaths.from_root(root), PRIMARY)
-    assert "{" not in text and "has not been run" in text
+    assert "{" not in text and "## Held out records" in text
+    held_out = text.split("## Held out records")[1]
+    assert "has not been run" in held_out or "| C over B (first visit added) |" in held_out
     assert text.count("\n| ") >= len(table) + len(QUESTIONS)
 
 

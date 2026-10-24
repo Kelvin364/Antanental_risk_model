@@ -6,6 +6,7 @@ All notable changes to this project. Dates are in UTC.
 
 ### Added
 
+* The single held out evaluation, run once on 24 October 2026 after the supervisor's approval, and `python -m antenatal holdout-report`, which writes `docs/holdout_results.md`: the proof that the model never learned from the held out records (git timeline, the integrity audit before and after, the training guard, the exact rebuild from development records, the one logged read) and every held out result beside its development value. The audits and the run output are kept in `docs/evidence/holdout_run/`.
 * `docs/ethics_and_ai.md` replaces `docs/ethics_note.md` and `docs/tripod_ai_pending.md`: one document for the ethical basis of the data, the safeguards built into the model and the application, and the statements only the author writes, each marked AUTHOR TO WRITE.
 * The research results now answer the four research questions quoted from the proposal: question 2 adds the comparison with the prevalence only model and the calibration of set C against set B, and question 4 gathers the sensitivity analyses on missing measurements and questionable outcome records.
 * The held out evaluation also writes `holdout_net_benefit.csv`, the net benefit of each locked model at every prespecified threshold, with intervals.

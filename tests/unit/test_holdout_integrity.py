@@ -41,4 +41,7 @@ def test_repository_audit_passes_every_check(root):
 
     table = run_audit(ProjectPaths.from_root(root))
     assert (table["result"] == "pass").all() and len(table) == 11
-    assert not (root / "partitions" / "holdout_access.log").exists()
+    log = root / "partitions" / "holdout_access.log"
+    # Absent before Stage 4; afterwards it records exactly one evaluation.
+    if log.exists():
+        assert log.read_text().count("\tEVALUATED\t") == 1

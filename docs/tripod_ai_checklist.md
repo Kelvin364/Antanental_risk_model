@@ -56,7 +56,7 @@ evaluation of Stage 4).
 | 19 | Patient and public involvement | Involvement or none | None | Pending: state in the report |
 | 20a | Participants | Flow, with and without the outcome | `outputs/tables/cohort_flow.csv`; Figure 1 | Reported |
 | 20b | Participants | Characteristics, events, missing data | Figures 2 to 4; `outputs/tables/missingness.csv` | Reported |
-| 20c | Participants | Evaluation versus development distributions | Single held out evaluation | Pending: Stage 4 |
+| 20c | Participants | Evaluation versus development distributions | `docs/holdout_results.md`: records, events and every performance measure on both partitions | Partly: predictor distributions are not compared, so that the held out records are read only by the single evaluation |
 | 21 | Model development | Participants and events in each analysis | Every table carries `n` and `events`; every figure title states both | Reported |
 | 22 | Model specification | Full model to allow new predictions | `webapp/model/` artefact, `model_params.json`, `version.json` | Reported |
 | 23a | Model performance | Estimates with intervals, including subgroups | `outputs/tables/model_performance.csv`; `subgroups.csv` | Reported |

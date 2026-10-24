@@ -132,6 +132,15 @@ def research_results(paths: ProjectPaths) -> None:
     print("Wrote outputs/research/results_table.csv and docs/research_results.md")
 
 
+def holdout_report(paths: ProjectPaths) -> None:
+    """Stage 4: write docs/holdout_results.md from the saved held out tables, without reading
+    the held out records."""
+    from antenatal.reporting.holdout_report import write_holdout_report
+
+    write_holdout_report(paths)
+    print("Wrote docs/holdout_results.md")
+
+
 def freeze_comparator_artefact(paths: ProjectPaths) -> None:
     """Freeze the set A comparator for the held out secondary comparison, on development records."""
     from antenatal.study import COMPARATOR_PLAN
@@ -198,6 +207,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "run-experiments-v2": run_experiments_v2,
         "audit-report": audit_report,
         "research-results": research_results,
+        "holdout-report": holdout_report,
         "summarise-results": summarise_results,
         "draw-figures": draw_figures,
         "load-db": load_db,
