@@ -6,8 +6,8 @@ from antenatal.paths import ProjectPaths
 from antenatal.reporting.audit_report import write_audit_report
 
 
-def test_audit_report_fills_every_section(root):
-    text = write_audit_report(ProjectPaths.from_root(root))
+def test_audit_report_fills_every_section(root, tmp_path):
+    text = write_audit_report(ProjectPaths.from_root(root), target=tmp_path / "audit.md")
     assert "{" not in text and "}" not in text
     for heading in (
         "Baseline",

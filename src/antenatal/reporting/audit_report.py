@@ -10,6 +10,7 @@ from __future__ import annotations
 import subprocess
 from datetime import UTC, datetime
 from importlib.metadata import version
+from pathlib import Path
 
 import pandas as pd
 
@@ -157,8 +158,10 @@ def _write_tables(paths: ProjectPaths, context) -> dict[str, pd.DataFrame]:
     return tables
 
 
-def write_audit_report(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> str:
-    """Write the audit report and its tables; return the report text."""
+def write_audit_report(
+    paths: ProjectPaths, spec: StudySpec = PRIMARY, target: Path | None = None
+) -> str:
+    """Write the audit report (to ``docs/`` unless ``target`` is given) and its tables."""
     context = load_context(paths, spec)
     tables = _write_tables(paths, context)
     holdout = context.partition.holdout_size
@@ -190,11 +193,9 @@ def write_audit_report(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> str:
         features=_table(tables["feature_quality"]),
         missing=_table(missing),
     )
-    (paths.root / "docs" / "implementation_audit.md").write_text(text)
+    (target or paths.root / "docs" / "implementation_audit.md").write_text(text)
     return text
 
 
 def _template() -> str:
-    from pathlib import Path
-
     return (Path(__file__).parent / "templates" / "implementation_audit.md").read_text()
