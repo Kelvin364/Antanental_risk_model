@@ -46,3 +46,6 @@ backups/
 # Internal supervisor and status notes stay local
 docs/meeting_evidence.md
 docs/PROJECT_STATUS.md
+
+# Temporary self diagnostic (deleted after review; never committed)
+diagnostics/
