@@ -120,6 +120,9 @@ class HoldoutEvaluator:
         tables = {
             "holdout_result": holdout_tables.model_metrics(y, probabilities, groups, spec),
             "holdout_comparisons": holdout_tables.comparisons(y, probabilities, groups, spec),
+            "holdout_net_benefit": holdout_tables.net_benefit_table(
+                y, probabilities, groups, rule, spec
+            ),
         }
         if rule is not None and "C" in probabilities:
             tables["holdout_classification"] = holdout_tables.classification(

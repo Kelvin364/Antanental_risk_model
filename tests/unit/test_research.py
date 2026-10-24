@@ -41,8 +41,12 @@ def test_results_reproduce_the_saved_comparisons_and_cover_every_question(table,
     merged = table.merge(saved, on=["model", "comparison", "metric"], suffixes=("", "_saved"))
     assert len(merged) == 24
     assert np.allclose(merged["difference"], merged["difference_saved"], atol=1e-12)
-    assert set(table["question"]) == {"1", "2", "3", "4", "supporting"}
+    assert set(table["question"]) == {"1", "2", "3", "4", "supporting", "secondary hypothesis"}
     assert len(QUESTIONS) == 4
+    assert QUESTIONS[0].question.startswith("Do measurements from the first antenatal visit")
+    saved = table[table["p_method"].str.startswith("normal")]
+    assert set(saved["analysis"]) >= {"S3", "S4", "S6"} and saved["p_value"].between(0, 1).all()
+    assert {"brier", "calibration_slope"} <= set(table.loc[table["question"] == "2", "metric"])
 
 
 def test_prespecified_rows_are_unadjusted_and_the_rest_are_holm_adjusted(table):

@@ -22,6 +22,7 @@ Every interval is a 95 percent group bootstrap interval with 2,000 resamples tha
 2. **Primary comparison** (`outputs/tables/holdout_comparisons.csv`): average precision of C minus B, with its paired interval, bootstrap standard error, detectable difference and bootstrap p value. ROC AUC of C minus B is reported as descriptive.
 3. **Secondary comparison**: ROC AUC of B minus A, with the same quantities. Average precision of B minus A is descriptive.
 4. **The label** (`outputs/tables/holdout_classification.csv`): how many records the candidate labels "Likely low birth weight" at the fixed threshold, with sensitivity, specificity and the two predictive values, and the share of events retrieved in the top 10, 20 and 30 percent of the ranking.
+5. **Net benefit** (`outputs/tables/holdout_net_benefit.csv`): the net benefit of acting on each locked model at every prespecified threshold from 0.03 to 0.12 and at the label's threshold, with its interval, beside acting for everyone. Net benefit counts true positives minus false positives weighted by the threshold's odds, per pregnancy.
 
 A comparison counts as a finding only when its interval excludes zero. The two comparisons are prespecified, so no adjustment for multiple comparisons is applied to them; the descriptive rows are not tested.
 

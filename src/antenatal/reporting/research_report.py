@@ -15,7 +15,7 @@ import pandas as pd
 from antenatal.config import PRIMARY, StudySpec
 from antenatal.paths import ProjectPaths
 from antenatal.reporting.style import INK_SECONDARY, ORDERED, count_label, save
-from antenatal.research import QUESTIONS, questions_table, results_table
+from antenatal.research import NORMAL_P, QUESTIONS, questions_table, results_table
 
 RESULTS_FILE = "results_table.csv"
 HOLDOUT_RESULTS = "holdout_comparisons.csv"
@@ -23,6 +23,9 @@ METRIC_NAMES = {
     "pr_auc": "average precision",
     "roc_auc": "ROC AUC",
     "retrieval_gain": "retrieval minus random",
+    "brier": "Brier score (lower is better)",
+    "calibration_slope": "calibration slope",
+    "calibration_intercept": "calibration intercept",
 }
 
 
@@ -53,22 +56,27 @@ def _reading(row: pd.Series) -> str:
 
 def _rows(table: pd.DataFrame) -> list[str]:
     lines = [
-        "| Question | Model | Comparison | Measure | Difference (95% interval) | p | p, Holm "
-        "| DeLong p, descriptive | Reading |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Question | Model | Comparison | Records, events | Measure | Difference (95% interval) "
+        "| p | p, Holm | DeLong p, descriptive | Reading |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for _, r in table.iterrows():
         interval = f"{_number(r['difference'])} ({_number(r['ci_low'])} to {_number(r['ci_high'])})"
+        mark = " *" if r["p_method"] == NORMAL_P and pd.notna(r["p_value"]) else ""
         lines.append(
             f"| {r['question']} | {r['model']} | {r['comparison']} | "
-            f"{METRIC_NAMES.get(r['metric'], r['metric'])} | {interval} | {_p(r['p_value'])} | "
-            f"{_p(r['p_holm'])} | {_p(r['delong_p_value'])} | {_reading(r)} |"
+            f"{int(r['n']):,}, {int(r['events'])} | {METRIC_NAMES.get(r['metric'], r['metric'])} "
+            f"| {interval} | {_p(r['p_value'])}{mark} | {_p(r['p_holm'])} "
+            f"| {_p(r['delong_p_value'])} | {_reading(r)} |"
         )
     return lines
 
 
 def _questions() -> list[str]:
-    lines = ["| Number | Question | Endpoint | Method | Null hypothesis |", "| --- " * 5 + "|"]
+    lines = [
+        "| Number | Question, as in the proposal | Endpoint | Method | Null hypothesis |",
+        "| --- " * 5 + "|",
+    ]
     for q in QUESTIONS:
         lines.append(
             f"| {q.number} | {q.question} | {q.endpoint} | {q.method} | {q.null_hypothesis} |"
@@ -103,7 +111,8 @@ def _figure(table: pd.DataFrame, directory) -> None:
         ax.plot([r["ci_low"], r["ci_high"]], [position, position], color=colour)
         ax.plot(r["difference"], position, "o", color=colour)
     labels = [
-        f"{'Q' + r['question'] if r['question'].isdigit() else 'Supporting'} {r['model']}: "
+        f"{'Q' + r['question'] if r['question'].isdigit() else r['question'].capitalize()} "
+        f"{r['model']}: "
         f"{r['comparison']}"
         for _, r in tested.iterrows()
     ]
@@ -141,10 +150,13 @@ def _text(table: pd.DataFrame, paths: ProjectPaths, spec: StudySpec) -> str:
             f"Pooled out of fold predictions averaged over {spec.repeats} repeats, "
             f"{int(first['n']):,} records with {int(first['events'])} events. Each interval is "
             f"a paired group bootstrap with {spec.bootstrap_resamples:,} resamples; p is twice "
-            "the smaller share of resamples on either side of zero. Questions 1 and 2 are "
-            "prespecified and not adjusted; the other tested rows are one exploratory family "
-            "with a Holm adjustment. DeLong's test ignores registration groups and is "
-            "descriptive only. No test is made over fold level results.",
+            "the smaller share of resamples on either side of zero. The primary hypothesis "
+            "(question 1) and the prespecified secondary hypothesis (set B over set A on ROC "
+            "AUC) are not adjusted; every other tested row is one exploratory family with a "
+            "Holm adjustment. DeLong's test ignores registration groups and is descriptive "
+            "only. No test is made over fold level results. A p value marked * comes from a "
+            "saved sensitivity analysis on another cohort, whose predictions are not stored, "
+            "and uses the normal approximation with its saved bootstrap standard error.",
             "",
             *_rows(table),
             "",

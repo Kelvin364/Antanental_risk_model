@@ -187,7 +187,13 @@ def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
         spec=spec,
         provenance="operator test; purpose test",
     )
-    assert set(tables) == {"holdout_result", "holdout_comparisons", "holdout_classification"}
+    assert set(tables) == {
+        "holdout_result",
+        "holdout_comparisons",
+        "holdout_classification",
+        "holdout_net_benefit",
+    }
+    assert len(tables["holdout_net_benefit"]) == 3 * 11
     assert set(tables["holdout_comparisons"]["role"]) >= {"primary", "secondary"}
     assert (tmp_path / "holdout_result.csv").exists()
     assert "operator test" in (tmp_path / "holdout_access.log").read_text()

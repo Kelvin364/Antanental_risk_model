@@ -8,7 +8,8 @@ The approval must be the exact sentence. The script loads the locked candidate (
 artefact 1.0.0), the frozen comparators (set B and set A) and the classification
 threshold, verifies every checksum, and calls ``HoldoutEvaluator.evaluate_once`` once.
 Results go to ``outputs/tables/holdout_result.csv``, ``holdout_comparisons.csv`` and
-``holdout_classification.csv``; the access log records the operator, purpose, commit,
+``holdout_classification.csv`` and
+``holdout_net_benefit.csv``; the access log records the operator, purpose, commit,
 checksums and result path. A second run is refused.
 """
 

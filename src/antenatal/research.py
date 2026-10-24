@@ -1,16 +1,20 @@
 """Guideline version 2 Stage 3: the research questions answered from saved predictions.
 
-``python -m antenatal research-results`` reads the stored out of fold predictions,
-never fits a model and never touches the held out records. Every comparison is a
-paired group bootstrap on the same development records, with a two sided bootstrap
-p value. The prespecified primary and secondary comparisons are not adjusted; every
-other tested row forms one exploratory family with a Holm adjustment. DeLong's test
-is added beside each ROC AUC difference as descriptive only.
+``python -m antenatal research-results`` reads the stored out of fold predictions and
+result tables, never fits a model and never touches the held out records. Every
+comparison computed here is a paired group bootstrap on the same development records,
+with a two sided bootstrap p value. The prespecified primary and secondary hypotheses
+are not adjusted; every other tested row forms one exploratory family with a Holm
+adjustment. DeLong's test is added beside each ROC AUC difference as descriptive only.
+Sensitivity analyses on other cohorts are read from their saved tables, whose
+predictions are not stored, so their p values use the normal approximation with the
+saved bootstrap standard error.
 """
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from statistics import NormalDist
 
 import numpy as np
 import pandas as pd
@@ -19,9 +23,15 @@ from antenatal.config import PRIMARY, StudySpec
 from antenatal.evaluation.bootstrap import GroupBootstrap
 from antenatal.evaluation.comparisons import ComparisonRunner, primary_comparisons
 from antenatal.evaluation.delong import delong_paired
-from antenatal.evaluation.metrics import MetricStrategy
+from antenatal.evaluation.metrics import (
+    Brier,
+    CalibrationIntercept,
+    CalibrationSlope,
+    MetricStrategy,
+)
 from antenatal.evaluation.missingness_signal import indicator_comparisons
 from antenatal.evaluation.nested_cv import CVResults
+from antenatal.evaluation.power import detectable_difference
 from antenatal.evaluation.retrieval import BUDGETS, RetrievalAtBudget
 from antenatal.experiments_v2 import holm
 from antenatal.extensions import EXTENSION_OOF
@@ -31,16 +41,28 @@ from antenatal.study import load_context, load_results
 MODELS = ("logistic_l2", "gradient_boosting")
 SERVED = ("logistic_l2", "C")
 PRESPECIFIED = ("primary", "secondary")
+BOOTSTRAP_P = "paired group bootstrap"
+NORMAL_P = "normal approximation with the saved bootstrap standard error"
+# Saved sensitivity rows for question 4: (table, analysis or model, what it is sensitive to).
+SAVED_SENSITIVITY = (
+    ("sensitivity_analyses.csv", "S4", "missing measurements"),
+    ("multiple_imputation.csv", "logistic_l2_iterative_pooled", "missing measurements"),
+    ("sensitivity_analyses.csv", "GBT, uniform imputation", "missing measurements"),
+    ("sensitivity_analyses.csv", "S3", "questionable outcome records"),
+    ("sensitivity_analyses.csv", "S6", "questionable outcome records"),
+    ("sensitivity_analyses.csv", "S1", "timing of the second visit"),
+    ("sensitivity_analyses.csv", "S2", "timing of the second visit"),
+    ("sensitivity_analyses.csv", "S5", "form of the visit one values"),
+)
 
 
 @dataclass(frozen=True)
 class ResearchQuestion:
-    """One research question of the proposal, mapped to how it is answered."""
+    """One research question of the proposal, quoted, and how it is answered."""
 
     number: int
     question: str
     endpoint: str
-    population: str
     method: str
     null_hypothesis: str
 
@@ -48,36 +70,40 @@ class ResearchQuestion:
 QUESTIONS = (
     ResearchQuestion(
         1,
-        "Do first visit values add predictive value beyond the second visit (set C over set B)?",
-        "Average precision, the area under the precision recall curve",
-        "Development records",
-        "Paired group bootstrap of C minus B on pooled out of fold predictions",
-        "The difference in average precision is zero",
+        "Do measurements from the first antenatal visit improve prediction of recorded low "
+        "birth weight beyond the second visit alone in the eligible cohort?",
+        "Average precision of set C minus set B",
+        "Paired group bootstrap, both model families; the prespecified primary hypothesis",
+        "Adding first visit values changes average precision by zero",
     ),
     ResearchQuestion(
         2,
-        "Do second visit values add discrimination beyond registration (set B over set A)?",
-        "ROC AUC, the area under the receiver operating characteristic curve",
-        "Development records",
-        "Paired group bootstrap of B minus A; DeLong's test as descriptive",
-        "The difference in ROC AUC is zero",
+        "Does a learned model outperform constant prevalence prediction, and does adding the "
+        "earlier visit improve both discrimination and calibration over the second visit "
+        "features alone?",
+        "Average precision of sets A, B and C minus the prevalence only model; ROC AUC, "
+        "Brier score, calibration slope and intercept of set C minus set B",
+        "Paired group bootstrap; DeLong's test beside each ROC AUC as descriptive",
+        "Each difference is zero",
     ),
     ResearchQuestion(
         3,
-        "What share of low birth weight births falls in the top 10, 20 and 30 percent "
-        "of the served model's ranking, against ranking at random?",
-        "Retrieval at each budget minus the budget itself",
-        "Development records",
+        "Optionally, within fixed ranking budgets, what proportion of pregnancies "
+        "subsequently recorded as low birth weight is retrieved by model ranking relative "
+        "to ranking at random?",
+        "Share of events in the top 10, 20 and 30 percent of the served ranking, minus the "
+        "share random ranking retrieves",
         "Group bootstrap of retrieval minus the random expectation",
         "The served ranking retrieves no more than random",
     ),
     ResearchQuestion(
         4,
-        "Is missingness informative: do missingness indicators improve sets B and C?",
-        "Average precision with indicators minus without",
-        "Development records",
-        "Paired group bootstrap on the same folds",
-        "Indicators change average precision by zero",
+        "What sensitivity do the feature set comparisons show to missing measurements and "
+        "to questionable outcome records?",
+        "The primary comparison, C minus B average precision, under each sensitivity "
+        "analysis, and missingness indicators added to sets B and C",
+        "Paired group bootstrap; saved sensitivity analyses use the normal approximation",
+        "Each difference is zero",
     ),
 )
 
@@ -110,12 +136,15 @@ def load_all(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> CVResults:
     return CVResults(primary.development, oof, primary.fold_metrics)
 
 
-def _question(label: str) -> str:
+def _question(label: str, metric: str) -> tuple[str, str | None]:
+    """The question a comparison answers, and its role when that differs from the runner's."""
     if label.startswith("C over B ("):
-        return "1"
+        return ("1", None) if metric == "pr_auc" else ("2", "exploratory")
     if label.startswith("B over A ("):
-        return "2"
-    return "4" if label.startswith("Indicators") else "supporting"
+        return "secondary hypothesis", None
+    if "over B0" in label:
+        return "2", None
+    return ("4", None) if label.startswith("Indicators") else ("supporting", None)
 
 
 def _comparisons(results: CVResults, spec: StudySpec) -> pd.DataFrame:
@@ -124,7 +153,9 @@ def _comparisons(results: CVResults, spec: StudySpec) -> pd.DataFrame:
         check_alignment(results, c.new)
         check_alignment(results, c.old)
     table = ComparisonRunner(results, spec).run(comparisons, analysis="Stage 3")
-    table["question"] = [_question(c) for c in table["comparison"]]
+    mapped = [_question(c, m) for c, m in zip(table["comparison"], table["metric"], strict=True)]
+    table["question"] = [q for q, _ in mapped]
+    table["role"] = [r or role for (_, r), role in zip(mapped, table["role"], strict=True)]
     # ComparisonRunner writes one row per metric in this order for each comparison.
     by_row = [c for c in comparisons for _ in ComparisonRunner.METRICS]
     table["delong_p_value"] = [
@@ -138,6 +169,45 @@ def _comparisons(results: CVResults, spec: StudySpec) -> pd.DataFrame:
     return table
 
 
+def _row(model, comparison, metric, role, question, interval, new, old, y) -> dict:
+    return {
+        "analysis": "Stage 3",
+        "model": model,
+        "comparison": comparison,
+        "metric": metric,
+        "role": role,
+        "new_value": new,
+        "old_value": old,
+        "difference": interval.estimate,
+        "ci_low": interval.low,
+        "ci_high": interval.high,
+        "bootstrap_se": interval.se,
+        "detectable_difference": detectable_difference(interval.se),
+        "excludes_zero": interval.excludes_zero,
+        "p_value": interval.p_value,
+        "n": len(y),
+        "events": int(y.sum()),
+        "question": question,
+    }
+
+
+def _calibration(results: CVResults, spec: StudySpec) -> pd.DataFrame:
+    """Question 2: does set C improve calibration over set B? Brier is tested; the
+    calibration slope and intercept are shown with intervals as descriptive."""
+    bootstrap = GroupBootstrap(results.groups, spec.bootstrap_resamples, spec.seed)
+    y, rows = results.y, []
+    metrics = ((Brier(), "exploratory"), (CalibrationSlope(), "descriptive"))
+    metrics += ((CalibrationIntercept(), "descriptive"),)
+    for model in MODELS:
+        p_new, p_old = results.averaged(model, "C"), results.averaged(model, "B")
+        for metric, role in metrics:
+            interval = bootstrap.paired_difference(y, p_new, p_old, metric)
+            new, old = metric.compute(y, p_new), metric.compute(y, p_old)
+            label = "C over B (first visit added)"
+            rows.append(_row(model, label, metric.name, role, "2", interval, new, old, y))
+    return pd.DataFrame(rows)
+
+
 def _retrieval(results: CVResults, spec: StudySpec) -> pd.DataFrame:
     check_alignment(results, SERVED)
     y, p = results.y, results.averaged(*SERVED)
@@ -145,33 +215,45 @@ def _retrieval(results: CVResults, spec: StudySpec) -> pd.DataFrame:
     rows = []
     for budget in BUDGETS:
         interval = bootstrap.single(y, p, RetrievalGain(budget))
-        rows.append(
-            {
-                "analysis": "Stage 3",
-                "model": SERVED[0],
-                "comparison": f"Top {round(budget * 100)} percent, set C over random ranking",
-                "metric": "retrieval_gain",
-                "role": "exploratory",
-                "new_value": interval.estimate + budget,
-                "old_value": budget,
-                "difference": interval.estimate,
-                "ci_low": interval.low,
-                "ci_high": interval.high,
-                "bootstrap_se": interval.se,
-                "excludes_zero": interval.excludes_zero,
-                "p_value": interval.p_value,
-                "n": len(y),
-                "events": int(y.sum()),
-                "question": "3",
-            }
-        )
+        label = f"Top {round(budget * 100)} percent, set C over random ranking"
+        row = _row(SERVED[0], label, "retrieval_gain", "exploratory", "3", interval, 0, 0, y)
+        rows.append(row | {"new_value": interval.estimate + budget, "old_value": budget})
     return pd.DataFrame(rows)
 
 
+def _saved_sensitivity(paths: ProjectPaths) -> pd.DataFrame:
+    """Question 4 rows read from the saved sensitivity tables, primary comparison only."""
+    rows = []
+    for file, key, sensitive_to in SAVED_SENSITIVITY:
+        table = pd.read_csv(paths.tables / file)
+        column = "model" if file == "multiple_imputation.csv" else "analysis"
+        row = table[(table[column] == key) & (table["role"] == "primary")].iloc[0]
+        z = abs(row["difference"]) / row["bootstrap_se"]
+        label = row.get("specification", "Iterative imputation, five draws pooled")
+        rows.append(
+            row.to_dict()
+            | {
+                "analysis": key,
+                "comparison": f"{label}: {row['comparison']}",
+                "role": "exploratory",
+                "p_value": 2 * (1 - NormalDist().cdf(z)),
+                "p_method": NORMAL_P,
+                "sensitive_to": sensitive_to,
+                "question": "4",
+            }
+        )
+    return pd.DataFrame(rows).drop(columns=["specification"], errors="ignore")
+
+
 def results_table(paths: ProjectPaths, spec: StudySpec = PRIMARY) -> pd.DataFrame:
-    """Every tested row of research questions 1 to 4, with its family and adjusted p value."""
+    """Every row of research questions 1 to 4, with its family and adjusted p value."""
     results = load_all(paths, spec)
-    table = pd.concat([_comparisons(results, spec), _retrieval(results, spec)], ignore_index=True)
+    computed = pd.concat(
+        [_comparisons(results, spec), _calibration(results, spec), _retrieval(results, spec)],
+        ignore_index=True,
+    ).assign(p_method=BOOTSTRAP_P)
+    computed.loc[computed["question"] == "4", "sensitive_to"] = "missing measurements"
+    table = pd.concat([computed, _saved_sensitivity(paths)], ignore_index=True)
     table["family"] = np.where(
         table["role"].isin(PRESPECIFIED),
         "prespecified, not adjusted",

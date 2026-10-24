@@ -13,9 +13,19 @@ import pandas as pd
 from antenatal.artefact.classification import AtThreshold, ClassificationRule
 from antenatal.config import PRIMARY, StudySpec
 from antenatal.evaluation.bootstrap import GroupBootstrap
-from antenatal.evaluation.metrics import ALL_METRICS, AveragePrecision, RocAuc
+from antenatal.evaluation.metrics import (
+    ALL_METRICS,
+    AveragePrecision,
+    MetricStrategy,
+    RocAuc,
+    net_benefit,
+    net_benefit_treat_all,
+)
 from antenatal.evaluation.power import detectable_difference
 from antenatal.evaluation.retrieval import BUDGETS, RetrievalAtBudget
+
+# The prespecified net benefit thresholds (configs/experiment_plan.yaml, metrics).
+NET_BENEFIT_THRESHOLDS = np.round(np.arange(0.03, 0.121, 0.01), 2)
 
 # (label, new model, old model, metric, role), as prespecified in the protocol.
 COMPARISONS = (
@@ -104,4 +114,38 @@ def classification(y, p, groups, rule: ClassificationRule, spec: StudySpec = PRI
                 "detail": f"random ranking gives {budget:.2f}",
             }
         )
+    return pd.DataFrame(rows)
+
+
+class NetBenefitAt(MetricStrategy):
+    """Net benefit of acting on probabilities at or above one threshold."""
+
+    def __init__(self, threshold: float) -> None:
+        self.threshold = threshold
+        self.name = f"net_benefit_{threshold:.4f}"
+
+    def compute(self, y: np.ndarray, p: np.ndarray) -> float:
+        return float(net_benefit(y, p, [self.threshold])[0])
+
+
+def net_benefit_table(y, probabilities: dict[str, np.ndarray], groups, rule=None, spec=PRIMARY):
+    """Net benefit of each locked model at every prespecified threshold and the label's
+    threshold, with a group bootstrap interval, beside acting for everyone."""
+    boot = GroupBootstrap(groups, spec.bootstrap_resamples, spec.seed)
+    thresholds = list(NET_BENEFIT_THRESHOLDS) + ([rule.threshold] if rule is not None else [])
+    rows = []
+    for t in thresholds:
+        everyone = float(net_benefit_treat_all(y, [t])[0])
+        for name, p in probabilities.items():
+            interval = boot.single(y, p, NetBenefitAt(t))
+            rows.append(
+                {
+                    "threshold": round(float(t), 4),
+                    "model": name,
+                    "net_benefit": interval.estimate,
+                    "ci_low": interval.low,
+                    "ci_high": interval.high,
+                    "act_for_everyone": everyone,
+                }
+            )
     return pd.DataFrame(rows)

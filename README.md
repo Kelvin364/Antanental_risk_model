@@ -78,7 +78,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Online deployment on Fly.io with the local environment as backup (decision D7) | Live at https://antenatal-caseload.fly.dev/ (Fly.io, Johannesburg). Public checks 5 of 5 pass; the signed in checks run once the first accounts exist. Locally 11 of 11 | [`fly.toml`](fly.toml), [`docs/OPERATIONS.md`](docs/OPERATIONS.md), [`docs/evidence/deployment.md`](docs/evidence/deployment.md) |
 | Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
 | Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
-| Architecture, ethics note, changelog and deviation log | Completed; the ethics note holds a placeholder because the dataset release has no ethics statement | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_note.md`](docs/ethics_note.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
+| Architecture, ethics and responsible AI document, changelog and deviation log | Completed; the ethics document holds marked placeholders for the data producers' statement and the statements only the author writes | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_and_ai.md`](docs/ethics_and_ai.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
 | Input variation evidence | Completed | [`docs/evidence/input_tests.md`](docs/evidence/input_tests.md) |
 
 ## Quick start
@@ -147,13 +147,12 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── VIDEO_SCRIPT.md
 │   ├── decisions_log.md
 │   ├── deviations.md
-│   ├── ethics_note.md
+│   ├── ethics_and_ai.md
 │   ├── evidence
 │   ├── holdout_protocol.md
 │   ├── implementation_audit.md
 │   ├── research_results.md
-│   ├── tripod_ai_checklist.md
-│   └── tripod_ai_pending.md
+│   └── tripod_ai_checklist.md
 ├── fly.toml
 ├── frontend
 │   ├── next-env.d.ts

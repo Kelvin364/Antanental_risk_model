@@ -6,7 +6,7 @@ tripod-statement.org; the wording here is a short paraphrase. "D" marks items
 for model development, "E" for evaluation. This study develops a model and
 evaluates it internally, so both apply.
 
-Items awaiting the author are listed with prompts in `docs/tripod_ai_pending.md`.
+Items awaiting the author are listed with prompts in section 7 of `docs/ethics_and_ai.md`.
 
 Status values: **Reported** (answered in the named place), **Partly** (answered
 with a stated gap), **Not applicable** (with the reason), **Pending** (answered
@@ -46,7 +46,7 @@ evaluation of Stage 4).
 | 14 | Fairness | Approaches to model fairness | `outputs/tables/subgroups.csv` (age and parity) | Partly: only age and parity are available |
 | 15 | Model output | Output type and any thresholds | Probability with confidence interval and rank; no classification (R11) | Reported |
 | 16 | Training versus evaluation | Differences between development and evaluation data | Same source and rules; random grouped split (`partitions/`) | Reported |
-| 17 | Ethical approval | Ethics committee and consent | `docs/ethics_note.md` | Partly: the dataset release states no approval or consent; placeholder kept |
+| 17 | Ethical approval | Ethics committee and consent | `docs/ethics_and_ai.md` | Partly: the dataset release states no approval or consent; placeholder kept |
 | 18a | Funding | Funding source and role | `docs/Technical-Report.md` | Pending |
 | 18b | Conflicts of interest | Declarations | `docs/Technical-Report.md` | Pending |
 | 18c | Protocol | Where the protocol can be accessed | The proposal, frozen before analysis | Pending: state its location |
