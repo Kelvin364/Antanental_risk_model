@@ -1,0 +1,5 @@
+number,question,endpoint,population,method,null_hypothesis
+1,Do first visit values add predictive value beyond the second visit (set C over set B)?,"Average precision, the area under the precision recall curve",Development records,Paired group bootstrap of C minus B on pooled out of fold predictions,The difference in average precision is zero
+2,Do second visit values add discrimination beyond registration (set B over set A)?,"ROC AUC, the area under the receiver operating characteristic curve",Development records,Paired group bootstrap of B minus A; DeLong's test as descriptive,The difference in ROC AUC is zero
+3,"What share of low birth weight births falls in the top 10, 20 and 30 percent of the served model's ranking, against ranking at random?",Retrieval at each budget minus the budget itself,Development records,Group bootstrap of retrieval minus the random expectation,The served ranking retrieves no more than random
+4,Is missingness informative: do missingness indicators improve sets B and C?,Average precision with indicators minus without,Development records,Paired group bootstrap on the same folds,Indicators change average precision by zero

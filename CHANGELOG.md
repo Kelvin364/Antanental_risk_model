@@ -6,6 +6,7 @@ All notable changes to this project. Dates are in UTC.
 
 ### Added
 
+* Stage 3 of guideline version 2: `python -m antenatal research-results` answers research questions 1 to 4 from the saved out of fold predictions without fitting any model, and writes `outputs/research/results_table.csv`, a figure and `docs/research_results.md`; `notebooks/03_statistical_analysis.ipynb` reads them, checks record alignment before each paired test and recomputes DeLong's test as descriptive; the notebook is executed by the tests.
 * The single held out evaluation is prepared but not run: `docs/holdout_protocol.md` fixes the locked candidate, the comparisons and what cannot change afterwards; a frozen set A comparator in `webapp/model/comparator_set_a/` (`python -m antenatal freeze-comparator-artefact`); `HoldoutEvaluator.evaluate_once` now evaluates the candidate and both comparators together and writes `holdout_result.csv`, `holdout_comparisons.csv` and `holdout_classification.csv`; `scripts/run_holdout.py` runs it only on the exact approval sentence.
 * The Next.js interface in `frontend/` (App Router, TypeScript, Tailwind): the five screens as separate routes over the existing API, a typed client generated from the API's OpenAPI schema, validation messages taken from the API only, and a footer reporting the artefact version from `/health`. FastAPI serves its static export.
 * `scripts/export_openapi.py`, with a `--check` mode in continuous integration, and an interface build job.

@@ -56,6 +56,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Calibration, decision curve and detectable difference | Completed | [`calibration_by_set.csv`](outputs/tables/calibration_by_set.csv), [`decision_curve.csv`](outputs/tables/decision_curve.csv), [`detectable_difference.csv`](outputs/tables/detectable_difference.csv) |
 | Sensitivity analyses S1 to S6 | Completed | [`sensitivity_analyses.csv`](outputs/tables/sensitivity_analyses.csv) |
 | Further analyses: learning curve, ablation, parameterisation, missingness, multiple imputation, subgroups, retrieval | Completed | [`extensions.py`](src/antenatal/extensions.py), [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) |
+| Statistical analysis of research questions 1 to 4 on development records: paired group bootstrap p values, Holm adjustment over the exploratory family, DeLong as descriptive; held out section a template until the held out evaluation runs | Completed, from saved predictions only | [`research.py`](src/antenatal/research.py), [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb), [`docs/research_results.md`](docs/research_results.md) |
 | Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
 | Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
 | Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
@@ -150,6 +151,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── evidence
 │   ├── holdout_protocol.md
 │   ├── implementation_audit.md
+│   ├── research_results.md
 │   ├── tripod_ai_checklist.md
 │   └── tripod_ai_pending.md
 ├── fly.toml
@@ -165,7 +167,8 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   └── tsconfig.json
 ├── notebooks
 │   ├── 01_data_audit.ipynb
-│   └── 02_model_notebook.ipynb
+│   ├── 02_model_notebook.ipynb
+│   └── 03_statistical_analysis.ipynb
 ├── outputs
 │   ├── cohort_manifest.csv
 │   ├── figures
@@ -174,6 +177,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── oof_experiments_v2.parquet
 │   ├── oof_extensions.parquet
 │   ├── oof_predictions.parquet
+│   ├── research
 │   └── tables
 ├── partitions
 │   ├── folds.parquet

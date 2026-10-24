@@ -35,6 +35,7 @@ run-all:
 notebook:
 	cd notebooks && ../$(PYTHON) -m jupyter nbconvert --to notebook --execute --inplace 01_data_audit.ipynb
 	cd notebooks && ../$(PYTHON) -m jupyter nbconvert --to notebook --execute --inplace 02_model_notebook.ipynb
+	cd notebooks && ../$(PYTHON) -m jupyter nbconvert --to notebook --execute --inplace 03_statistical_analysis.ipynb
 
 serve:
 	$(PYTHON) -m uvicorn webapp.app.main:app --host 127.0.0.1 --port 8000
