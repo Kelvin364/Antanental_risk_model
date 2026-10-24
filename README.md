@@ -249,7 +249,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 | Item | Link |
 | --- | --- |
 | Demonstration video | https://youtu.be/QN0X9P8TFkA|
-| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), built from [`docs/Technical-Report.md`](docs/Technical-Report.md) by `make report-pdf`; final submitted link to be added |
+| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf) |
 | Submission bundle | `.venv/bin/python scripts/package_attempt2.py VIDEO` writes `dist/attempt2.zip` |
 
 ## Limitations
