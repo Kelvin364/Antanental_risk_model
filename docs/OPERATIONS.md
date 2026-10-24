@@ -66,9 +66,26 @@ make backup-online      # writes backups/online.sqlite3 with SQLite's online bac
 To run the local backup environment on that copy:
 
 ```
-cp backups/online.sqlite3 webapp/data/app.sqlite3
+make restore-local CONFIRM=yes   # copies backups/online.sqlite3 into webapp/data/app.sqlite3
 make frontend && make serve      # http://127.0.0.1:8000/, same accounts and cases
 ```
+
+`restore-local` refuses to run without `CONFIRM=yes`, because it replaces the local database.
+
+## Retention of synthetic cases
+
+Synthetic cases are deleted, with their visits and assessments, once they are older than
+`ANTENATAL_CASE_RETENTION_DAYS` days (default 7). The check runs every time the application
+starts, which on Fly.io happens whenever the machine wakes, and on demand:
+
+```
+fly ssh console -C "python -m webapp.app.admin purge-cases"
+```
+
+## Dependency security
+
+The `security` job of the continuous integration workflow runs `pip-audit` on
+`requirements.txt` and `npm audit` on the interface's run time dependencies at every push.
 
 Or in a container: `make docker`, then copy the file into the `app-state` volume.
 

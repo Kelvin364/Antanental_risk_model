@@ -18,6 +18,7 @@ from webapp.app.services.auth_service import AccountRefused, AuthService, SignIn
 from webapp.app.services.case_service import CaseNotFound, CaseService, StepOutOfOrder
 from webapp.app.services.model_service import ModelService
 from webapp.app.services.ranking_service import RankingService
+from webapp.app.services.retention import purge_old_cases
 from webapp.app.services.validation import EntryRefused, EntryRules
 
 
@@ -58,6 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     model = ModelService(settings.model_dir)
     sessions = create_session_factory(settings.database_url)
+    purge_old_cases(sessions, settings.case_retention_days)
     app = FastAPI(
         title="Antenatal caseload prototype",
         description="Research prototype. Synthetic cases only. Not for clinical use.",

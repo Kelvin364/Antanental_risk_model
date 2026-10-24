@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 
 .PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
-	frontend api-types frontend-dev benchmark accessibility docker audit deploy backup-online
+	frontend api-types frontend-dev benchmark accessibility docker audit deploy backup-online restore-local
 
 install:
 	python3.12 -m venv .venv
@@ -77,3 +77,12 @@ backup-online:
 	mkdir -p backups
 	fly ssh console -C "python -c \"import sqlite3; sqlite3.connect('/app/state/app.sqlite3').backup(sqlite3.connect('/app/state/backup.sqlite3'))\""
 	fly ssh sftp get /app/state/backup.sqlite3 backups/online.sqlite3
+
+# Load the online backup into the local environment, so the local system can stand in for
+# the online one. Asks for CONFIRM=yes because it replaces the local database.
+restore-local:
+	@test "$(CONFIRM)" = "yes" || { echo "This replaces webapp/data/app.sqlite3; run make restore-local CONFIRM=yes"; exit 1; }
+	test -f backups/online.sqlite3
+	mkdir -p webapp/data
+	$(PYTHON) -c "import sqlite3; sqlite3.connect('backups/online.sqlite3').backup(sqlite3.connect('webapp/data/app.sqlite3'))"
+	@echo "Restored backups/online.sqlite3 into webapp/data/app.sqlite3; start it with make serve"

@@ -50,6 +50,25 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
 
+  security:
+    # Known vulnerabilities in the pinned Python and interface dependencies (Stage 6).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit the Python dependencies
+        run: |
+          python -m pip install pip-audit
+          pip-audit -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Audit the interface dependencies used at run time
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
+
   deploy:
     # Runs only when the repository variable FLY_DEPLOY is "true" and the
     # FLY_API_TOKEN secret is set (docs/OPERATIONS.md).

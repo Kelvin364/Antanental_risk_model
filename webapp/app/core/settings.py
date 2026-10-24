@@ -26,10 +26,12 @@ class Settings:
     model_dir: Path
     database_url: str
     static_dir: Path
+    case_retention_days: int = 7
 
     @classmethod
     def from_env(cls) -> Settings:
-        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL`` and ``ANTENATAL_STATIC_DIR``.
+        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL``, ``ANTENATAL_STATIC_DIR``
+        and ``ANTENATAL_CASE_RETENTION_DAYS`` (default 7).
 
         The interface is the Next.js build in frontend/out. Without a build the
         API still runs and only the interface is absent.
@@ -39,4 +41,5 @@ class Settings:
             model_dir=Path(os.environ.get("ANTENATAL_MODEL_DIR", WEBAPP / "model")),
             database_url=os.environ.get("ANTENATAL_DATABASE_URL", f"sqlite:///{database}"),
             static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", FRONTEND_BUILD)),
+            case_retention_days=int(os.environ.get("ANTENATAL_CASE_RETENTION_DAYS", "7")),
         )
