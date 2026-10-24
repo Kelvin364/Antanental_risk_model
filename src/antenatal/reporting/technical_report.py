@@ -68,6 +68,62 @@ def _results(summary: pd.DataFrame) -> dict[str, str]:
     }
 
 
+def _span(estimate: float, low: float, high: float, signed: bool = False) -> str:
+    form = "+.4f" if signed else ".4f"
+    return f"{estimate:{form}} ({low:{form}} to {high:{form}})"
+
+
+def _stage2(tables: Path) -> dict[str, str]:
+    """Stage 2: how many prespecified runs, how many passed, and the largest gain."""
+    runs = pd.read_csv(tables / "experiments_v2_runs.csv")
+    selection = json.loads((tables / "selection_v2.json").read_text())
+    exp = pd.read_csv(tables / "experiments_v2.csv")
+    exp = exp[(exp["role"] == "exploratory") & (exp["metric"] == "pr_auc")]
+    best = exp.sort_values("difference").iloc[-1]
+    return {
+        "stage2_runs": str(len(runs)),
+        "stage2_passing": str(selection["candidates_passing"]),
+        "stage2_best_label": best["comparison"].split(": ", 1)[-1],
+        "stage2_best": _span(best["difference"], best["ci_low"], best["ci_high"], signed=True),
+        "stage2_best_detectable": f"{best['detectable_difference']:.4f}",
+    }
+
+
+def _holdout(tables: Path) -> dict[str, str]:
+    """The single held out evaluation, from its saved tables only."""
+    result = pd.read_csv(tables / "holdout_result.csv")
+    c = result[result["model"] == "C"].set_index("metric")
+    comp = pd.read_csv(tables / "holdout_comparisons.csv")
+    labels = pd.read_csv(tables / "holdout_classification.csv").set_index("measure")
+    audit = pd.read_csv(tables / "holdout_integrity.csv")
+
+    def metric(name: str) -> str:
+        return _span(c.loc[name, "estimate"], c.loc[name, "ci_low"], c.loc[name, "ci_high"])
+
+    def compared(role: str) -> str:
+        r = comp[comp["role"] == role].iloc[0]
+        interval = _span(r["difference"], r["ci_low"], r["ci_high"], signed=True)
+        return f"{interval}, p {r['p_value']:.3f}"
+
+    def label(name: str) -> str:
+        r = labels.loc[name]
+        return _span(r["estimate"], r["ci_low"], r["ci_high"])
+
+    return {
+        "holdout_date": str(result["evaluated_at"].iloc[0])[:10],
+        "holdout_ap": metric("pr_auc"),
+        "holdout_roc": metric("roc_auc"),
+        "holdout_slope": metric("calibration_slope"),
+        "holdout_primary": compared("primary"),
+        "holdout_secondary": compared("secondary"),
+        "holdout_sens": label("sensitivity"),
+        "holdout_spec": label("specificity"),
+        "holdout_ppv": label("ppv"),
+        "audit_pass": str(int((audit["result"] == "pass").sum())),
+        "audit_total": str(len(audit)),
+    }
+
+
 def _tests(evidence: Path) -> dict[str, str]:
     t = json.loads((evidence / "test_summary.json").read_text())
     inputs = pd.read_csv(evidence / "input_tests.csv")
@@ -113,6 +169,8 @@ def write_technical_report(paths: ProjectPaths) -> Path:
         "resamples": f"{PRIMARY.bootstrap_resamples:,}",
         "commits": _commits(paths.root),
         **_results(pd.read_csv(paths.tables / "results_summary.csv")),
+        **_stage2(paths.tables),
+        **_holdout(paths.tables),
         **_tests(paths.root / "docs" / "evidence"),
     }
     target = paths.root / "docs" / "Technical-Report.md"
