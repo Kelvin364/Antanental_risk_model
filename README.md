@@ -9,125 +9,240 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 
 > **Research code. The prototype accepts synthetic cases only. It is not a medical device and must not be used for any real pregnancy.**
 
-## Overview
+| | |
+| --- | --- |
+| Demonstration video | https://youtu.be/QN0X9P8TFkA |
+| Technical report | [Technical Report (PDF)](docs/Technical%20Report_%20Incremental%20Predictive%20Value%20of%20Two%20Antenatal%20Visits%20for%20Recorded%20Low%20Birth%20Weight%20%281%29.pdf) |
+| Live prototype | https://antenatal-caseload.fly.dev/ (synthetic cases only, sign in required) |
+| Source code | https://github.com/Kelvin364/Antanental_risk_model |
 
-When a pregnancy is seen for the second time, at or before 28 weeks, does information from the first antenatal visit help predict a recorded birth weight below 2.5 kg beyond what the second visit already shows? This repository answers that question on the publicly released Maternal Health Risks Stratification dataset from Tanzania (Mwifunyi et al., 2025; 8,817 records; CC BY 4.0), following the frozen plan in the project proposal.
+## Contents
 
-It contains four things that fit together:
+1. [The question and the answer](#the-question-and-the-answer)
+2. [System architecture](#system-architecture)
+3. [Research pipeline](#research-pipeline)
+4. [Results](#results)
+5. [How the held out records were protected](#how-the-held-out-records-were-protected)
+6. [The prototype](#the-prototype)
+7. [Getting started](#getting-started)
+8. [Testing and evidence](#testing-and-evidence)
+9. [Documentation](#documentation)
+10. [Repository structure](#repository-structure)
+11. [Limitations](#limitations)
+12. [Licence and data](#licence-and-data)
 
-1. **The `antenatal` package** (`src/antenatal`). It loads the file after checking its SHA 256, derives the cohort exactly as Table 3.5 of the proposal states, seals a held out partition before any modelling step, runs repeated nested grouped cross validation on development records only, and writes every table and figure.
-2. **Two notebooks** (`notebooks/`) that explain the audit and the results in plain English. They compute nothing of their own; they read the package outputs.
-3. **A frozen model artefact** (`webapp/model/`): L2 logistic regression on set C, fitted once on the 3,126 development records, saved with a checksum and a version record. A set B artefact sits beside it and is not served.
-4. **A prototype interface** (`webapp/`, `frontend/`): a FastAPI service and a Next.js interface that score synthetic cases with that artefact and show a rank, a probability with its confidence interval, and a label at a fixed threshold ("Likely" or "Not likely low birth weight") together with how often that label is right and whether the case's interval crosses the threshold.
+## The question and the answer
+
+When a pregnancy is seen for the second time, at or before 28 weeks, does information from the first antenatal visit help predict a recorded birth weight below 2.5 kg beyond what the second visit already shows?
+
+The study answers this on the publicly released Maternal Health Risks Stratification dataset from Tanzania (Mwifunyi et al., 2025; CC BY 4.0), following a plan fixed in the project proposal before any model was fitted. Three nested sets of predictors are compared: set A holds what is recorded at registration, set B adds the second visit, and set C adds the first visit as well.
+
+**Answer.** Adding the first visit did not improve prediction by any amount the design could detect, on development records, in every sensitivity analysis, and in the single evaluation on records held out from the start. The second visit adds a modest gain over registration alone. Twenty eight prespecified attempts to improve the model did not pass the selection rule, so version 1.0.0 of the model is the one served.
+
+## System architecture
+
+One Python package does all of the research and produces a frozen model artefact. The application only loads that artefact and never trains anything, so the web prototype and the analysis always give the same answer for the same case.
+
+```mermaid
+flowchart LR
+    data[("Released data file<br/>checked by SHA 256")] --> pkg["antenatal package<br/>src/antenatal"]
+    pkg --> outputs[("Tables, figures<br/>and predictions<br/>outputs/")]
+    pkg --> artefact[("Frozen model 1.0.0<br/>with checksum<br/>webapp/model/")]
+    artefact --> api["FastAPI service<br/>webapp/app"]
+    api <--> db[("SQLite<br/>synthetic cases,<br/>accounts, audit trail")]
+    ui["Next.js interface<br/>frontend/"] <--> api
+    api --> host["Fly.io host<br/>online system"]
+    api --> local["make serve or<br/>make docker<br/>local backup"]
+```
+
+The service checks the model checksum when it starts and refuses to run if the file has changed. Every case, visit, assessment and caseload route needs a signed in user with the administrator or researcher role. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) describes each module, the layering of routers, services and storage, and the data model.
+
+## Research pipeline
+
+Every step that learns from data runs inside a training fold, and the held out records are sealed before the first model step.
+
+```mermaid
+flowchart TD
+    A["Load the file and verify its checksum"] --> B["Derive the cohort, one logged rule at a time<br/>8,817 records to 3,908 pregnancies"]
+    B --> C["Seal the held out partition<br/>grouped by registration profile"]
+    C --> D["Development records only"]
+    D --> E["Build sets A, B and C<br/>availability screen inside each fold"]
+    E --> F["Nested grouped cross validation<br/>10 repeats, 5 outer folds, 3 inner folds"]
+    F --> G["Paired group bootstrap<br/>2,000 resamples, detectable difference"]
+    G --> H["Prespecified Stage 2 experiments<br/>and the selection rule"]
+    H --> I["Lock the model and the label threshold"]
+    I --> J["Evaluate the held out records once<br/>logged, audited before and after"]
+    C -.->|never used for training| J
+```
+
+The cohort flow from the released file to the analysis cohort, with the number excluded at each rule:
+
+![Cohort flow](outputs/figures/fig01_cohort_flow.png)
 
 ## Results
 
-Every number below is generated from `outputs/tables/results_summary.csv` by `python -m antenatal update-readme`. None is typed by hand. Intervals are 95 percent group bootstrap intervals on development out of fold predictions.
+The two tables below are generated from saved result files by `python -m antenatal update-readme`; no number is typed by hand. Intervals are 95 percent group bootstrap intervals. Average precision is the area under the precision recall curve; ROC AUC is the area under the receiver operating characteristic curve.
+
+**Development records** (out of fold predictions):
 
 <!-- results:start -->
 | Result | Value (95 percent interval) |
 | --- | --- |
 | Analysis cohort | 3,908 pregnancies, 206 events |
 | Development partition | 3,126 pregnancies, 165 events |
-| Primary: first visit added (C over B), PR AUC, logistic | -0.0040 (-0.0130 to +0.0025) |
-| Primary: first visit added (C over B), PR AUC, trees | -0.0066 (-0.0173 to +0.0024) |
+| Primary: first visit added (C over B), average precision, logistic | -0.0040 (-0.0130 to +0.0025) |
+| Primary: first visit added (C over B), average precision, trees | -0.0066 (-0.0173 to +0.0024) |
 | Secondary: second visit added (B over A), ROC AUC, logistic | +0.0205 (-0.0066 to +0.0476) |
 | Secondary: second visit added (B over A), ROC AUC, trees | +0.0345 (+0.0070 to +0.0627) |
-| Smallest detectable C over B, PR AUC, logistic | 0.0110 |
+| Smallest detectable C over B, average precision, logistic | 0.0110 |
 | C minus B with all training data (learning curve) | -0.0041 |
 | C over B under pooled multiple imputation | -0.0055 (-0.0151 to +0.0008) |
 | Share of events in the top 10 percent of the ranking | 21.8 percent (15.9 to 27.9) |
 | Calibration slope, logistic, set C | 0.98 (0.63 to 1.37) |
 <!-- results:end -->
 
-In plain words: adding the first visit to the second did not improve prediction by any amount this design could detect, and the learning curve gives no sign that more data of this kind would change that. The single held out evaluation agrees that the first visit adds nothing measurable, and shows weaker discrimination than on development records, with wide intervals ([`docs/holdout_results.md`](docs/holdout_results.md)).
+**The single held out evaluation and the Stage 2 experiments:**
 
-## Feature status
+<!-- heldout:start -->
+| Result | Value (95 percent interval) |
+| --- | --- |
+| Held out partition | 782 pregnancies, 41 events, evaluated once |
+| Held out: first visit added (C over B), average precision | +0.0012 (-0.0221 to +0.0185), p 0.707 |
+| Held out: second visit added (B over A), ROC AUC | +0.0405 (+0.0008 to +0.0805), p 0.046 |
+| Held out: served model, average precision | 0.1023 (0.0532 to 0.1879) |
+| Held out: served model, ROC AUC | 0.5725 (0.4752 to 0.6721) |
+| Held out: label sensitivity at the fixed threshold | 0.3415 (0.2059 to 0.4865) |
+| Held out: label specificity at the fixed threshold | 0.7949 (0.7643 to 0.8226) |
+| Stage 2 prespecified experiments that passed the selection rule | 0 of 28 |
+<!-- heldout:end -->
 
-| Feature | Status | Evidence |
+The paired differences between predictor sets on development records. An interval that crosses zero means no detectable difference:
+
+![Feature set differences](outputs/figures/fig07_feature_set_differences.png)
+
+| Calibration of predicted probabilities | Events found within ranking budgets |
+| --- | --- |
+| ![Calibration](outputs/figures/fig08_calibration.png) | ![Retrieval at budget](outputs/figures/fig16_retrieval_at_budget.png) |
+
+The four research questions are answered with estimates, intervals, p values and a Holm adjustment in [`docs/research_results.md`](docs/research_results.md) and in the notebook [`notebooks/03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb). The held out results, set beside the development results measure by measure, are in [`docs/holdout_results.md`](docs/holdout_results.md).
+
+## How the held out records were protected
+
+The supervisor's one absolute rule was that the held out records must never reach the training pipeline, so that the model could not be biased by them. Five pieces of evidence show it did not happen.
+
+| Evidence | Where to see it |
+| --- | --- |
+| The records were sealed before the model was fitted, and every locked model was fixed before they were first read | Git history, summarised in [`docs/holdout_results.md`](docs/holdout_results.md) |
+| Eleven integrity checks passed before and after the single evaluation | [`docs/evidence/holdout_integrity.md`](docs/evidence/holdout_integrity.md), [`docs/evidence/holdout_run/`](docs/evidence/holdout_run) |
+| Every model fit carries a guard that refuses any held out record | [`src/antenatal/cohort/partition.py`](src/antenatal/cohort/partition.py) |
+| The served model rebuilds exactly from development records alone | [`tests/integration/test_artefact_reproducibility.py`](tests/integration/test_artefact_reproducibility.py) |
+| The records were read once, and a second attempt was refused and logged | [`partitions/holdout_access.log`](partitions/holdout_access.log) |
+
+The protocol written before the evaluation, with the locked models, the measures and the rule that nothing changes afterwards, is [`docs/holdout_protocol.md`](docs/holdout_protocol.md).
+
+## The prototype
+
+The interface takes one synthetic pregnancy through registration and two visits, then shows its rank in a reference caseload, its probability with an interval, and a label, "Likely" or "Not likely low birth weight", at a threshold fixed on development records. The label is always shown with how often it is right. There is no triage band or priority wording anywhere.
+
+| Register | Assessment | Caseload |
 | --- | --- | --- |
-| Data loader with checksum verification | Completed | [`data/loader.py`](src/antenatal/data/loader.py), [`tests/unit/test_data_and_audit.py`](tests/unit/test_data_and_audit.py) |
-| Data quality audit (Table 3.3) | Completed | [`audit/quality.py`](src/antenatal/audit/quality.py), [`01_data_audit.ipynb`](notebooks/01_data_audit.ipynb) |
-| Cohort derivation reproducing Table 3.5 with a per record exclusion reason (R1) | Completed | [`cohort_flow.csv`](outputs/tables/cohort_flow.csv), [`cohort_manifest.csv`](outputs/cohort_manifest.csv) |
-| Held out partition sealed before any model step (R3) | Completed | [`partitions/`](partitions), [`cohort/partition.py`](src/antenatal/cohort/partition.py) |
-| Feature sets A, B and C with the availability screen (R2) | Completed | [`features/sets.py`](src/antenatal/features/sets.py), [`availability_screen.csv`](outputs/tables/availability_screen.csv) |
-| Eight model families and the constant prevalence baseline | Completed | [`models/factory.py`](src/antenatal/models/factory.py), [`model_performance.csv`](outputs/tables/model_performance.csv) |
-| Repeated nested grouped cross validation and paired group bootstrap | Completed | [`evaluation/nested_cv.py`](src/antenatal/evaluation/nested_cv.py), [`feature_set_comparisons.csv`](outputs/tables/feature_set_comparisons.csv) |
-| Calibration, decision curve and detectable difference | Completed | [`calibration_by_set.csv`](outputs/tables/calibration_by_set.csv), [`decision_curve.csv`](outputs/tables/decision_curve.csv), [`detectable_difference.csv`](outputs/tables/detectable_difference.csv) |
-| Sensitivity analyses S1 to S6 | Completed | [`sensitivity_analyses.csv`](outputs/tables/sensitivity_analyses.csv) |
-| Further analyses: learning curve, ablation, parameterisation, missingness, multiple imputation, subgroups, retrieval | Completed | [`extensions.py`](src/antenatal/extensions.py), [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) |
-| Statistical analysis of research questions 1 to 4 on development records: paired group bootstrap p values, Holm adjustment over the exploratory family, DeLong as descriptive; held out section filled from the single held out evaluation | Completed, from saved predictions only | [`research.py`](src/antenatal/research.py), [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb), [`docs/research_results.md`](docs/research_results.md) |
-| Frozen primary artefact and secondary set B artefact (R12) | Completed | [`webapp/model/version.json`](webapp/model/version.json), [`secondary_set_b/version.json`](webapp/model/secondary_set_b/version.json) |
-| Research data model in SQLite: pregnancy records, visit measurements, model configurations, evaluation results (Section 3.4.4) | Completed | [`storage.py`](src/antenatal/storage.py), `python -m antenatal load-db`, [`tests/unit/test_storage.py`](tests/unit/test_storage.py) |
-| Backend API with synthetic flag, range and timing rules (R9, R10, R16) | Completed | [`webapp/app/`](webapp/app), [`tests/integration/test_api.py`](tests/integration/test_api.py) |
-| Prototype interface over the API, five screens (R11) | Completed: Next.js in `frontend/` | [`frontend/src/`](frontend/src) |
-| Sign in with administrator and researcher roles, enforced on the server: scrypt password hashes, server side sessions in HttpOnly SameSite cookies, CSRF tokens, lockout after five failures, per address rate limit, audit trail, researchers see only their own cases (decision D1) | Completed | [`auth_service.py`](webapp/app/services/auth_service.py), [`tests/integration/test_auth.py`](tests/integration/test_auth.py) |
-| Classification at a fixed threshold with its confidence (decision D6): label, sensitivity, specificity and predictive values with intervals, and whether each case's interval crosses the threshold | Completed on development records and checked once on the held out records ([`docs/holdout_results.md`](docs/holdout_results.md)) | [`classification.py`](src/antenatal/artefact/classification.py), [`webapp/model/classification.json`](webapp/model/classification.json) |
-| Automated tests and continuous integration workflow | Completed: the workflow runs on every push to GitHub | [`tests/`](tests), [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
-| TRIPOD+AI checklist | Partial: the items only the author writes are pending, listed in [`docs/ethics_and_ai.md`](docs/ethics_and_ai.md) section 7 | [`docs/tripod_ai_checklist.md`](docs/tripod_ai_checklist.md) |
-| Classification threshold command: `python -m antenatal freeze-classification` fixes the threshold from out of fold predictions and saves it beside the artefact | Completed | [`study.py`](src/antenatal/study.py) |
-| Held out partition guarded in code and audited: every model fit refuses held out records, and `make audit` records eleven checks (decision D7) | Completed: 11 of 11 checks pass, before and after the held out evaluation | [`integrity.py`](src/antenatal/evaluation/integrity.py), [`docs/evidence/holdout_integrity.md`](docs/evidence/holdout_integrity.md) |
-| Stage 2 experiments of guideline version 2, prespecified in `configs/experiment_plan.yaml`: tuning on sets A, B and C, class weights, ablations, splines, recalibration, model averaging, visit two extras; selection rule applied | Completed on development records: no candidate passed the rule, so artefact 1.0.0 stays | [`experiments_v2.py`](src/antenatal/experiments_v2.py), [`candidates_v2.csv`](outputs/tables/candidates_v2.csv), [`experiments_v2.csv`](outputs/tables/experiments_v2.csv) |
-| Single evaluation on the held out partition (Stage 4): candidate C against frozen comparators B and A, the label at the fixed threshold, and net benefit | Completed once on 24 October 2026 after the supervisor's approval; integrity audit 11 of 11 before and after | [`docs/holdout_results.md`](docs/holdout_results.md), [`docs/holdout_protocol.md`](docs/holdout_protocol.md), [`partitions/holdout_access.log`](partitions/holdout_access.log) |
-| API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
-| Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
-| Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
-| Next.js interface (Stage 6): App Router, TypeScript, Tailwind, typed client generated from the OpenAPI schema, static export served by FastAPI | Completed | [`frontend/`](frontend), [`scripts/export_openapi.py`](scripts/export_openapi.py), [`tests/e2e/`](tests/e2e) |
-| Accessibility of the five screens: Lighthouse accessibility scores at phone and desktop sizes | Completed | [`scripts/accessibility_audit.py`](scripts/accessibility_audit.py), [`docs/evidence/accessibility.md`](docs/evidence/accessibility.md) |
-| Docker image: interface built in a Node stage, API and interface served by one container, cases kept on a named volume | Completed: built and run with `docker compose up --build`, health check passing | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
-| Online deployment on Fly.io with the local environment as backup (decision D7) | Live at https://antenatal-caseload.fly.dev/ (Fly.io, Johannesburg). Public checks 5 of 5 pass after the redeploy of 24 October 2026; the signed in checks passed as a researcher account ([`docs/evidence/deployment.md`](docs/evidence/deployment.md)). Locally 11 of 11 | [`fly.toml`](fly.toml), [`docs/OPERATIONS.md`](docs/OPERATIONS.md), [`docs/evidence/deployment.md`](docs/evidence/deployment.md) |
-| Technical report, Markdown and a PDF of at most five pages | Completed | [`docs/Technical-Report.md`](docs/Technical-Report.md), [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf), [`scripts/build_report_pdf.py`](scripts/build_report_pdf.py) |
-| Submission bundle and video outline | Completed as scripts; the video is not recorded yet | [`scripts/package_attempt2.py`](scripts/package_attempt2.py), [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) |
-| Architecture, ethics and responsible AI document, changelog and deviation log | Completed; the ethics document holds marked placeholders for the data producers' statement and the statements only the author writes | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/ethics_and_ai.md`](docs/ethics_and_ai.md), [`CHANGELOG.md`](CHANGELOG.md), [`docs/deviations.md`](docs/deviations.md) |
-| Input variation evidence | Completed | [`docs/evidence/input_tests.md`](docs/evidence/input_tests.md) |
+| ![Register](designs/web/01-register.png) | ![Assessment](designs/web/04-assessment.png) | ![Caseload](designs/web/05-caseload.png) |
 
-## Quick start
+The images are screenshots of the running interface drawn by `scripts/render_designs.py`; [`designs/README.md`](designs/README.md) lists every screen.
 
-These commands install everything, build the interface and start the prototype at http://127.0.0.1:8000/. They need Python 3.12 on the path as `python3.12` and Node.js 20.9 or newer.
+## Getting started
+
+These commands install everything, build the interface and start the prototype at http://127.0.0.1:8000/. They need Python 3.12 as `python3.12` and Node.js 20.9 or newer.
 
 ```bash
 git clone https://github.com/Kelvin364/Antanental_risk_model.git && cd Antanental_risk_model
 make install
 make frontend
+python -m webapp.app.admin create-admin admin   # prints the first password once
 make serve
 ```
 
-## Full installation
-
 | Component | Version |
 | --- | --- |
-| Python | 3.12 (the committed results used 3.12.13) |
-| scikit-learn | 1.8.0 |
-| pandas | 3.0.2 |
-| NumPy | 2.4.4 |
-| FastAPI | 0.142.2 |
-| uvicorn | 0.46.0 |
-| Node.js | 20.9 or newer, to build the interface (Next.js 16.4.2) |
+| Python | 3.12 |
+| scikit-learn | 1.8.0 (the artefact loads only with this version) |
+| pandas, NumPy | 3.0.2, 2.4.4 |
+| FastAPI, uvicorn | 0.142.2, 0.46.0 |
+| Node.js | 20.9 or newer, for the Next.js 16 interface |
 
-Every runtime version is pinned in [`requirements.txt`](requirements.txt) and every development tool in [`requirements-dev.txt`](requirements-dev.txt). The artefact is serialised with scikit-learn 1.8.0 and joblib 1.5.3, and other versions may not load it.
+Every version is pinned in [`requirements.txt`](requirements.txt) and [`requirements-dev.txt`](requirements-dev.txt). The data file is included under its licence; [`data/README.md`](data/README.md) gives its source and checksum.
 
-```bash
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python -m pip install -e .
-```
+**Common commands**
 
-The data file is included under its CC BY 4.0 licence. See [`data/README.md`](data/README.md) for its source and checksum.
+| Task | Command |
+| --- | --- |
+| Derive the cohort and its flow table | `.venv/bin/python -m antenatal derive-cohort` |
+| Run the whole analysis (the held out evaluation is never part of it) | `.venv/bin/python -m antenatal run-all` |
+| Answer the research questions from saved predictions | `.venv/bin/python -m antenatal research-results` |
+| Check that the held out records never reached training | `make audit` |
+| Run the tests and the linters | `make test` and `make lint` |
+| Run the notebooks | `make notebook` |
+| Start the prototype in a container | `make docker` |
+| Deploy the online system | `make deploy` |
+| Copy the online database into the local backup | `make backup-online`, then `make restore-local CONFIRM=yes` |
+| Remove synthetic cases older than seven days | `python -m webapp.app.admin purge-cases` (also runs at every start) |
+
+## Testing and evidence
+
+The tests run on every push in continuous integration, together with ruff, black and a dependency security audit. The figures in the evidence documents are written by the scripts that measure them.
+
+| What is checked | Evidence |
+| --- | --- |
+| Unit, integration and browser tests, with coverage and linter results | [`docs/evidence/test_summary.json`](docs/evidence/test_summary.json) |
+| Twelve inputs entered through a running server | [`docs/evidence/input_tests.md`](docs/evidence/input_tests.md) |
+| The five screens in Chromium, Firefox and WebKit at two sizes | [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
+| Accessibility scores of every screen | [`docs/evidence/accessibility.md`](docs/evidence/accessibility.md) |
+| Latency, memory and start up time of the API | [`docs/evidence/performance.md`](docs/evidence/performance.md) |
+| Checks against the live online system | [`docs/evidence/deployment.md`](docs/evidence/deployment.md) |
+
+## Documentation
+
+| Document | What it holds |
+| --- | --- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The modules, the layering of the application and the data model, with diagrams |
+| [`docs/research_results.md`](docs/research_results.md) | The four research questions, each with its endpoint, method, estimate, interval and p value |
+| [`docs/holdout_protocol.md`](docs/holdout_protocol.md) | What was locked and measured before the held out records were opened |
+| [`docs/holdout_results.md`](docs/holdout_results.md) | The held out results beside the development results, and the proof of independence |
+| [`docs/deviations.md`](docs/deviations.md) | Every place the work differs from the proposal, with the reason |
+| [`configs/experiment_plan.yaml`](configs/experiment_plan.yaml) | The Stage 2 experiments and the selection rule, written before any of them ran |
+| [`CHANGELOG.md`](CHANGELOG.md) | What changed in the project, in order |
+
+The three notebooks explain the work in plain English and compute nothing of their own: [`01_data_audit.ipynb`](notebooks/01_data_audit.ipynb) covers the data quality audit, [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) the models and further analyses, and [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb) the research questions.
 
 ## Repository structure
+
+<details>
+<summary>Files and folders tracked by git (generated)</summary>
 
 <!-- tree:start -->
 ```
 .
+├── (1).pdf
 ├── .dockerignore
 ├── .github
 │   └── workflows
 ├── .gitignore
+├── Antenatal
+├── Birth
 ├── CHANGELOG.md
 ├── Dockerfile
+├── Incremental
 ├── LICENSE
+├── Low
 ├── Makefile
+├── Predictive
 ├── README.md
+├── Recorded
+├── Report_
+├── Two
+├── Value
+├── Visits
+├── Weight
 ├── configs
 │   └── experiment_plan.yaml
 ├── data
@@ -141,20 +256,14 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ├── docker-compose.yml
 ├── docs
 │   ├── ARCHITECTURE.md
-│   ├── OPERATIONS.md
-│   ├── Technical-Report.md
-│   ├── Technical-Report.pdf
-│   ├── VIDEO_SCRIPT.md
-│   ├── decisions_log.md
+│   ├── Technical
 │   ├── deviations.md
-│   ├── ethics_and_ai.md
 │   ├── evidence
 │   ├── holdout_protocol.md
 │   ├── holdout_results.md
-│   ├── implementation_audit.md
-│   ├── research_results.md
-│   └── tripod_ai_checklist.md
+│   └── research_results.md
 ├── fly.toml
+├── for
 ├── frontend
 │   ├── next-env.d.ts
 │   ├── next.config.ts
@@ -169,6 +278,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── 01_data_audit.ipynb
 │   ├── 02_model_notebook.ipynb
 │   └── 03_statistical_analysis.ipynb
+├── of
 ├── outputs
 │   ├── cohort_manifest.csv
 │   ├── figures
@@ -215,53 +325,26 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 ```
 <!-- tree:end -->
 
-## How to run
+</details>
 
-**The analysis.** Each command reads and writes paths relative to the repository root.
-
-```bash
-.venv/bin/python -m antenatal derive-cohort      # cohort, per record manifest, flow table
-.venv/bin/python -m antenatal seal-partition     # reads the sealed partition; never regenerates it
-.venv/bin/python -m antenatal run-analysis       # nested cross validation, tables and figures (about 5 minutes)
-.venv/bin/python -m antenatal run-extensions     # further analyses (several minutes)
-.venv/bin/python -m antenatal summarise-results  # outputs/tables/results_summary.csv
-.venv/bin/python -m antenatal update-readme      # refreshes the results and structure blocks above
-```
-
-`python -m antenatal run-all` runs the full sequence, including `freeze-artefact` and `freeze-secondary-artefact`. Refitting the artefacts reproduces the same coefficients and reference probabilities, but the files get new checksums, so the committed artefacts remain the ones of record. The single held out evaluation is never part of `run-all`.
-
-**The notebooks.** `make notebook` executes both notebooks in place. They read the outputs above.
-
-**The application.** `make frontend` builds the Next.js interface into `frontend/out`, and `make serve` starts the API and serves that interface at http://127.0.0.1:8000/, with interactive API documentation at http://127.0.0.1:8000/docs. Without a build, `make serve` runs the API only. While changing the interface, `make frontend-dev` serves it with hot reloading at http://127.0.0.1:3000/ and forwards API calls to `make serve`. After a change to an API request or response, `make api-types` regenerates `frontend/openapi.json` and the typed client; continuous integration fails if either is stale. The server verifies the artefact checksum when it starts and refuses to start if the file has changed.
-
-**The tests.** `make test` runs the unit, integration and browser suites with coverage, and `make lint` runs ruff and black. The browser tests need `make browsers` once, which downloads Chromium, Firefox and WebKit for Playwright; without them those tests are skipped. `make e2e` runs only the browser tests and rewrites `docs/evidence/compatibility.md`.
-
-**The benchmarks.** `make benchmark` starts its own server, sends 500 sequential and 50 concurrent predictions and writes `docs/evidence/performance.md`. `make accessibility` starts its own server, records one synthetic case and runs the Lighthouse accessibility audit on each screen at phone and desktop sizes, writing `docs/evidence/accessibility.md`; it needs `make frontend` and `make browsers` first, and fetches the pinned Lighthouse through `npx` so it never enters the interface's dependencies.
-
-**The container.** `make docker` (that is, `docker compose up --build`) builds the interface and the API into one image and serves both at http://127.0.0.1:8000/. Cases are kept on the `app-state` volume; `docker compose down -v` removes them. On WSL without systemd, start the engine first with `sudo dockerd &`, or enable systemd by putting `systemd=true` under `[boot]` in `/etc/wsl.conf`.
-
-## Designs
-
-`designs/web/` holds five screenshots of the running interface, one per screen, drawn by `scripts/render_designs.py` from a synthetic case. The earlier Figma screens with sign up, sign in and triage wording were removed. [`designs/README.md`](designs/README.md) lists the files.
-
-## Submission
-
-| Item | Link |
+| Folder | Role |
 | --- | --- |
-| Demonstration video | https://youtu.be/QN0X9P8TFkA|
-| Technical report | [`docs/Technical-Report.pdf`](docs/Technical-Report.pdf) |
-| Submission bundle | `.venv/bin/python scripts/package_attempt2.py VIDEO` writes `dist/attempt2.zip` |
+| `src/antenatal` | The research package: data, cohort, partition, features, models, evaluation, artefact, reporting |
+| `webapp/` | The FastAPI service and the frozen model artefacts |
+| `frontend/` | The Next.js interface, built into a static export that the service serves |
+| `outputs/` | Every table, figure and saved prediction |
+| `partitions/` | The sealed held out identifiers, the folds and the access log |
+| `tests/` | Unit, integration and browser tests |
+| `scripts/` | Evidence, packaging and held out evaluation scripts |
 
 ## Limitations
 
-* One public Tanzanian dataset with no facility or geographic identifier, so neither external nor geographic validation is possible.
-* The development partition holds 165 events, so only differences of roughly the detectable size shown above could be seen.
-* Haemoglobin at visit two is recorded for a minority of pregnancies, so the test of the earlier visit rests mainly on blood pressure, weight, gestational week and pulse.
-* The outcome is the birth weight recorded under the care actually given. Nothing here shows that acting on a prediction would change it.
-* The held out partition is small, so its intervals are wide; its ROC AUC interval includes the value of random ranking ([`docs/holdout_results.md`](docs/holdout_results.md)).
-* The predictors carry little information: fundal height is recorded only as normal or abnormal, history counts are internally inconsistent, and birth weight is recorded to 0.1 kg. A larger independent cohort is needed before any claim about use in practice.
-* The prototype is a demonstration on synthetic cases. It has not been validated for any pregnancy.
+1. One public Tanzanian dataset with no facility or geographic identifier, so neither external nor geographic validation is possible.
+2. The predictors carry little information. Fundal height is recorded only as normal or abnormal, history counts are internally inconsistent, and birth weight is recorded to 0.1 kg.
+3. The development partition holds 165 events and the held out partition 41, so only differences of roughly the detectable size could be seen, and held out intervals are wide.
+4. The outcome is birth weight recorded under the care actually given. Nothing here shows that acting on a prediction would change it.
+5. The prototype is a demonstration on synthetic cases. It has not been validated for any pregnancy, and a larger independent cohort is needed before any claim about use in practice.
 
-## Licence
+## Licence and data
 
-The code is released under the MIT licence (see [`LICENSE`](LICENSE)). The data file is by Mwifunyi et al. (2025), released under CC BY 4.0, https://doi.org/10.5281/zenodo.15309733.
+The code is released under the MIT licence ([`LICENSE`](LICENSE)). The data file is by Mwifunyi et al. (2025), released under CC BY 4.0, https://doi.org/10.5281/zenodo.15309733.

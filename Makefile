@@ -69,7 +69,7 @@ docker:
 audit:
 	$(PYTHON) -m antenatal audit-holdout
 
-# Online deployment on Fly.io and its backup to the local environment (docs/OPERATIONS.md).
+# Online deployment on Fly.io and its backup to the local environment (README, Getting started).
 deploy:
 	fly deploy --remote-only
 

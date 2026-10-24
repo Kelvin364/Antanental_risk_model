@@ -1,6 +1,6 @@
 # Protocol for the single held out evaluation
 
-This page fixes, before any held out outcome is read, what will be evaluated on the held out records, how, and what may and may not change afterwards. It serves guideline version 2 Stage 4 and decision D7 in `docs/decisions_log.md`.
+This page fixes, before any held out outcome is read, what will be evaluated on the held out records, how, and what may and may not change afterwards. It serves guideline version 2 Stage 4 and the supervisor's decision D7.
 
 The held out records are 782 pregnancies with 41 recorded low birth weight outcomes, set aside by `partitions/holdout_ids.csv` before any model was fitted. Until the run below, `partitions/holdout_access.log` does not exist and `python -m antenatal audit-holdout` reports every check as pass.
 

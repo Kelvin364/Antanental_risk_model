@@ -1,8 +1,9 @@
 """Generated blocks of the README, so its numbers and its tree are never typed by hand.
 
-Two blocks are replaced between HTML comment markers: the results, read
-from ``outputs/tables/results_summary.csv``, and the repository structure,
-built from the files tracked by git to a depth of two.
+Three blocks are replaced between HTML comment markers: the development results, read
+from ``outputs/tables/results_summary.csv``; the held out and Stage 2 results, read from
+the tables the single held out evaluation and Stage 2 wrote; and the repository
+structure, built from the files tracked by git to a depth of two.
 """
 
 from __future__ import annotations
@@ -21,10 +22,15 @@ RESULT_ROWS = (
     (
         "primary_c_over_b_logistic",
         None,
-        "Primary: first visit added (C over B), PR AUC, logistic",
+        "Primary: first visit added (C over B), average precision, logistic",
         "diff",
     ),
-    ("primary_c_over_b_gbt", None, "Primary: first visit added (C over B), PR AUC, trees", "diff"),
+    (
+        "primary_c_over_b_gbt",
+        None,
+        "Primary: first visit added (C over B), average precision, trees",
+        "diff",
+    ),
     (
         "secondary_b_over_a_logistic",
         None,
@@ -40,7 +46,7 @@ RESULT_ROWS = (
     (
         "primary_c_over_b_logistic_detectable",
         None,
-        "Smallest detectable C over B, PR AUC, logistic",
+        "Smallest detectable C over B, average precision, logistic",
         "value",
     ),
     ("learning_curve_gap_full", None, "C minus B with all training data (learning curve)", "value"),
@@ -75,6 +81,49 @@ def results_block(summary: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
+def _span(estimate: float, low: float, high: float, signed: bool = True) -> str:
+    form = "+.4f" if signed else ".4f"
+    return f"{estimate:{form}} ({low:{form}} to {high:{form}})"
+
+
+def heldout_block(tables: Path) -> str:
+    """Markdown table of the single held out evaluation and the Stage 2 outcome."""
+    result = pd.read_csv(tables / "holdout_result.csv")
+    served = result[result["model"] == "C"].set_index("metric")
+    comp = pd.read_csv(tables / "holdout_comparisons.csv").set_index("role")
+    labels = pd.read_csv(tables / "holdout_classification.csv").set_index("measure")
+    runs = len(pd.read_csv(tables / "experiments_v2_runs.csv"))
+    passing = pd.read_json(tables / "selection_v2.json", typ="series")["candidates_passing"]
+
+    def measured(frame, key, signed=False):
+        r = frame.loc[key]
+        return _span(r["estimate"], r["ci_low"], r["ci_high"], signed)
+
+    def compared(role):
+        r = comp.loc[role]
+        return f"{_span(r['difference'], r['ci_low'], r['ci_high'])}, p {r['p_value']:.3f}"
+
+    rows = [
+        (
+            "Held out partition",
+            f"{int(result['n'].iloc[0]):,} pregnancies, "
+            f"{int(result['events'].iloc[0])} events, evaluated once",
+        ),
+        ("Held out: first visit added (C over B), average precision", compared("primary")),
+        ("Held out: second visit added (B over A), ROC AUC", compared("secondary")),
+        ("Held out: served model, average precision", measured(served, "pr_auc")),
+        ("Held out: served model, ROC AUC", measured(served, "roc_auc")),
+        ("Held out: label sensitivity at the fixed threshold", measured(labels, "sensitivity")),
+        ("Held out: label specificity at the fixed threshold", measured(labels, "specificity")),
+        (
+            "Stage 2 prespecified experiments that passed the selection rule",
+            f"{int(passing)} of {runs}",
+        ),
+    ]
+    lines = ["| Result | Value (95 percent interval) |", "| --- | --- |"]
+    return "\n".join(lines + [f"| {label} | {text} |" for label, text in rows])
+
+
 def tree_block(root: Path) -> str:
     """Tracked files and folders to a depth of two, in the style of ``tree -L 2``."""
     files = subprocess.run(
@@ -106,9 +155,10 @@ def _replace(text: str, name: str, block: str) -> str:
 
 
 def render_readme(paths: ProjectPaths, text: str) -> str:
-    """Return ``text`` with both generated blocks refreshed."""
+    """Return ``text`` with every generated block refreshed."""
     summary = pd.read_csv(paths.tables / "results_summary.csv")
     text = _replace(text, "results", results_block(summary))
+    text = _replace(text, "heldout", heldout_block(paths.tables))
     return _replace(text, "tree", tree_block(paths.root))
 
 

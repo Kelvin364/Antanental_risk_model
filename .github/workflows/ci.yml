@@ -71,7 +71,7 @@ jobs:
 
   deploy:
     # Runs only when the repository variable FLY_DEPLOY is "true" and the
-    # FLY_API_TOKEN secret is set (docs/OPERATIONS.md).
+    # FLY_API_TOKEN secret is set (README, Getting started).
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.FLY_DEPLOY == 'true'
     needs: [test, interface]
     runs-on: ubuntu-latest

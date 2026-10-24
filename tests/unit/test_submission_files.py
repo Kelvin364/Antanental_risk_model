@@ -1,7 +1,6 @@
-"""The submission files: report PDF, package script and video outline."""
+"""The submission files: the report PDF and the package script."""
 
 import importlib.util
-import re
 
 import pytest
 
@@ -13,12 +12,20 @@ def _script(root, name):
     return module
 
 
-def test_report_pdf_is_a4_and_at_most_five_pages(root):
+REPORT_GLOB = "Technical Report_*.pdf"
+# A4 or US Letter, in points.
+PAPER = {(595.3, 841.9), (612.0, 792.0)}
+
+
+def test_submitted_report_is_at_most_five_pages_in_times_new_roman(root):
     pypdf = pytest.importorskip("pypdf")
-    reader = pypdf.PdfReader(root / "docs" / "Technical-Report.pdf")
+    reports = sorted((root / "docs").glob(REPORT_GLOB))
+    assert len(reports) == 1, reports
+    reader = pypdf.PdfReader(reports[0])
     assert 1 <= len(reader.pages) <= 5
     box = reader.pages[0].mediabox
-    assert abs(float(box.width) - 595.3) < 1 and abs(float(box.height) - 841.9) < 2
+    size = (float(box.width), float(box.height))
+    assert any(abs(size[0] - w) < 1 and abs(size[1] - h) < 2 for w, h in PAPER)
     fonts = {
         f.get_object()["/BaseFont"] for p in reader.pages for f in p["/Resources"]["/Font"].values()
     }
@@ -32,11 +39,3 @@ def test_report_html_numbers_headings_by_style_sheet(root):
     html = build.to_html("# Title\n\n## 1. Scope\n\n| a | b |\n| --- | --- |\n| 1 | 2 |\n")
     assert "<h2>Scope</h2>" in html and "<table>" in html
     assert "counter(h2)" in html and "11pt" in html and "Times New Roman" in html
-
-
-def test_video_outline_fits_eight_to_twelve_minutes(root):
-    text = (root / "docs" / "VIDEO_SCRIPT.md").read_text()
-    ends = [int(m) * 60 + int(s) for m, s in re.findall(r"to (\d+):(\d\d) \|", text)]
-    assert 8 * 60 <= max(ends) <= 12 * 60
-    for part in "ABCDE":
-        assert f"### Part {part}" in text

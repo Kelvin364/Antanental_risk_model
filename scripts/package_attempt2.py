@@ -21,7 +21,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = "antenatal-caseload-attempt2"
-PDF = ROOT / "docs" / "Technical-Report.pdf"
+# The submitted technical report, committed in docs/ under the name it was exported with.
+PDF = next(
+    iter(sorted((ROOT / "docs").glob("Technical Report_*.pdf"))), ROOT / "docs" / "report.pdf"
+)
+PDF_NAME = f"docs/{PDF.name}"
 RUN = """# Running the submission
 
 Python 3.12 and make are needed. From this folder:
@@ -34,7 +38,7 @@ make serve        # the API and interface at http://127.0.0.1:8000/
 
 The browser tests are skipped unless `make browsers` has been run once.
 `python -m antenatal derive-cohort` prints the cohort flow counts.
-The report is `docs/Technical-Report.pdf` and the video is in `video/`.
+The report is the PDF in `docs/` and the video is in `video/`.
 """
 
 
@@ -44,7 +48,7 @@ def _git(*args: str) -> bytes:
 
 def build(video: Path, out: Path) -> Path:
     if not PDF.exists():
-        raise SystemExit("docs/Technical-Report.pdf is missing; run scripts/build_report_pdf.py")
+        raise SystemExit("The technical report PDF is missing from docs/")
     if not video.is_file():
         raise SystemExit(f"video file not found: {video}")
     if _git("status", "--porcelain", "--untracked-files=no").strip():
@@ -56,11 +60,11 @@ def build(video: Path, out: Path) -> Path:
         zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as bundle,
     ):
         for member in archive.getmembers():
-            if member.isfile() and member.name != "docs/Technical-Report.pdf":
+            if member.isfile() and member.name != PDF_NAME:
                 info = zipfile.ZipInfo(f"{FOLDER}/{member.name}", _date(member))
                 info.external_attr = (member.mode & 0o777) << 16
                 bundle.writestr(info, archive.extractfile(member).read(), zipfile.ZIP_DEFLATED)
-        bundle.write(PDF, f"{FOLDER}/docs/Technical-Report.pdf")
+        bundle.write(PDF, f"{FOLDER}/{PDF_NAME}")
         bundle.write(video, f"{FOLDER}/video/{video.name}")
         bundle.writestr(f"{FOLDER}/RUN.md", RUN)
     return out
