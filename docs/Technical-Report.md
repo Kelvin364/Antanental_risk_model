@@ -36,7 +36,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 
 ## 3. Testing approaches and results
 
-The test suite ran 315 tests in 330.3 seconds with 0 failures: 242 unit tests, 67 integration tests and 6 browser tests. Line coverage of the package and the application was 97.0 percent of 3,789 statements. Ruff reported no findings and black reported no changes needed.
+The test suite ran 329 tests in 336.4 seconds with 0 failures: 253 unit tests, 70 integration tests and 6 browser tests. Line coverage of the package and the application was 96.3 percent of 4,435 statements. Ruff reported no findings and black reported no changes needed.
 
 | Approach | What it checks |
 | --- | --- |
@@ -65,7 +65,7 @@ The input variation run gave 12 of 12 inputs behaving as expected:
 
 ## 4. Code quality practices
 
-The package separates data access, parsing, cohort rules, partitioning, features, models, evaluation, the artefact and reporting into their own modules, and every constant lives in one frozen `StudySpec`. `FeatureSet` and `MetricStrategy` use abstraction and polymorphism. Every public class and function has a docstring and type hints; no function exceeds 50 lines and no file 300. Ruff and black run locally and in continuous integration, every output carries a checksum in `outputs/manifest.json`, and the README results are generated and tested. The history holds 90 commits with imperative messages.
+The package separates data access, parsing, cohort rules, partitioning, features, models, evaluation, the artefact and reporting into their own modules, and every constant lives in one frozen `StudySpec`. `FeatureSet` and `MetricStrategy` use abstraction and polymorphism. Every public class and function has a docstring and type hints; no function exceeds 50 lines and no file 300. Ruff and black run locally and in continuous integration, every output carries a checksum in `outputs/manifest.json`, and the README results are generated and tested. The history holds 94 commits with imperative messages.
 
 ## 5. Results and limitations
 

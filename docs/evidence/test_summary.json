@@ -1,9 +1,9 @@
 {
-  "recorded_at": "2026-10-24T11:39:53+00:00",
+  "recorded_at": "2026-10-24T11:50:19+00:00",
   "tests": 329,
   "failures": 0,
   "skipped": 0,
-  "seconds": 347.9,
+  "seconds": 336.4,
   "by_suite": {
     "e2e": {
       "tests": 6,
@@ -22,7 +22,7 @@
     }
   },
   "line_coverage_percent": 96.3,
-  "statements": 4428,
+  "statements": 4435,
   "ruff_clean": true,
   "black_clean": true
 }
