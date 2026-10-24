@@ -1,0 +1,12 @@
+                                                                     check result               value                                    evidence
+                                Held out file matches its recorded SHA 256   pass    249114c363dab8a8 partitions/holdout.sha256, verified on load
+                                     Development records that are held out   pass                   0                       Partition.development
+                             Registration groups shared by both partitions   pass                   0                group_key of both partitions
+                                  Training guard refuses a held out record   pass 782 records blocked  TrainingGuard, required by every model fit
+                               Held out records in oof_predictions.parquet   pass                   0             outputs/oof_predictions.parquet
+                                Held out records in oof_extensions.parquet   pass                   0              outputs/oof_extensions.parquet
+                    Held out records in learning_curve_predictions.parquet   pass                   0  outputs/learning_curve_predictions.parquet
+                            Held out records in oof_experiments_v2.parquet   pass                   0          outputs/oof_experiments_v2.parquet
+      Served reference caseload equals development out of fold predictions   pass                3126               webapp/model/lbw_model.joblib
+Held out records with a predictor vector identical to a development record   pass                   0           25 predictors of the served model
+                                             Held out evaluations recorded   pass                   0               partitions/holdout_access.log
