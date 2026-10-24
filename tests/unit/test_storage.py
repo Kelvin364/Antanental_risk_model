@@ -53,7 +53,7 @@ def test_model_configurations_match_the_frozen_artefacts(database, root):
     frame = _read(engine, "model_configurations").set_index("feature_set")
     primary = json.loads((root / "webapp" / "model" / "version.json").read_text())
     assert frame.loc["C", "artefact_sha256"] == primary["artefact_sha256"]
-    assert set(frame.index) == {"B", "C"} and frame["version"].is_unique
+    assert set(frame.index) == {"A", "B", "C"} and frame["version"].is_unique
 
 
 def test_evaluation_results_match_the_fold_metrics(database, root):

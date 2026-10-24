@@ -8,13 +8,14 @@ import pandas as pd
 import pytest
 
 from antenatal.artefact.artefact import ArtefactVersionMismatch, FittedPipelineArtefact
+from antenatal.artefact.classification import derive_rule
 from antenatal.artefact.interval import design_rows
 from antenatal.cohort.builder import Cohort
 from antenatal.cohort.exclusion_log import ExclusionLog
 from antenatal.cohort.partition import PartitionWriter
 from antenatal.config import PRIMARY
 from antenatal.data.loader import ChecksumMismatch
-from antenatal.evaluation.holdout import HoldoutAccessRefused, HoldoutEvaluator
+from antenatal.evaluation.holdout import HoldoutAccessRefused, HoldoutEvaluator, LockedModel
 
 CASE = {
     "age": 24,
@@ -169,25 +170,30 @@ def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
     (tmp_path / "holdout.sha256").write_text(f"{digest}  holdout_ids.csv\n")
     evaluator = HoldoutEvaluator(tmp_path)
     spec = PRIMARY.variant("test", bootstrap_resamples=50)
+    models = [LockedModel(name, _ConstantArtefact(), "f" * 64) for name in ("C", "B", "A")]
     with pytest.raises(HoldoutAccessRefused):
         evaluator.evaluate_once(
-            _ConstantArtefact(),
-            cohort,
-            tmp_path / "r.csv",
-            confirm_supervisor_reviewed=False,
-            spec=spec,
+            models, cohort, tmp_path, confirm_supervisor_reviewed=False, spec=spec
         )
-    table = evaluator.evaluate_once(
-        _ConstantArtefact(), cohort, tmp_path / "r.csv", confirm_supervisor_reviewed=True, spec=spec
+    rule = derive_rule(
+        np.array([0, 1] * 50), np.linspace(0, 1, 100), np.arange(100), "t", "f" * 64, "t"
     )
-    assert set(table["metric"]) >= {"pr_auc", "roc_auc"} and table["n"].iloc[0] == 100
+    tables = evaluator.evaluate_once(
+        models,
+        cohort,
+        tmp_path,
+        confirm_supervisor_reviewed=True,
+        rule=rule,
+        spec=spec,
+        provenance="operator test; purpose test",
+    )
+    assert set(tables) == {"holdout_result", "holdout_comparisons", "holdout_classification"}
+    assert set(tables["holdout_comparisons"]["role"]) >= {"primary", "secondary"}
+    assert (tmp_path / "holdout_result.csv").exists()
+    assert "operator test" in (tmp_path / "holdout_access.log").read_text()
     with pytest.raises(HoldoutAccessRefused):
         evaluator.evaluate_once(
-            _ConstantArtefact(),
-            cohort,
-            tmp_path / "r.csv",
-            confirm_supervisor_reviewed=True,
-            spec=spec,
+            models, cohort, tmp_path, confirm_supervisor_reviewed=True, spec=spec
         )
     assert evaluator.evaluations_logged() == 1
 

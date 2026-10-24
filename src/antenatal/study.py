@@ -23,7 +23,7 @@ from antenatal.data.loader import DataLoader
 from antenatal.evaluation.nested_cv import CVResults, Experiment, NestedCVRunner
 from antenatal.features.builder import FeatureBuilder
 from antenatal.features.screen import AvailabilityScreen
-from antenatal.features.sets import PRIMARY_SETS, FeatureSet, SetB, SetC
+from antenatal.features.sets import PRIMARY_SETS, FeatureSet, SetA, SetB, SetC
 from antenatal.models.factory import FAMILY_SCREEN, PRIMARY_MODELS
 from antenatal.paths import ProjectPaths
 
@@ -109,6 +109,15 @@ class ArtefactPlan:
 PRIMARY_PLAN = ArtefactPlan(SERVED_MODEL, SERVED_SET, "", ARTEFACT_VERSION, "primary, served")
 SECONDARY_PLAN = ArtefactPlan(
     SERVED_MODEL, SetB(), "secondary_set_b", "1.0.0+set-b", "secondary, not served by default"
+)
+# Frozen before the single held out evaluation so the secondary comparison (B over A)
+# can be repeated there with locked models (docs/holdout_protocol.md).
+COMPARATOR_PLAN = ArtefactPlan(
+    SERVED_MODEL,
+    SetA(),
+    "comparator_set_a",
+    "1.0.0+set-a",
+    "comparator for the secondary comparison on the held out records, not served",
 )
 
 

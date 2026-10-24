@@ -62,6 +62,9 @@ class GroupBootstrap:
     def _summarise(self, estimate: float, draws: list[float]) -> Interval:
         values = np.asarray(draws, dtype=float)
         values = values[~np.isnan(values)]
+        if values.size < 2:
+            # Undefined in every resample, for example a precision when nothing is flagged.
+            return Interval(estimate, float("nan"), float("nan"), float("nan"), int(values.size))
         low, high = np.percentile(values, [2.5, 97.5])
         # Two sided bootstrap p value for a difference: twice the smaller share of
         # resamples on either side of zero, capped at 1.

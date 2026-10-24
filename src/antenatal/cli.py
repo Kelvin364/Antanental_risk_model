@@ -124,6 +124,15 @@ def audit_report(paths: ProjectPaths) -> None:
     print("Wrote docs/implementation_audit.md")
 
 
+def freeze_comparator_artefact(paths: ProjectPaths) -> None:
+    """Freeze the set A comparator for the held out secondary comparison, on development records."""
+    from antenatal.study import COMPARATOR_PLAN
+    from antenatal.study import freeze_artefact as freeze
+
+    artefact = freeze(paths, PRIMARY, COMPARATOR_PLAN)
+    print(f"Comparator artefact {artefact.version}: set {artefact.feature_set}, not served")
+
+
 def summarise_results(paths: ProjectPaths) -> None:
     """Collect every headline number, with its source file, into results_summary.csv."""
     from antenatal.reporting.results_summary import build_results_summary
@@ -175,6 +184,7 @@ def _commands() -> dict[str, Callable[[ProjectPaths], None]]:
         "run-extensions": run_extensions,
         "freeze-artefact": freeze_artefact,
         "freeze-secondary-artefact": freeze_secondary_artefact,
+        "freeze-comparator-artefact": freeze_comparator_artefact,
         "freeze-classification": freeze_classification,
         "audit-holdout": audit_holdout,
         "run-experiments-v2": run_experiments_v2,

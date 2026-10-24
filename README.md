@@ -67,7 +67,7 @@ In plain words: adding the first visit to the second did not improve prediction 
 | Classification threshold command: `python -m antenatal freeze-classification` fixes the threshold from out of fold predictions and saves it beside the artefact | Completed | [`study.py`](src/antenatal/study.py) |
 | Held out partition guarded in code and audited: every model fit refuses held out records, and `make audit` records ten checks (decision D7) | Completed: 10 of 10 checks pass | [`integrity.py`](src/antenatal/evaluation/integrity.py), [`docs/evidence/holdout_integrity.md`](docs/evidence/holdout_integrity.md) |
 | Stage 2 experiments of guideline version 2, prespecified in `configs/experiment_plan.yaml`: tuning on sets A, B and C, class weights, ablations, splines, recalibration, model averaging, visit two extras; selection rule applied | Completed on development records: no candidate passed the rule, so artefact 1.0.0 stays | [`experiments_v2.py`](src/antenatal/experiments_v2.py), [`candidates_v2.csv`](outputs/tables/candidates_v2.csv), [`experiments_v2.csv`](outputs/tables/experiments_v2.csv) |
-| Single evaluation on the held out partition (Stage 4) | Not implemented: written and tested on synthetic data, not yet run | [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
+| Single evaluation on the held out partition (Stage 4): candidate C against frozen comparators B and A, and the label at the fixed threshold | Not run: protocol written, script and code tested on synthetic data, awaiting the supervisor's approval | [`docs/holdout_protocol.md`](docs/holdout_protocol.md), [`scripts/run_holdout.py`](scripts/run_holdout.py), [`evaluation/holdout.py`](src/antenatal/evaluation/holdout.py) |
 | API performance: start up, latency and memory on one machine | Completed | [`scripts/benchmark_api.py`](scripts/benchmark_api.py), [`docs/evidence/performance.md`](docs/evidence/performance.md) |
 | Compatibility of the current interface: five screen flow in Chromium, Firefox and WebKit at 1366 by 768 and 390 by 844 | Completed | [`tests/e2e/`](tests/e2e), [`docs/evidence/compatibility.md`](docs/evidence/compatibility.md) |
 | Design images drawn from the running interface, five screens, no sign in screens | Completed | [`scripts/render_designs.py`](scripts/render_designs.py), [`designs/README.md`](designs/README.md) |
@@ -148,6 +148,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── deviations.md
 │   ├── ethics_note.md
 │   ├── evidence
+│   ├── holdout_protocol.md
 │   ├── implementation_audit.md
 │   ├── tripod_ai_checklist.md
 │   └── tripod_ai_pending.md
@@ -191,6 +192,7 @@ The data file is included under its CC BY 4.0 licence. See [`data/README.md`](da
 │   ├── package_attempt2.py
 │   ├── record_test_results.py
 │   ├── render_designs.py
+│   ├── run_holdout.py
 │   └── smoke_test.py
 ├── src
 │   └── antenatal
