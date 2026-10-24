@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-23T15:43:54+00:00",
+  "recorded_at": "2026-10-24T11:39:58+00:00",
   "machine": {
     "cpu": "Apple M3",
     "logical_cores": 8,
@@ -8,19 +8,19 @@
     "python": "3.12.13"
   },
   "startup_seconds": 1.73,
-  "peak_rss_mb": 224.3,
+  "peak_rss_mb": 228.4,
   "sequential": {
     "requests": 500,
-    "p50_ms": 3.2,
-    "p95_ms": 3.9,
-    "max_ms": 6.9
+    "p50_ms": 3.4,
+    "p95_ms": 5.6,
+    "max_ms": 17.1
   },
   "concurrent": {
     "requests": 50,
-    "p50_ms": 189.1,
-    "p95_ms": 207.9,
-    "max_ms": 208.5,
-    "wall_seconds": 0.21
+    "p50_ms": 181.4,
+    "p95_ms": 221.4,
+    "max_ms": 221.7,
+    "wall_seconds": 0.23
   },
   "warm_up_requests": 1
 }

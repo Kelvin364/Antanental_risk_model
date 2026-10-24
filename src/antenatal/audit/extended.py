@@ -92,32 +92,35 @@ def _implausible(raw_values: pd.Series, cleaned: pd.Series, parsed) -> int:
     return int((readable & cleaned.isna()).sum())
 
 
-def feature_quality(raw: pd.DataFrame, development: pd.DataFrame, spec: StudySpec = PRIMARY):
-    """One row per predictor and per excluded field."""
-    raw_dev = raw.set_index(spec.record_id).loc[development["record_id"]]
-    numbers, pressure = NumericParser(SentinelPolicy()), BloodPressureParser(SentinelPolicy())
+def _registration_rows(raw_dev, development, numbers) -> list[dict]:
     rows = []
     for f in REGISTRATION_FIELDS:
-        parse = numbers.parse if f.kind is FieldKind.NUMERIC else (lambda v: v)
+        numeric = f.kind is FieldKind.NUMERIC
+        implausible = (
+            _implausible(
+                raw_dev[f.column].reset_index(drop=True),
+                development[f.name].reset_index(drop=True),
+                numbers.parse,
+            )
+            if numeric
+            else 0
+        )
         rows.append(
             {
                 "predictor": f.name,
                 "source_column": f.column,
                 "available": "registration",
                 "missing_percent": round(100 * development[f.name].isna().mean(), 1),
-                "implausible_set_missing": (
-                    _implausible(
-                        raw_dev[f.column].reset_index(drop=True),
-                        development[f.name].reset_index(drop=True),
-                        parse,
-                    )
-                    if f.kind is FieldKind.NUMERIC
-                    else 0
-                ),
+                "implausible_set_missing": implausible,
                 "used": "yes, sets A, B and C",
                 "reason": "recorded at booking",
             }
         )
+    return rows
+
+
+def _visit_rows(raw_dev, development, numbers, pressure) -> list[dict]:
+    rows = []
     for visit in (1, 2):
         for m in VISIT_MEASUREMENTS:
             name, column = f"{m.name}_v{visit}", m.column_for(visit)
@@ -138,18 +141,27 @@ def feature_quality(raw: pd.DataFrame, development: pd.DataFrame, spec: StudySpe
                     "reason": reason,
                 }
             )
-    for column in EXCLUDED_PREDICTORS:
-        rows.append(
-            {
-                "predictor": column,
-                "source_column": column,
-                "available": "not used",
-                "missing_percent": None,
-                "implausible_set_missing": None,
-                "used": "no",
-                "reason": EXCLUSION_REASONS[column],
-            }
-        )
+    return rows
+
+
+def feature_quality(raw: pd.DataFrame, development: pd.DataFrame, spec: StudySpec = PRIMARY):
+    """One row per predictor and per excluded field."""
+    raw_dev = raw.set_index(spec.record_id).loc[development["record_id"]]
+    numbers, pressure = NumericParser(SentinelPolicy()), BloodPressureParser(SentinelPolicy())
+    excluded = [
+        {
+            "predictor": column,
+            "source_column": column,
+            "available": "not used",
+            "missing_percent": None,
+            "implausible_set_missing": None,
+            "used": "no",
+            "reason": EXCLUSION_REASONS[column],
+        }
+        for column in EXCLUDED_PREDICTORS
+    ]
+    rows = _registration_rows(raw_dev, development, numbers)
+    rows += _visit_rows(raw_dev, development, numbers, pressure) + excluded
     return pd.DataFrame(rows)
 
 

@@ -12,10 +12,12 @@ Run these once so nothing waits on screen:
 make install
 make browsers
 python -m antenatal derive-cohort
+make frontend
+python -m webapp.app.admin create-admin admin   # note the printed password; change it at first sign in
 make serve            # leave running in a second terminal
 ```
 
-Open in the browser: http://127.0.0.1:8000/ and http://127.0.0.1:8000/docs. Open in the editor: `README.md`, `docs/Technical-Report.pdf`, `outputs/tables/results_summary.csv`. Use only synthetic cases on camera.
+Open in the browser: http://127.0.0.1:8000/ (or the live site https://antenatal-caseload.fly.dev/) and http://127.0.0.1:8000/docs. Open in the editor: `README.md`, `docs/Technical-Report.pdf`, `docs/holdout_results.md`, `docs/research_results.md`. Use only synthetic cases on camera, and never show a password.
 
 ## Timed outline
 
@@ -51,11 +53,13 @@ python -m antenatal derive-cohort
 
 Point at the eight flow counts as they print, then open `outputs/figures/fig01_cohort_flow.png`.
 
-Explain the sealed partition: open `src/antenatal/evaluation/holdout.py` and show that `evaluate_once` needs `confirm_supervisor_reviewed=True`. Run `test -e partitions/holdout_access.log || echo absent` to show the held out partition has not been opened.
+Explain the sealed partition: open `src/antenatal/evaluation/holdout.py` and show that `evaluate_once` needs `confirm_supervisor_reviewed=True`, and that every model fit carries a `TrainingGuard`. Run `cat partitions/holdout_access.log` to show the partition was opened once, evaluated once, and a second attempt refused. Run `python -m antenatal audit-holdout` and read the eleven checks.
 
 Explain feature sets A, B and C and the repeated nested grouped cross validation, using `outputs/figures/fig06_model_families.png` and `outputs/figures/fig07_feature_set_differences.png`.
 
-Walk the five screens at http://127.0.0.1:8000/: register, visit one, visit two, assessment, caseload. On the assessment screen read the rank position, the probability, its interval and the limitation line. Then open http://127.0.0.1:8000/docs and run `POST /api/predict` once.
+Sign in, then walk the five screens at http://127.0.0.1:8000/: register, visit one, visit two, assessment, caseload. On the assessment screen read the rank position, the probability, its interval, the label "Likely" or "Not likely low birth weight" with how often it is right, and the limitation line. Show that the caseload refuses access after signing out. Then open http://127.0.0.1:8000/docs and run `POST /api/predict` once.
+
+Show `configs/experiment_plan.yaml` and `outputs/tables/selection_v2.json`: the Stage 2 experiments were written down before they ran, and none passed the rule, so artefact 1.0.0 stays.
 
 ### Part C, testing approaches and results (5:30 to 7:15)
 
@@ -75,11 +79,13 @@ Run:
 make lint
 ```
 
-Show `src/antenatal/config.py` (`StudySpec`, one place for every constant), `src/antenatal/features/` (one class per feature set) and `.github/workflows/ci.yml`. Show `git log --oneline | head -15` and point out that each message cites a proposal section, requirement or supervisor comment.
+Show `src/antenatal/config.py` (`StudySpec`, one place for every constant), `src/antenatal/features/` (one class per feature set) and `.github/workflows/ci.yml`, including the `security` job. Show `git log --oneline | head -15` and point out that each message cites a proposal section, requirement or supervisor comment.
 
 ### Part E, results and limitations (8:30 to 9:45)
 
-Open `outputs/tables/results_summary.csv` and read the primary comparison row. Show `outputs/figures/fig08_calibration.png` and `outputs/figures/fig10_detectable_difference.png`. Read the limitations from section 5 of `docs/Technical-Report.pdf`: internal validation only, one dataset, recorded outcome, and the held out evaluation not yet run.
+Open `notebooks/03_statistical_analysis.ipynb` or `docs/research_results.md` and read the answer to each of the four research questions. Show `outputs/figures/fig08_calibration.png` and `outputs/figures/fig10_detectable_difference.png`.
+
+Open `docs/holdout_results.md`: section 1 shows why the model never learned from the held out records; then read the held out table beside the development values. Read the limitations from section 5 of `docs/Technical-Report.pdf`: one dataset with weak predictors, a small held out partition whose ROC AUC interval includes random ranking, a recorded outcome, and the need for a larger independent cohort.
 
 ### Close (9:45 to 10:00)
 

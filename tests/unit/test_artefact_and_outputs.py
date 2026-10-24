@@ -151,9 +151,8 @@ class _ConstantArtefact:
         return p, p, p
 
 
-def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
-    """Exercises the gate without ever scoring the real held out records."""
-    n = 200
+def _synthetic_partition(tmp_path, n: int = 200) -> Cohort:
+    """A synthetic cohort with a sealed synthetic held out file in ``tmp_path``."""
     records = pd.DataFrame(
         {
             "record_id": np.arange(n),
@@ -162,12 +161,17 @@ def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
             "in_analysis_cohort": True,
         }
     )
-    cohort = Cohort(PRIMARY, records, ExclusionLog())
     pd.DataFrame({"record_id": np.arange(0, n, 2)}).to_csv(
         tmp_path / "holdout_ids.csv", index=False
     )
     digest = __import__("hashlib").sha256((tmp_path / "holdout_ids.csv").read_bytes()).hexdigest()
     (tmp_path / "holdout.sha256").write_text(f"{digest}  holdout_ids.csv\n")
+    return Cohort(PRIMARY, records, ExclusionLog())
+
+
+def test_evaluate_once_on_a_synthetic_cohort(tmp_path):
+    """Exercises the gate without ever scoring the real held out records."""
+    cohort = _synthetic_partition(tmp_path)
     evaluator = HoldoutEvaluator(tmp_path)
     spec = PRIMARY.variant("test", bootstrap_resamples=50)
     models = [LockedModel(name, _ConstantArtefact(), "f" * 64) for name in ("C", "B", "A")]
