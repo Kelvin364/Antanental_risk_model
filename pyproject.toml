@@ -26,6 +26,7 @@ addopts = "-q"
 markers = [
     "slow: runs part of the analysis on the real data file",
     "e2e: drives the interface in real browsers; skipped when Playwright or a browser is absent",
+    "postgres: runs the prototype on PostgreSQL; skipped unless ANTENATAL_TEST_POSTGRES_URL is set",
 ]
 
 [tool.coverage.run]

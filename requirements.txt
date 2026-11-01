@@ -11,3 +11,5 @@ fastapi==0.142.2
 uvicorn[standard]==0.46.0
 pydantic==2.13.3
 sqlalchemy==2.1.5
+# PostgreSQL driver for the hosted database on Render (docs/deviations.md).
+psycopg[binary]==3.3.6

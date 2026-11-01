@@ -184,8 +184,22 @@ Every version is pinned in [`requirements.txt`](requirements.txt) and [`requirem
 | Run the notebooks | `make notebook` |
 | Start the prototype in a container | `make docker` |
 | Deploy the online system | `make deploy` |
+| Deploy on Render's free tier with a hosted PostgreSQL database | See [Deploying on Render](#deploying-on-render) |
 | Copy the online database into the local backup | `make backup-online`, then `make restore-local CONFIRM=yes` |
 | Remove synthetic cases older than seven days | `python -m webapp.app.admin purge-cases` (also runs at every start) |
+
+### Deploying on Render
+
+[`render.yaml`](render.yaml) deploys the same image on Render's free instance type. A free instance keeps no files between restarts, so the database is a hosted PostgreSQL one instead of the SQLite file ([`docs/deviations.md`](docs/deviations.md)).
+
+1. Create a free PostgreSQL database, for example a Neon project in Frankfurt, and copy its connection address.
+2. In Render, create a Blueprint from this repository. When asked for `ANTENATAL_DATABASE_URL`, paste the address. It stays a secret in Render and is never committed.
+3. Deploy. The tables are created on first start, and `/health` reports the frozen artefact.
+4. Create the first administrator from your own machine against the hosted database:
+   `ANTENATAL_DATABASE_URL='postgresql://...' python -m webapp.app.admin create-admin admin`
+5. Check the deployment: `python scripts/smoke_test.py --base-url https://ADDRESS.onrender.com --username U --password P`.
+
+The first request after about fifteen idle minutes waits while Render and the database wake. `pytest tests/postgres` runs the prototype on PostgreSQL when `ANTENATAL_TEST_POSTGRES_URL` names a database that may be wiped.
 
 ## Testing and evidence
 
@@ -295,6 +309,7 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── holdout_access.log
 │   └── holdout_ids.csv
 ├── pyproject.toml
+├── render.yaml
 ├── requirements-dev.txt
 ├── requirements.txt
 ├── scripts
@@ -316,6 +331,7 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── conftest.py
 │   ├── e2e
 │   ├── integration
+│   ├── postgres
 │   └── unit
 └── webapp
     ├── __init__.py

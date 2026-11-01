@@ -82,7 +82,8 @@ class SyntheticCase(Base):
     """A synthetic pregnancy with the registration fields of set A."""
 
     __tablename__ = "synthetic_cases"
-    __table_args__ = (CheckConstraint("synthetic = 1", name="synthetic_flag_always_true"),)
+    # ``true`` rather than ``1``: SQLite reads both as one, PostgreSQL accepts only ``true``.
+    __table_args__ = (CheckConstraint("synthetic = true", name="synthetic_flag_always_true"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

@@ -102,6 +102,28 @@ Every model fit in the package carries a `TrainingGuard` from the sealed partiti
 refuses any frame containing a held out record; `make audit` records the ten checks of
 `docs/evidence/holdout_integrity.md` (decision D7).
 
+## Hosting on Render with PostgreSQL
+
+The same image runs on Render's free instance type (`render.yaml`). A free instance
+keeps no files between restarts, so the database cannot be a SQLite file there.
+Instead `ANTENATAL_DATABASE_URL` names a hosted PostgreSQL database (for example a
+free Neon project in Frankfurt), and Render holds that address as a secret.
+
+```mermaid
+flowchart LR
+    ui["Browser<br/>Next.js pages"] -->|HTTPS| app["Render free web service<br/>FastAPI, interface, frozen artefact"]
+    app -->|"SQL over SSL"| pg[("Hosted PostgreSQL<br/>accounts, sessions, audit,<br/>synthetic cases")]
+```
+
+Only the address changes. `webapp/app/db/database.py` rewrites a `postgres://` or
+`postgresql://` address to the installed `psycopg` driver, passes the SQLite only
+option `check_same_thread` to SQLite alone, and checks each pooled connection
+before use because hosted databases close idle ones. The tables are created on
+first start, as with SQLite. The first administrator is created from any machine
+by pointing `ANTENATAL_DATABASE_URL` at the hosted database and running
+`python -m webapp.app.admin create-admin admin`. The research tables written by
+`load-db` stay local.
+
 ## Request flow for one assessment
 
 A synthetic case is registered, its two visits are recorded, and an assessment is requested.
