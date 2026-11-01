@@ -31,3 +31,7 @@ frontend/*.tsbuildinfo
 
 # Local safety copies of frozen artefacts (git keeps them under the pre-v2 tag)
 backups/
+
+# Database credentials written by the Neon CLI; never committed.
+.env
+.env.local
