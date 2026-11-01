@@ -35,3 +35,5 @@ backups/
 # Database credentials written by the Neon CLI; never committed.
 .env
 .env.local
+.neon
+node_modules/

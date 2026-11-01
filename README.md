@@ -192,7 +192,7 @@ Every version is pinned in [`requirements.txt`](requirements.txt) and [`requirem
 
 [`render.yaml`](render.yaml) deploys the same image on Render's free instance type. A free instance keeps no files between restarts, so the database is a hosted PostgreSQL one instead of the SQLite file ([`docs/deviations.md`](docs/deviations.md)).
 
-1. Create a free PostgreSQL database, for example a Neon project in Frankfurt, and copy its connection address.
+1. Create the database. This repository is linked to a Neon project through [`neon.ts`](neon.ts): `npx neon@latest deploy` writes `DATABASE_URL` (pooled, for the application) and `DATABASE_URL_UNPOOLED` (direct, for `pg_dump` backups) into `.env.local`, which git ignores. Copy `DATABASE_URL`.
 2. In Render, create a Blueprint from this repository. When asked for `ANTENATAL_DATABASE_URL`, paste the address. It stays a secret in Render and is never committed.
 3. Deploy. The tables are created on first start, and `/health` reports the frozen artefact.
 4. Create the first administrator from your own machine against the hosted database:
@@ -288,6 +288,7 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── public
 │   ├── src
 │   └── tsconfig.json
+├── neon.ts
 ├── notebooks
 │   ├── 01_data_audit.ipynb
 │   ├── 02_model_notebook.ipynb
@@ -303,6 +304,8 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── oof_predictions.parquet
 │   ├── research
 │   └── tables
+├── package-lock.json
+├── package.json
 ├── partitions
 │   ├── folds.parquet
 │   ├── holdout.sha256
