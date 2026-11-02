@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 
 .PHONY: install browsers test e2e report-pdf lint format run-all notebook serve clean-outputs \
-	frontend api-types frontend-dev benchmark accessibility docker audit deploy backup-online restore-local
+	frontend api-types frontend-dev benchmark accessibility docker audit deploy check-online-db backup-online restore-local
 
 install:
 	python3.12 -m venv .venv
@@ -69,14 +69,22 @@ docker:
 audit:
 	$(PYTHON) -m antenatal audit-holdout
 
-# Online deployment on Fly.io and its backup to the local environment (README, Getting started).
+# Online deployment on Render and its backup to the local environment (README, Deploying on Render).
+# deploy triggers the service's deploy hook, a secret address from the Render dashboard
+# (Settings, Deploy Hook) kept in RENDER_DEPLOY_HOOK_URL and never committed.
 deploy:
-	fly deploy --remote-only
+	@test -n "$$RENDER_DEPLOY_HOOK_URL" || { echo "Set RENDER_DEPLOY_HOOK_URL to the service's deploy hook"; exit 1; }
+	curl -fsS -X POST "$$RENDER_DEPLOY_HOOK_URL" > /dev/null && echo "Render deploy started"
+
+# Reads the database at ANTENATAL_DATABASE_URL (the Neon direct address suits this) without
+# printing it, and copies every application table into backups/online.sqlite3.
+check-online-db:
+	@test -n "$$ANTENATAL_DATABASE_URL" || { echo "Set ANTENATAL_DATABASE_URL to the Neon address"; exit 1; }
+	$(PYTHON) -m webapp.app.admin check-database
 
 backup-online:
-	mkdir -p backups
-	fly ssh console -C "python -c \"import sqlite3; sqlite3.connect('/app/state/app.sqlite3').backup(sqlite3.connect('/app/state/backup.sqlite3'))\""
-	fly ssh sftp get /app/state/backup.sqlite3 backups/online.sqlite3
+	@test -n "$$ANTENATAL_DATABASE_URL" || { echo "Set ANTENATAL_DATABASE_URL to the Neon address"; exit 1; }
+	$(PYTHON) -m webapp.app.admin backup backups/online.sqlite3
 
 # Load the online backup into the local environment, so the local system can stand in for
 # the online one. Asks for CONFIRM=yes because it replaces the local database.

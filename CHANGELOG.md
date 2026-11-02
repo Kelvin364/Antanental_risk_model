@@ -4,7 +4,14 @@ All notable changes to this project. Dates are in UTC.
 
 ## Unreleased
 
+### Changed
+
+* The online system moved from Fly.io to a Render web service with its tables in a Neon PostgreSQL database, so accounts, sessions and synthetic cases survive restarts and sleep. `fly.toml`, the Fly.io make targets and the Fly.io CI deploy job were removed; `make deploy` and the optional CI deploy job now call the Render deploy hook, and `make backup-online` copies the Neon tables into `backups/online.sqlite3`.
+* `/health` reports which kind of database is connected; with `ANTENATAL_REQUIRE_PERSISTENT_DATABASE=true` (set by `render.yaml`) the server refuses to start on a SQLite file.
+
 ### Added
+
+* `python -m webapp.app.admin check-database` and `backup`, `make check-online-db`, and `scripts/smoke_test.py --expect-database`, `--leave-case` and `--expect-case`, which test the Neon and Render connection and that a case survives a restart (README, Testing the Neon and Render connection).
 
 * Synthetic cases older than `ANTENATAL_CASE_RETENTION_DAYS` (default 7) are deleted at every application start and by `python -m webapp.app.admin purge-cases`; a `security` job in continuous integration runs `pip-audit` and `npm audit`; `make restore-local CONFIRM=yes` loads the online backup into the local environment (guideline version 2, Stage 6).
 * The technical report and the README now report the Stage 2 experiments and the single held out evaluation.

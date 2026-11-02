@@ -104,10 +104,12 @@ refuses any frame containing a held out record; `make audit` records the ten che
 
 ## Hosting on Render with PostgreSQL
 
-The same image runs on Render's free instance type (`render.yaml`). A free instance
-keeps no files between restarts, so the database cannot be a SQLite file there.
-Instead `ANTENATAL_DATABASE_URL` names a hosted PostgreSQL database (for example a
-free Neon project in Frankfurt), and Render holds that address as a secret.
+The online system runs on Render's free instance type (`render.yaml`); the earlier
+Fly.io deployment was retired. A free instance keeps no files between restarts, so the
+database cannot be a SQLite file there. Instead `ANTENATAL_DATABASE_URL` names the Neon
+PostgreSQL project in Frankfurt, and Render holds that address as a secret. With
+`ANTENATAL_REQUIRE_PERSISTENT_DATABASE=true` the server refuses to start on a SQLite
+address, and `/health` reports which kind of database is connected, never its address.
 
 ```mermaid
 flowchart LR
@@ -122,7 +124,9 @@ before use because hosted databases close idle ones. The tables are created on
 first start, as with SQLite. The first administrator is created from any machine
 by pointing `ANTENATAL_DATABASE_URL` at the hosted database and running
 `python -m webapp.app.admin create-admin admin`. The research tables written by
-`load-db` stay local.
+`load-db` stay local. `python -m webapp.app.admin check-database` describes the connected
+database read only, and `python -m webapp.app.admin backup` copies its tables into
+`backups/online.sqlite3` for `make restore-local` (`webapp/app/db/maintenance.py`).
 
 ## Request flow for one assessment
 

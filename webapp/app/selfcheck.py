@@ -9,8 +9,8 @@ versions. The same reference case scored on the development machine gives
 It starts no server and touches no database, so it is safe on a small host beside
 the running server: an earlier version that started a second server ran a 512 MB
 machine out of memory. The signed in HTTP path is checked by ``scripts/smoke_test.py``
-and by the integration tests. On the host:
-``fly ssh console --app antenatal-caseload -C "python -m webapp.app.selfcheck"``.
+and by the integration tests. Run it locally, or in the Render dashboard's shell on a
+paid instance; the free instance has none, so ``/health`` and the smoke test stand in.
 """
 
 from __future__ import annotations

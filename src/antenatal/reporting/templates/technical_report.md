@@ -20,7 +20,7 @@ The proposal fixed the question, the cohort, the partition, the feature sets, th
 | Model serialiser (R12, R16) and label (decision D6) | One artefact with checksum; a label with its confidence | Completed | `webapp/model/version.json`, `webapp/model/classification.json` |
 | Data model (Section 3.4.4) | Records, visits, configurations and results | Completed in SQLite; the budget named PostgreSQL | `python -m antenatal load-db` |
 | Interface screens 1 to 5 (Table 3.10), entry rules (R9, R10), sign in (decision D1) | Register, two visits, assessment, caseload, with roles | Completed in Next.js over the API | `frontend/src/`, `docs/evidence/input_tests.md` |
-| Cross browser, accessibility, performance, container, online host | Evidence and deployment | Completed; hosted online with a local backup (decision D7) | `docs/evidence/`, `Dockerfile`, `fly.toml` |
+| Cross browser, accessibility, performance, container, online host | Evidence and deployment | Completed; hosted online with a local backup (decision D7) | `docs/evidence/`, `Dockerfile`, `render.yaml` |
 
 ## 2. Technical functionality and algorithms
 

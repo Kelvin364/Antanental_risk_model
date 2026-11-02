@@ -98,16 +98,16 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
 
   deploy:
-    # Runs only when the repository variable FLY_DEPLOY is "true" and the
-    # FLY_API_TOKEN secret is set (README, Getting started).
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.FLY_DEPLOY == 'true'
-    needs: [test, interface]
+    # Starts a Render deploy only when the repository variable RENDER_DEPLOY is "true" and
+    # the RENDER_DEPLOY_HOOK_URL secret is set, after every test job has passed
+    # (README, Deploying on Render).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.RENDER_DEPLOY == 'true'
+    needs: [test, postgres, interface]
     runs-on: ubuntu-latest
     concurrency: deploy
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: Trigger the Render deploy hook
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL" > /dev/null
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 

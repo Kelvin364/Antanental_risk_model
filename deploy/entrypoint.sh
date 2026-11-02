@@ -1,6 +1,6 @@
 #!/bin/sh
-# Start as root only long enough to give the app user the state volume, which
-# hosts such as Fly.io mount owned by root, then run the server as that user.
+# Start as root only long enough to give the app user /app/state, where a Docker
+# volume (docker compose) is mounted owned by root, then run the server as that user.
 set -eu
 if [ "$(id -u)" = "0" ]; then
     mkdir -p /app/state
