@@ -4,13 +4,17 @@
 retention period (``ANTENATAL_CASE_RETENTION_DAYS``, default 7).
 
 The generated password is printed once and stored only as a scrypt hash. There
-is no default account and no default password. On the host, run it once with
+is no default account and no default password. To choose the first password
+instead, put it in ``ANTENATAL_ADMIN_PASSWORD``; it is read from the environment,
+never from the command line or a file in git, and is not printed. Either way the
+administrator must replace it at first sign in. On the host, run it once with
 ``fly ssh console -C "python -m webapp.app.admin create-admin admin"``.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 
 from webapp.app.core.settings import Settings
 from webapp.app.db.database import create_session_factory
@@ -32,9 +36,13 @@ def main(argv: list[str] | None = None) -> int:
     if not args.username:
         parser.error("create-admin needs a username")
     auth = AuthService(sessions)
-    user, password = auth.create_user(args.username, ADMINISTRATOR, "command line")
+    chosen = os.environ.get("ANTENATAL_ADMIN_PASSWORD") or None
+    user, password = auth.create_user(args.username, ADMINISTRATOR, "command line", chosen)
     print(f"Administrator {user.username} created.")
-    print(f"Password (shown once, change it at first sign in): {password}")
+    if chosen:
+        print("Password taken from ANTENATAL_ADMIN_PASSWORD; change it at first sign in.")
+    else:
+        print(f"Password (shown once, change it at first sign in): {password}")
     return 0
 
 

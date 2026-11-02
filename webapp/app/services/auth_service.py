@@ -28,7 +28,7 @@ SESSION_HOURS = 8
 MAX_FAILURES = 5
 LOCK_MINUTES = 15
 MIN_PASSWORD = 12
-USERNAME = re.compile(r"^[a-z0-9._-]{3,40}$")
+USERNAME = re.compile(r"^[a-z0-9._@-]{3,40}$")
 _SCRYPT = {"n": 2**14, "r": 8, "p": 1, "dklen": 32}
 
 
@@ -89,13 +89,21 @@ class AuthService:
             session.add(AuditEvent(event=event, username=username, detail=detail[:200]))
             session.commit()
 
-    def create_user(self, username: str, role: str, actor: str) -> tuple[User, str]:
-        """Create an account with a generated password, returned once and never stored."""
+    def create_user(
+        self, username: str, role: str, actor: str, password: str | None = None
+    ) -> tuple[User, str]:
+        """Create an account that must change its first password at first sign in.
+
+        The first password is generated unless one is given (the command line
+        reads it from the environment); either way it is stored only as a hash.
+        Usernames may be email addresses and are kept in lower case.
+        """
+        username = username.strip().lower()
         if not USERNAME.match(username):
-            raise AccountRefused("Usernames are 3 to 40 lower case letters, digits, . _ or -")
+            raise AccountRefused("Usernames are 3 to 40 lower case letters, digits, . _ @ or -")
         if role not in ROLES:
             raise AccountRefused(f"Role must be one of {', '.join(ROLES)}")
-        password = secrets.token_urlsafe(12)
+        password = password or secrets.token_urlsafe(12)
         with self._sessions() as session:
             if session.scalar(select(User).where(User.username == username)):
                 raise AccountRefused(f"The username {username} is taken")
@@ -108,6 +116,7 @@ class AuthService:
     def sign_in(self, username: str, password: str) -> tuple[str, CurrentUser]:
         """Check the password, apply the lockout, and open a session."""
         now = datetime.now(UTC)
+        username = username.strip().lower()
         with self._sessions() as session:
             user = session.scalar(select(User).where(User.username == username))
             if user and _aware(user.locked_until) and _aware(user.locked_until) > now:

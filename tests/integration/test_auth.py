@@ -163,6 +163,22 @@ def test_first_administrator_comes_from_the_command_line(tmp_path, monkeypatch, 
     assert "Administrator boss created" in printed and "shown once" in printed
 
 
+def test_administrator_with_an_email_and_a_chosen_password(tmp_path, monkeypatch, capsys):
+    from webapp.app.admin import main
+    from webapp.app.core.settings import Settings
+    from webapp.app.db.database import create_session_factory
+    from webapp.app.services.auth_service import AuthService
+
+    monkeypatch.setenv("ANTENATAL_DATABASE_URL", f"sqlite:///{tmp_path / 'admin.sqlite3'}")
+    monkeypatch.setenv("ANTENATAL_ADMIN_PASSWORD", "a chosen first password")
+    assert main(["create-admin", "Head.Admin@example.org"]) == 0
+    printed = capsys.readouterr().out
+    assert "head.admin@example.org created" in printed and "a chosen first" not in printed
+    auth = AuthService(create_session_factory(Settings.from_env().database_url))
+    _, user = auth.sign_in("HEAD.ADMIN@example.org", "a chosen first password")
+    assert user.is_administrator and user.must_change_password
+
+
 def test_account_rules_and_administration_actions(app):
     admin = sign_in_as(TestClient(app), "root1", "administrator")
     taken = admin.post("/api/admin/users", json={"username": "root1", "role": "researcher"})
