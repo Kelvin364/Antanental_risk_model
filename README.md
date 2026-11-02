@@ -13,7 +13,7 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 | --- | --- |
 | Demonstration video | https://youtu.be/QN0X9P8TFkA |
 | Technical report | [Technical Report (PDF)](docs/Technical%20Report_%20Incremental%20Predictive%20Value%20of%20Two%20Antenatal%20Visits%20for%20Recorded%20Low%20Birth%20Weight%20%281%29.pdf) |
-| Live prototype | Render web service with a Neon PostgreSQL database: RENDER_ADDRESS (synthetic cases only, sign in required) |
+| Live prototype | Render web service with a Neon PostgreSQL database: https://antanental-risk-model.onrender.com/ (synthetic cases only, sign in required) |
 | Source code | https://github.com/Kelvin364/Antanental_risk_model |
 
 ## Contents
@@ -206,8 +206,8 @@ Run these after every deploy. Each step proves one link of the chain, and togeth
 | Step | Command | A successful deployment shows |
 | --- | --- | --- |
 | 1. Neon is reachable and holds the tables | `ANTENATAL_DATABASE_URL="$DATABASE_URL_UNPOOLED" make check-online-db` | `"database": "postgresql"`, the Neon host, `"encrypted": "yes"`, `"missing_tables": []` and a row count per table. It reads only and never prints the address |
-| 2. Render serves the frozen model | `curl https://RENDER_ADDRESS/health` | `"status": "ok"`, the artefact checksum `7358b0b2...` and `"database": "postgresql"`. If it says `sqlite`, the database address is not reaching the service |
-| 3. The whole system works through Render | `python scripts/smoke_test.py --base-url https://RENDER_ADDRESS --username RESEARCHER --password '...' --expect-database postgresql --leave-case` | Every line `pass`, ending with `Left case N. After a restart, rerun with --expect-case N:P` |
+| 2. Render serves the frozen model | `curl https://antanental-risk-model.onrender.com/health` | `"status": "ok"`, the artefact checksum `7358b0b2...` and `"database": "postgresql"`. If it says `sqlite`, the database address is not reaching the service |
+| 3. The whole system works through Render | `python scripts/smoke_test.py --base-url https://antanental-risk-model.onrender.com --username RESEARCHER --password '...' --expect-database postgresql --leave-case` | Every line `pass`, ending with `Left case N. After a restart, rerun with --expect-case N:P` |
 | 4. Cases survive a restart | Restart the service in the Render dashboard (Manual Deploy, or Restart), wait for `/health`, then rerun step 3 with `--expect-case N:P` instead of `--leave-case`, adding `--record` | `pass  Case survives a restart unchanged`, and [`docs/evidence/deployment.md`](docs/evidence/deployment.md) rewritten with the address, the commit and the date |
 | 5. The record is in Neon | Repeat step 1 | The `synthetic_cases` and `assessments` counts include the case from step 3 |
 
