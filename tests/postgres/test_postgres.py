@@ -87,3 +87,22 @@ def test_database_refuses_a_case_without_the_synthetic_flag(client, settings):
     with engine.begin() as connection, pytest.raises(IntegrityError):
         connection.execute(text("UPDATE synthetic_cases SET synthetic = false"))
     engine.dispose()
+
+
+def test_health_names_postgresql_and_a_required_persistent_database_starts(client, settings):
+    """What the Render service runs with: the guard admits PostgreSQL, /health says so."""
+    from dataclasses import replace
+
+    TestClient(create_app(replace(settings, require_persistent_database=True)))
+    assert client.get("/health").json()["database"] == "postgresql"
+
+
+def test_check_and_backup_read_the_hosted_tables(client, settings, tmp_path):
+    """The check reports the server and every table; the backup copies each row."""
+    from webapp.app.db.maintenance import check, copy_to_sqlite
+
+    _assessed_case(client)
+    report = check(settings.database_url)
+    assert report["database"] == "postgresql" and report["missing_tables"] == []
+    assert report["rows"]["assessments"] == 1 and report["server_version"]
+    assert copy_to_sqlite(settings.database_url, tmp_path / "online.sqlite3") == report["rows"]

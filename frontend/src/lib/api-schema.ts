@@ -337,7 +337,8 @@ export interface paths {
         };
         /**
          * Health
-         * @description Artefact version and checksums, data checksum, prevalence and feature count.
+         * @description Artefact version and checksums, data checksum, prevalence, feature count, and which kind
+         *     of database is connected ("sqlite" or "postgresql"; never its address).
          */
         get: operations["health_health_get"];
         put?: never;

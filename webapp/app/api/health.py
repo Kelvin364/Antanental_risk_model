@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from webapp.app.api.deps import model_service
 from webapp.app.core.settings import INTERVAL_LABEL, LIMITATION, SYNTHETIC_BANNER
@@ -16,9 +16,10 @@ Model = Annotated[ModelService, Depends(model_service)]
 
 
 @router.get("/health")
-def health(model: Model) -> dict[str, object]:
-    """Artefact version and checksums, data checksum, prevalence and feature count."""
-    return model.health()
+def health(model: Model, request: Request) -> dict[str, object]:
+    """Artefact version and checksums, data checksum, prevalence, feature count, and which kind
+    of database is connected ("sqlite" or "postgresql"; never its address)."""
+    return {**model.health(), "database": request.app.state.database}
 
 
 @router.get("/api/artefact")

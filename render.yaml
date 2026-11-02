@@ -3,8 +3,8 @@
 # A free Render instance has no persistent disk: its files are wiped whenever it
 # restarts or wakes from sleep. The application's tables therefore live in a hosted
 # PostgreSQL database (for example a free Neon or Supabase project in Frankfurt),
-# whose address is pasted into Render as a secret. The image is the same one Fly.io
-# builds: interface, API and frozen artefact together. docs/deviations.md records why.
+# whose address is pasted into Render as a secret. The image holds the interface, the
+# API and the frozen artefact together. docs/deviations.md records why.
 services:
   - type: web
     name: antenatal-caseload
@@ -13,7 +13,7 @@ services:
     plan: free
     region: frankfurt
     healthCheckPath: /health
-    # Deploy deliberately from the dashboard, as `make deploy` does for Fly.io.
+    # Deploy deliberately: from the dashboard, or `make deploy` through the deploy hook.
     autoDeploy: false
     envVars:
       # The container listens on 8000 (Dockerfile CMD); Render routes to this port.
@@ -24,3 +24,7 @@ services:
       # Set it in the Render dashboard; it is never committed.
       - key: ANTENATAL_DATABASE_URL
         sync: false
+      # Refuse to start on the image's SQLite file, which a restart would wipe, so a
+      # missing database address fails loudly instead of losing cases quietly.
+      - key: ANTENATAL_REQUIRE_PERSISTENT_DATABASE
+        value: "true"

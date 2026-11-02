@@ -35,6 +35,28 @@ def with_driver(database_url: str) -> str:
     return database_url
 
 
+def backend(database_url: str) -> str:
+    """The database kind an address names, "sqlite" or "postgresql", never the address itself."""
+    return "sqlite" if database_url.startswith("sqlite") else "postgresql"
+
+
+class EphemeralDatabase(RuntimeError):
+    """A persistent database was required but the address names a local SQLite file."""
+
+
+def require_persistent(database_url: str) -> None:
+    """Refuse a SQLite address on a host whose files a restart wipes (Render free instance).
+
+    Without this, a missing ``ANTENATAL_DATABASE_URL`` would quietly fall back to the image's
+    SQLite file, and every account and synthetic case would vanish at the next restart.
+    """
+    if backend(database_url) == "sqlite":
+        raise EphemeralDatabase(
+            "ANTENATAL_REQUIRE_PERSISTENT_DATABASE is set but ANTENATAL_DATABASE_URL names a "
+            "SQLite file, which this host wipes on restart. Set it to the PostgreSQL address."
+        )
+
+
 def create_session_factory(database_url: str) -> sessionmaker:
     """Create the database if needed and return a session factory bound to it."""
     database_url = with_driver(database_url)

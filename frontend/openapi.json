@@ -1640,7 +1640,7 @@
     },
     "/health": {
       "get": {
-        "description": "Artefact version and checksums, data checksum, prevalence and feature count.",
+        "description": "Artefact version and checksums, data checksum, prevalence, feature count, and which kind\nof database is connected (\"sqlite\" or \"postgresql\"; never its address).",
         "operationId": "health_health_get",
         "responses": {
           "200": {

@@ -27,11 +27,14 @@ class Settings:
     database_url: str
     static_dir: Path
     case_retention_days: int = 7
+    require_persistent_database: bool = False
 
     @classmethod
     def from_env(cls) -> Settings:
-        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL``, ``ANTENATAL_STATIC_DIR``
-        and ``ANTENATAL_CASE_RETENTION_DAYS`` (default 7).
+        """Read ``ANTENATAL_MODEL_DIR``, ``ANTENATAL_DATABASE_URL``, ``ANTENATAL_STATIC_DIR``,
+        ``ANTENATAL_CASE_RETENTION_DAYS`` (default 7) and
+        ``ANTENATAL_REQUIRE_PERSISTENT_DATABASE`` ("true" on Render, where files do not survive
+        a restart, so the server refuses to start on a SQLite file).
 
         The interface is the Next.js build in frontend/out. Without a build the
         API still runs and only the interface is absent.
@@ -42,4 +45,8 @@ class Settings:
             database_url=os.environ.get("ANTENATAL_DATABASE_URL", f"sqlite:///{database}"),
             static_dir=Path(os.environ.get("ANTENATAL_STATIC_DIR", FRONTEND_BUILD)),
             case_retention_days=int(os.environ.get("ANTENATAL_CASE_RETENTION_DAYS", "7")),
+            require_persistent_database=os.environ.get(
+                "ANTENATAL_REQUIRE_PERSISTENT_DATABASE", ""
+            ).lower()
+            == "true",
         )

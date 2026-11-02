@@ -4,6 +4,15 @@ Usage: ``python scripts/smoke_test.py --base-url https://ADDRESS --username U --
 with a researcher account whose first password has been changed. With
 ``--record`` the result is written to ``docs/evidence/deployment.md`` with the
 address, the commit and the date. Exits with status 1 if any check fails.
+
+``--expect-database postgresql`` adds a check that ``/health`` reports the hosted
+database, so a Render service that lost its database address is caught.
+
+Persistence across a restart takes two runs. ``--leave-case`` registers and assesses one
+synthetic case, leaves it in place and prints its number and probability. Restart the
+service (Render dashboard, Manual Deploy or Restart), then run again with
+``--expect-case NUMBER:PROBABILITY``: the check passes only if the same case comes back
+with the same stored probability.
 """
 
 from __future__ import annotations
@@ -11,6 +20,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+from contextlib import closing
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -30,11 +40,12 @@ VISIT_TWO = {"gestational_week": 22, "systolic": 118, "diastolic": 76, "weight_k
 PREDICT = {"case": CASE, "visit_one": VISIT_ONE, "visit_two": VISIT_TWO}
 
 
-def _public_checks(base: str) -> list[tuple[str, bool, str]]:
+def _public_checks(base: str, database: str | None = None) -> list[tuple[str, bool, str]]:
     """What anyone can see: health, the sign in page, headers, and refusal without sign in."""
     expected = (ROOT / "webapp" / "model" / "lbw_model.sha256").read_text().split()[0]
-    with httpx.Client(base_url=base, timeout=60, follow_redirects=True) as anon:
-        served = anon.get("/health").json().get("artefact_sha256", "")
+    with httpx.Client(base_url=base, timeout=90, follow_redirects=True) as anon:
+        health = anon.get("/health").json()
+        served = health.get("artefact_sha256", "")
         page = anon.get("/sign-in/")
         refused = anon.get("/api/caseload").status_code
     headers = page.headers
@@ -50,6 +61,9 @@ def _public_checks(base: str) -> list[tuple[str, bool, str]]:
     ]
     if base.startswith("https"):
         out.append(("HSTS over HTTPS", "strict-transport-security" in headers, ""))
+    if database:
+        connected = str(health.get("database", "not reported"))
+        out.append((f"Health reports a {database} database", connected == database, connected))
     return out
 
 
@@ -85,8 +99,44 @@ def _signed_in_checks(base: str, username: str, password: str) -> list[tuple[str
     return out
 
 
-def _checks(base: str, username: str, password: str) -> list[tuple[str, bool, str]]:
-    return _public_checks(base) + _signed_in_checks(base, username, password)
+def _checks(
+    base: str, username: str, password: str, database: str | None = None
+) -> list[tuple[str, bool, str]]:
+    return _public_checks(base, database) + _signed_in_checks(base, username, password)
+
+
+def _session(base: str, username: str, password: str) -> httpx.Client:
+    client = httpx.Client(base_url=base, timeout=90)
+    signed = client.post("/api/auth/sign-in", json={"username": username, "password": password})
+    signed.raise_for_status()
+    client.headers["X-CSRF-Token"] = signed.json()["csrf_token"]
+    return client
+
+
+def leave_case(base: str, username: str, password: str) -> tuple[int, float]:
+    """Register, record and assess one synthetic case and leave it stored."""
+    with closing(_session(base, username, password)) as client:
+        case = client.post("/api/cases", json={**CASE, "label": "persistence check"})
+        case.raise_for_status()
+        number = case.json()["id"]
+        for visit, values in ((1, VISIT_ONE), (2, VISIT_TWO)):
+            client.put(f"/api/cases/{number}/visits/{visit}", json=values).raise_for_status()
+        assessed = client.post(f"/api/cases/{number}/assessment")
+        assessed.raise_for_status()
+        return number, assessed.json()["probability"]
+
+
+def persistence_check(
+    base: str, username: str, password: str, expected: str
+) -> tuple[str, bool, str]:
+    """The case left before a restart comes back with the same stored probability."""
+    number, probability = expected.split(":")
+    with closing(_session(base, username, password)) as client:
+        found = client.get(f"/api/cases/{number}")
+    latest = (found.json().get("latest_assessment") or {}) if found.is_success else {}
+    stored = latest.get("probability")
+    same = stored is not None and abs(stored - float(probability)) < 1e-12
+    return ("Case survives a restart unchanged", same, f"case {number}, {stored}")
 
 
 def _record(base: str, results: list[tuple[str, bool, str]], signed_in: bool = True) -> None:
@@ -126,14 +176,29 @@ def main() -> int:
         "--public-only", action="store_true", help="only the checks without sign in"
     )
     parser.add_argument("--record", action="store_true", help="write docs/evidence/deployment.md")
+    parser.add_argument(
+        "--expect-database", choices=["postgresql", "sqlite"], help="the database /health names"
+    )
+    parser.add_argument(
+        "--leave-case", action="store_true", help="store one case to check after a restart"
+    )
+    parser.add_argument("--expect-case", metavar="NUMBER:PROBABILITY")
     args = parser.parse_args()
     base = args.base_url.rstrip("/")
     if args.public_only:
-        results = _public_checks(base)
+        results = _public_checks(base, args.expect_database)
     elif args.username and args.password:
-        results = _checks(base, args.username, args.password)
+        results = _checks(base, args.username, args.password, args.expect_database)
     else:
         parser.error("pass --username and --password of a researcher, or --public-only")
+    if args.expect_case and not args.public_only:
+        results.append(persistence_check(base, args.username, args.password, args.expect_case))
+    if args.leave_case and not args.public_only:
+        number, probability = leave_case(base, args.username, args.password)
+        print(
+            f"Left case {number}. After a restart, rerun with "
+            f"--expect-case {number}:{probability!r}"
+        )
     for name, ok, detail in results:
         print(f"{'pass' if ok else 'FAIL'}  {name}  {detail}")
     if args.record:

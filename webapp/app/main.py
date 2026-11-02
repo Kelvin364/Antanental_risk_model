@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from webapp.app.api import auth, cases, health, predict
 from webapp.app.core import security
 from webapp.app.core.settings import Settings
-from webapp.app.db.database import create_session_factory
+from webapp.app.db.database import backend, create_session_factory, require_persistent
 from webapp.app.services.auth_service import AccountRefused, AuthService, SignInRefused
 from webapp.app.services.case_service import CaseNotFound, CaseService, StepOutOfOrder
 from webapp.app.services.model_service import ModelService
@@ -58,6 +58,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the application; raises ``ChecksumMismatch`` if the artefact has changed."""
     settings = settings or Settings.from_env()
     model = ModelService(settings.model_dir)
+    if settings.require_persistent_database:
+        require_persistent(settings.database_url)
     sessions = create_session_factory(settings.database_url)
     purge_old_cases(sessions, settings.case_retention_days)
     app = FastAPI(
@@ -66,6 +68,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         version=model.version,
     )
     app.state.model = model
+    app.state.database = backend(settings.database_url)
     app.state.cases = CaseService(sessions, model, EntryRules())
     app.state.ranking = RankingService(sessions, model)
     app.state.auth = AuthService(sessions)
