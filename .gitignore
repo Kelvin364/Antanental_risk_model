@@ -37,3 +37,7 @@ backups/
 .env.local
 .neon
 node_modules/
+
+# Local assistant settings and runtime database copies; never committed.
+.claude/
+webapp/data/*.bak
