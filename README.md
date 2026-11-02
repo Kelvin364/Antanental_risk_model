@@ -13,7 +13,7 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 | --- | --- |
 | Demonstration video | https://youtu.be/QN0X9P8TFkA |
 | Technical report | [Technical Report (PDF)](docs/Technical%20Report_%20Incremental%20Predictive%20Value%20of%20Two%20Antenatal%20Visits%20for%20Recorded%20Low%20Birth%20Weight%20%281%29.pdf) |
-| Live prototype | https://antenatal-caseload.fly.dev/ (synthetic cases only, sign in required) |
+| Live prototype | Render web service with a Neon PostgreSQL database: RENDER_ADDRESS (synthetic cases only, sign in required) |
 | Source code | https://github.com/Kelvin364/Antanental_risk_model |
 
 ## Contents
@@ -49,9 +49,9 @@ flowchart LR
     pkg --> outputs[("Tables, figures<br/>and predictions<br/>outputs/")]
     pkg --> artefact[("Frozen model 1.0.0<br/>with checksum<br/>webapp/model/")]
     artefact --> api["FastAPI service<br/>webapp/app"]
-    api <--> db[("SQLite<br/>synthetic cases,<br/>accounts, audit trail")]
+    api <--> db[("SQLite locally,<br/>Neon PostgreSQL online<br/>synthetic cases,<br/>accounts, audit trail")]
     ui["Next.js interface<br/>frontend/"] <--> api
-    api --> host["Fly.io host<br/>online system"]
+    api --> host["Render web service<br/>online system"]
     api --> local["make serve or<br/>make docker<br/>local backup"]
 ```
 
@@ -183,23 +183,37 @@ Every version is pinned in [`requirements.txt`](requirements.txt) and [`requirem
 | Run the tests and the linters | `make test` and `make lint` |
 | Run the notebooks | `make notebook` |
 | Start the prototype in a container | `make docker` |
-| Deploy the online system | `make deploy` |
-| Deploy on Render's free tier with a hosted PostgreSQL database | See [Deploying on Render](#deploying-on-render) |
+| Deploy the online system on Render with Neon | See [Deploying on Render](#deploying-on-render); later deploys with `make deploy` |
+| Check the online database without printing its address | `make check-online-db` |
 | Copy the online database into the local backup | `make backup-online`, then `make restore-local CONFIRM=yes` |
 | Remove synthetic cases older than seven days | `python -m webapp.app.admin purge-cases` (also runs at every start) |
 
 ### Deploying on Render
 
-[`render.yaml`](render.yaml) deploys the same image on Render's free instance type. A free instance keeps no files between restarts, so the database is a hosted PostgreSQL one instead of the SQLite file ([`docs/deviations.md`](docs/deviations.md)).
+The online system is one Render web service built from the [`Dockerfile`](Dockerfile) by [`render.yaml`](render.yaml), with its tables in a Neon PostgreSQL database. A free Render instance keeps no files between restarts or after it sleeps, so nothing that must last is stored on the instance: accounts, sessions, the audit trail and synthetic cases all live in Neon, and a restart loses nothing ([`docs/deviations.md`](docs/deviations.md)). The one exception is by design: synthetic cases older than seven days are deleted at every start.
 
-1. Create the database. This repository is linked to a Neon project through [`neon.ts`](neon.ts): `npx neon@latest deploy` writes `DATABASE_URL` (pooled, for the application) and `DATABASE_URL_UNPOOLED` (direct, for `pg_dump` backups) into `.env.local`, which git ignores. Copy `DATABASE_URL`.
-2. In Render, create a Blueprint from this repository. When asked for `ANTENATAL_DATABASE_URL`, paste the address. It stays a secret in Render and is never committed.
-3. Deploy. The tables are created on first start, and `/health` reports the frozen artefact.
-4. Create the first administrator from your own machine against the hosted database:
-   `ANTENATAL_DATABASE_URL='postgresql://...' python -m webapp.app.admin create-admin admin`
-5. Check the deployment: `python scripts/smoke_test.py --base-url https://ADDRESS.onrender.com --username U --password P`.
+1. **Database.** This repository is linked to its Neon project through [`neon.ts`](neon.ts). `npx neon@latest deploy` writes two addresses into `.env.local`, which git ignores: `DATABASE_URL` (pooled, for the application) and `DATABASE_URL_UNPOOLED` (direct, for checks and backups).
+2. **Service.** In Render, create a Blueprint from this repository. When asked for `ANTENATAL_DATABASE_URL`, paste the pooled address. It stays a secret in Render. The blueprint also sets `ANTENATAL_REQUIRE_PERSISTENT_DATABASE=true`, so the server refuses to start if that address is ever missing, rather than quietly using a file that the next restart wipes.
+3. **Deploy.** The tables are created on first start. For later deploys, copy the service's deploy hook (Render, Settings, Deploy Hook) into `RENDER_DEPLOY_HOOK_URL` and run `make deploy`, or set the repository variable `RENDER_DEPLOY=true` and the secret `RENDER_DEPLOY_HOOK_URL` so that CI deploys after every test job passes.
+4. **First administrator.** A free instance has no shell, and the account lives in the database, so create it from your own machine against Neon. The password is read from the environment and must be changed at first sign in:
+   `ANTENATAL_DATABASE_URL="$DATABASE_URL_UNPOOLED" ANTENATAL_ADMIN_PASSWORD='...' python -m webapp.app.admin create-admin admin`
+   The administrator then creates a researcher account in the interface for the checks below.
 
-The first request after about fifteen idle minutes waits while Render and the database wake. `pytest tests/postgres` runs the prototype on PostgreSQL when `ANTENATAL_TEST_POSTGRES_URL` names a database that may be wiped.
+#### Testing the Neon and Render connection
+
+Run these after every deploy. Each step proves one link of the chain, and together they prove that cases survive a restart.
+
+| Step | Command | A successful deployment shows |
+| --- | --- | --- |
+| 1. Neon is reachable and holds the tables | `ANTENATAL_DATABASE_URL="$DATABASE_URL_UNPOOLED" make check-online-db` | `"database": "postgresql"`, the Neon host, `"encrypted": "yes"`, `"missing_tables": []` and a row count per table. It reads only and never prints the address |
+| 2. Render serves the frozen model | `curl https://RENDER_ADDRESS/health` | `"status": "ok"`, the artefact checksum `7358b0b2...` and `"database": "postgresql"`. If it says `sqlite`, the database address is not reaching the service |
+| 3. The whole system works through Render | `python scripts/smoke_test.py --base-url https://RENDER_ADDRESS --username RESEARCHER --password '...' --expect-database postgresql --leave-case` | Every line `pass`, ending with `Left case N. After a restart, rerun with --expect-case N:P` |
+| 4. Cases survive a restart | Restart the service in the Render dashboard (Manual Deploy, or Restart), wait for `/health`, then rerun step 3 with `--expect-case N:P` instead of `--leave-case`, adding `--record` | `pass  Case survives a restart unchanged`, and [`docs/evidence/deployment.md`](docs/evidence/deployment.md) rewritten with the address, the commit and the date |
+| 5. The record is in Neon | Repeat step 1 | The `synthetic_cases` and `assessments` counts include the case from step 3 |
+
+If step 2 fails while step 1 passes, the address in Render is wrong or missing; the Render log then shows `ANTENATAL_REQUIRE_PERSISTENT_DATABASE is set but ANTENATAL_DATABASE_URL names a SQLite file`. The first request after about fifteen idle minutes waits while Render and Neon wake, so allow up to a minute.
+
+In continuous integration, `tests/postgres` runs the prototype against a throwaway PostgreSQL database: score equality to 1e-9, a case surviving a restart, the synthetic flag constraint, `/health` naming PostgreSQL, and the check and backup commands. Locally, point `ANTENATAL_TEST_POSTGRES_URL` at a database that may be wiped, such as a Neon branch made for testing, and never at the production branch, because these tests drop every table first.
 
 ## Testing and evidence
 
@@ -236,27 +250,16 @@ The three notebooks explain the work in plain English and compute nothing of the
 <!-- tree:start -->
 ```
 .
-├── (1).pdf
 ├── .dockerignore
 ├── .github
 │   └── workflows
 ├── .gitignore
-├── Antenatal
-├── Birth
 ├── CHANGELOG.md
+├── CLAUDE.md
 ├── Dockerfile
-├── Incremental
 ├── LICENSE
-├── Low
 ├── Makefile
-├── Predictive
 ├── README.md
-├── Recorded
-├── Report_
-├── Two
-├── Value
-├── Visits
-├── Weight
 ├── configs
 │   └── experiment_plan.yaml
 ├── data
@@ -270,14 +273,13 @@ The three notebooks explain the work in plain English and compute nothing of the
 ├── docker-compose.yml
 ├── docs
 │   ├── ARCHITECTURE.md
-│   ├── Technical
+│   ├── STATUS_REPORT.md
+│   ├── Technical Report_ Incremental Predictive Value of Two Antenatal Visits for Recorded Low Birth Weight (1).pdf
 │   ├── deviations.md
 │   ├── evidence
 │   ├── holdout_protocol.md
 │   ├── holdout_results.md
 │   └── research_results.md
-├── fly.toml
-├── for
 ├── frontend
 │   ├── next-env.d.ts
 │   ├── next.config.ts
@@ -293,7 +295,6 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── 01_data_audit.ipynb
 │   ├── 02_model_notebook.ipynb
 │   └── 03_statistical_analysis.ipynb
-├── of
 ├── outputs
 │   ├── cohort_manifest.csv
 │   ├── figures

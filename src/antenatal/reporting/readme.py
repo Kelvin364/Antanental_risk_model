@@ -128,7 +128,7 @@ def tree_block(root: Path) -> str:
     """Tracked files and folders to a depth of two, in the style of ``tree -L 2``."""
     files = subprocess.run(
         ["git", "ls-files"], cwd=root, capture_output=True, text=True, check=True
-    ).stdout.split()
+    ).stdout.splitlines()
     tree: dict[str, set[str]] = {}
     for name in files:
         parts = name.split("/")
