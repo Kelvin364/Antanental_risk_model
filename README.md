@@ -17,7 +17,6 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 | Phase 2 part 3: demonstration and architecture | https://www.loom.com/share/ec898ca64a724236a2a34839177b0090 |
 | Technical report | [Technical Report (PDF)](docs/Technical%20Report_%20Incremental%20Predictive%20Value%20of%20Two%20Antenatal%20Visits%20for%20Recorded%20Low%20Birth%20Weight%20%281%29.pdf) |
 | Live prototype | Render web service with a Neon PostgreSQL database: https://antanental-risk-model.onrender.com/ (synthetic cases only, sign in required) |
-| Administrator sign in | Username: `k.rwihimba@alustudent.com`, password: `Rukeratabaro2$` |
 | Source code | https://github.com/Kelvin364/Antanental_risk_model |
 
 ## Contents
