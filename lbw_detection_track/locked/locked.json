@@ -1,0 +1,38 @@
+{
+ "landmark": 36,
+ "primary_set": "B",
+ "method": "logistic",
+ "best_roc_auc_any_landmark": 0.6845223175551913,
+ "models": {
+  "A": {
+   "threshold": 0.026461153003419037,
+   "development_at_threshold": {
+    "sensitivity": 0.7560975609756098,
+    "specificity": 0.33517786561264823,
+    "ppv": 0.03555045871559633,
+    "npv": 0.9769585253456221
+   },
+   "sha256": "daa8cdd8dacce06c5e443881ad17e6fb54243806a98943db5d85d7b28126eb67"
+  },
+  "B": {
+   "threshold": 0.029404318481584212,
+   "development_at_threshold": {
+    "sensitivity": 0.7560975609756098,
+    "specificity": 0.5079051383399209,
+    "ppv": 0.047436878347360364,
+    "npv": 0.9846743295019157
+   },
+   "sha256": "8e39e00a1d314ecf39b24d2d87bcc0a3b705322172437dc2c13c8f7c36e0611d"
+  },
+  "C": {
+   "threshold": 0.025761694117338675,
+   "development_at_threshold": {
+    "sensitivity": 0.7560975609756098,
+    "specificity": 0.4458498023715415,
+    "ppv": 0.04234972677595628,
+    "npv": 0.9825783972125436
+   },
+   "sha256": "d19c4956fbf6d2026d06266fd2b4803c071e7dd50bbbf88f8bc0fa09e26413c3"
+  }
+ }
+}
