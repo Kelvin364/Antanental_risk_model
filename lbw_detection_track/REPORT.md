@@ -106,7 +106,7 @@ Weighting and SMOTE did not improve separation and badly damaged the probabiliti
 * A 70 percent detection target can be reached on unseen records, among pregnancies seen late in the third trimester, at the cost of flagging about half of them.
 * Separation is modest: ROC AUC about 0.65 to 0.70. It is clearly better than chance on these records, and in line with the median of 0.68 reported for small for gestational age prediction.
 * It is not a strong model. Over all low birth weight births the detection rate stayed near one third.
-* Routine visit data appears to be the limit. Seven methods and 84 configurations, added to the 43 earlier attempts, did not change that.
+* Routine visit data appears to be the limit. Seven methods and 84 configurations, added to the 36 earlier candidates (28 in Stage 2 and 8 in the 26 October sprint), did not change that.
 
 This track does not replace the served model 1.0.0 or change any result of the study.
 
