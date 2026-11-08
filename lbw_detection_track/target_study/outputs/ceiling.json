@@ -1,0 +1,29 @@
+{
+ "geometry": {
+  "minimum_auc_of_any_curve_through_target": 0.7227272727272727,
+  "binormal_auc_through_target": 0.838162747237883,
+  "binormal_sensitivity_at_90_specificity_for_served_auc": 0.20478106987823969,
+  "ppv_at_target": 0.23310023310023315,
+  "false_alarms_at_target": 296.0999999999999
+ },
+ "timing": {
+  "visit_one_inputs": 145,
+  "visit_one_roc_auc": 0.658847850337212,
+  "visit_one_pr_auc": 0.09974779549693041
+ },
+ "data_quality": {
+  "births_exceed_prior_deliveries": 0.6422819553135988,
+  "living_children_exceed_prior_deliveries": 0.2852444141998412,
+  "stillbirth_count_distribution": {
+   "0": 2259,
+   "1": 1552,
+   "2": 1477,
+   "3": 1679,
+   "4": 1845,
+   "5": 3
+  },
+  "cases_with_recorded_preterm_birth": 66,
+  "share_of_cases_preterm": 0.4,
+  "share_of_others_preterm": 0.01789935832489024
+ }
+}
