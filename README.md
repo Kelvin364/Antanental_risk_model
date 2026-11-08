@@ -296,6 +296,7 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── REPORT.md
 │   ├── evaluate_test.py
 │   ├── features.py
+│   ├── fusion
 │   ├── lock_model.py
 │   ├── locked
 │   ├── methods.py
