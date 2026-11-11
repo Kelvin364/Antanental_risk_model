@@ -19,17 +19,18 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 ## Contents
 
 1. [The question and the answer](#the-question-and-the-answer)
-2. [System architecture](#system-architecture)
-3. [Research pipeline](#research-pipeline)
-4. [Results](#results)
-5. [How the held out records were protected](#how-the-held-out-records-were-protected)
-6. [The prototype](#the-prototype)
-7. [Getting started](#getting-started)
-8. [Testing and evidence](#testing-and-evidence)
-9. [Documentation](#documentation)
-10. [Repository structure](#repository-structure)
-11. [Limitations](#limitations)
-12. [Licence and data](#licence-and-data)
+2. [The two models](#the-two-models)
+3. [System architecture](#system-architecture)
+4. [Research pipeline](#research-pipeline)
+5. [Results](#results)
+6. [How the held out records were protected](#how-the-held-out-records-were-protected)
+7. [The prototype](#the-prototype)
+8. [Getting started](#getting-started)
+9. [Testing and evidence](#testing-and-evidence)
+10. [Documentation](#documentation)
+11. [Repository structure](#repository-structure)
+12. [Limitations](#limitations)
+13. [Licence and data](#licence-and-data)
 
 ## The question and the answer
 
@@ -38,6 +39,21 @@ When a pregnancy is seen for the second time, at or before 28 weeks, does inform
 The study answers this on the publicly released Maternal Health Risks Stratification dataset from Tanzania (Mwifunyi et al., 2025; CC BY 4.0), following a plan fixed in the project proposal before any model was fitted. Three nested sets of predictors are compared: set A holds what is recorded at registration, set B adds the second visit, and set C adds the first visit as well.
 
 **Answer.** Adding the first visit did not improve prediction by any amount the design could detect, on development records, in every sensitivity analysis, and in the single evaluation on records held out from the start. The second visit adds a modest gain over registration alone. Twenty eight prespecified attempts to improve the model did not pass the selection rule, so version 1.0.0 of the model is the one served.
+
+## The two models
+
+| | Served 28 week model | Week 36 model |
+| --- | --- | --- |
+| Question | Does the first visit add to the second, at a second visit by 28 weeks? | How well can low birth weight be predicted for pregnancies seen at 33 to 36 weeks? |
+| Inputs | Set C: registration data, second visit and first visit | Set B: registration data and the latest visit in weeks 33 to 36 |
+| Method | Logistic regression with an L2 penalty | Logistic regression with an L2 penalty |
+| Code | `src/antenatal` | [`week36_model/`](week36_model/README.md) |
+| Frozen model | `webapp/model/lbw_model.joblib`, served by the application | `week36_model/locked/`, not served |
+| Sealed evaluation | 782 held out pregnancies, 41 with low birth weight, opened once on 24 October 2026 | 975 test pregnancies, 29 with low birth weight, opened once on 7 November 2026 |
+| ROC AUC on its sealed records | 0.572 (0.475 to 0.672), not distinguishable from chance | 0.706 (0.624 to 0.781) |
+| First visit added (C over B) on its sealed records | +0.001 average precision (−0.022 to +0.019) | −0.015 ROC AUC (−0.056 to +0.028) |
+
+ROC AUC is how often a pregnancy that ended in low birth weight is ranked above one that did not; 0.5 is chance. Both models find that the first visit adds nothing, the second on records sealed separately from the first. The week 36 model separates cases better mainly because of whom it sees, women still attending at 33 to 36 weeks: registration data alone reached 0.685 on the same records. Seven further analyses that tried to improve or combine the models changed no conclusion; they are listed with their results in [`docs/analyses_register.md`](docs/analyses_register.md) and kept in git under the tag `archive-all-analyses-2026-11-11`.
 
 ## System architecture
 
@@ -237,6 +253,8 @@ The tests run on every push in continuous integration, together with ruff, black
 | [`docs/holdout_protocol.md`](docs/holdout_protocol.md) | What was locked and measured before the held out records were opened |
 | [`docs/holdout_results.md`](docs/holdout_results.md) | The held out results beside the development results, and the proof of independence |
 | [`docs/deviations.md`](docs/deviations.md) | Every place the work differs from the proposal, with the reason |
+| [`week36_model/README.md`](week36_model/README.md) | The week 36 model: its plan, locked model, single test evaluation and files |
+| [`docs/analyses_register.md`](docs/analyses_register.md) | The seven further analyses, each with its question, plan commit and result, and how to restore it from git |
 | [`configs/experiment_plan.yaml`](configs/experiment_plan.yaml) | The Stage 2 experiments and the selection rule, written before any of them ran |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed in the project, in order |
 
@@ -275,6 +293,7 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── ARCHITECTURE.md
 │   ├── STATUS_REPORT.md
 │   ├── Technical Report_ Incremental Predictive Value of Two Antenatal Visits for Recorded Low Birth Weight (1).pdf
+│   ├── analyses_register.md
 │   ├── deviations.md
 │   ├── evidence
 │   ├── holdout_protocol.md
@@ -290,22 +309,6 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── public
 │   ├── src
 │   └── tsconfig.json
-├── lbw_detection_track
-│   ├── LITERATURE.md
-│   ├── PROTOCOL.md
-│   ├── REPORT.md
-│   ├── evaluate_test.py
-│   ├── features.py
-│   ├── fusion
-│   ├── lock_model.py
-│   ├── locked
-│   ├── methods.py
-│   ├── outputs
-│   ├── run_experiments.py
-│   ├── scoring.py
-│   ├── seal_test_set.py
-│   ├── sealed
-│   └── target_study
 ├── neon.ts
 ├── notebooks
 │   ├── 01_data_audit.ipynb
@@ -353,11 +356,26 @@ The three notebooks explain the work in plain English and compute nothing of the
 │   ├── integration
 │   ├── postgres
 │   └── unit
-└── webapp
-    ├── __init__.py
-    ├── app
-    ├── data
-    └── model
+├── webapp
+│   ├── __init__.py
+│   ├── app
+│   ├── data
+│   └── model
+└── week36_model
+    ├── LITERATURE.md
+    ├── PROTOCOL.md
+    ├── README.md
+    ├── REPORT.md
+    ├── evaluate_test.py
+    ├── features.py
+    ├── lock_model.py
+    ├── locked
+    ├── methods.py
+    ├── outputs
+    ├── run_experiments.py
+    ├── scoring.py
+    ├── seal_test_set.py
+    └── sealed
 ```
 <!-- tree:end -->
 
@@ -366,12 +384,14 @@ The three notebooks explain the work in plain English and compute nothing of the
 | Folder | Role |
 | --- | --- |
 | `src/antenatal` | The research package: data, cohort, partition, features, models, evaluation, artefact, reporting |
+| `week36_model/` | The week 36 model: plan, code, sealed test list, locked models and results |
 | `webapp/` | The FastAPI service and the frozen model artefacts |
 | `frontend/` | The Next.js interface, built into a static export that the service serves |
 | `outputs/` | Every table, figure and saved prediction |
 | `partitions/` | The sealed held out identifiers, the folds and the access log |
 | `tests/` | Unit, integration and browser tests |
 | `scripts/` | Evidence, packaging and held out evaluation scripts |
+| `docs/` | Architecture, protocols, deviations, the register of further analyses and the test evidence |
 
 ## Limitations
 
@@ -379,7 +399,8 @@ The three notebooks explain the work in plain English and compute nothing of the
 2. The predictors carry little information. Fundal height is recorded only as normal or abnormal, history counts are internally inconsistent, and birth weight is recorded to 0.1 kg.
 3. The development partition holds 165 events and the held out partition 41, so only differences of roughly the detectable size could be seen, and held out intervals are wide.
 4. The outcome is birth weight recorded under the care actually given. Nothing here shows that acting on a prediction would change it.
-5. The prototype is a demonstration on synthetic cases. It has not been validated for any pregnancy, and a larger independent cohort is needed before any claim about use in practice.
+5. The share of recorded low birth weight changes with the calendar start of the pregnancy, 1.5 to 1.9 percent for starts in 2023 and 6.4 percent for late 2024, consistent with births missing at both ends of the collection period ([`docs/analyses_register.md`](docs/analyses_register.md)).
+6. The prototype is a demonstration on synthetic cases. It has not been validated for any pregnancy, and a larger independent cohort is needed before any claim about use in practice.
 
 ## Licence and data
 

@@ -1,9 +1,0 @@
-{
- "records": 5195,
- "events": 240,
- "single_predictor_auc": {
-  "ga": 0.6123637739656913,
-  "visits_by_36": 0.5022431046081399
- },
- "logistic_set_b_latest_any_visit_roc_auc": 0.6652817019845273
-}

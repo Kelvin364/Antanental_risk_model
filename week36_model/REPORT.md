@@ -1,4 +1,4 @@
-# Low birth weight detection track: report
+# Week 36 model: report
 
 Written on 7 November 2026 for the author, the supervisor and the panel. Every number comes from `outputs/` or `locked/` in this folder. The plan fixed before any model was fitted is `PROTOCOL.md`, and the evidence behind it is `LITERATURE.md`.
 
@@ -115,7 +115,7 @@ This track does not replace the served model 1.0.0 or change any result of the s
 From the repository root, with `.venv` active. The last step is refused by design.
 
 ```
-cd lbw_detection_track
+cd week36_model
 PYTHONPATH=../src:. python run_experiments.py
 PYTHONPATH=../src:. python lock_model.py
 PYTHONPATH=../src:. python evaluate_test.py
