@@ -1,0 +1,18 @@
+predictor,source_field,status,evidence
+Previous low birth weight baby,none,absent,name search: []
+Mid upper arm circumference,none,absent,name search: []
+Gestational age at delivery,none,absent,name search: []
+Estimated fetal weight,none,absent,name search: []
+Fetal abdominal circumference,none,absent,name search: []
+Uterine artery Doppler,none,absent,name search: []
+Umbilical artery Doppler,none,absent,name search: []
+Previous preterm delivery,preterm_labour_1,present but not history,yes in 105 first pregnancies
+Previous stillbirth,number_of_prior_pregnancies_with_stillbirths,unreliable,see target study ceiling.json
+Parity and gravidity,"no_pregnancy, number_of_prior_deliveries",inconsistent,"2001 first pregnancies, prior deliveries"
+Maternal height,height_cm,available,numeric share 1.000
+Pre pregnancy body mass index,weight_kg at booking,proxy only,"booking weight, not pre pregnancy"
+Haemoglobin and anaemia,"hemoglobin_check_result_v1, v2","available, partly missing","numeric v1 0.919, v2 0.344"
+Hypertension and pre eclampsia,"blood_pressure_v*, urine albumin",rare and coarse,"prior 19, chronic 7"
+Early ultrasound dating,obstetric_ultrasound_scan_result_v1,categories only,scan at v1 0.119; LMP and EDD agree 0.238
+Numeric fundal height,uterine_size_symphysis_fundal_height_v*,categories only,numeric values at v1: 0
+Maternal weight gain trajectory,weight_kg_v1 to v8,"available, sparse",5103 records with 3 or more weights

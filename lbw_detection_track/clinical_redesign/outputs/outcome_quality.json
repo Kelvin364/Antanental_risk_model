@@ -1,0 +1,14 @@
+{
+ "preterm_and_term_both_recorded": 47,
+ "neither_preterm_nor_term_recorded": 57,
+ "preterm_recorded_with_antenatal_visit_at_37_weeks_or_later": 15,
+ "preterm_recorded": 119,
+ "registration_preterm_field_by_outcome_preterm": {
+  "registration_False_outcome_False": 3007,
+  "registration_False_outcome_True": 0,
+  "registration_True_outcome_False": 0,
+  "registration_True_outcome_True": 119
+ },
+ "birth_weight_on_whole_or_half_kg": 0.2981445937300064,
+ "birth_weight_on_tenth_kg": 1.0
+}

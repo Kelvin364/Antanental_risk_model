@@ -1,0 +1,5 @@
+group,records,share_of_records,recorded_term_labour,median_birth_weight_kg
+lbw_preterm,66,0.02111324376199616,3,2.0
+lbw_not_preterm,99,0.03166986564299424,96,2.3
+not_lbw_preterm,53,0.01695457453614843,44,3.1
+not_lbw_not_preterm,2908,0.9302623160588611,2854,3.1
