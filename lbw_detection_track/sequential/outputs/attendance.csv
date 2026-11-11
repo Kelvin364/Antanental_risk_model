@@ -1,0 +1,5 @@
+reassessed,recorded_preterm,records,cases,cases_missed_by_baseline
+True,True,47,13,7
+True,False,1573,43,28
+False,True,72,53,38
+False,False,1434,56,38
