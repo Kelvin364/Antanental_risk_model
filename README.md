@@ -48,6 +48,7 @@ The study answers this on the publicly released Maternal Health Risks Stratifica
 | Inputs | Set C: registration data, second visit and first visit | Set B: registration data and the latest visit in weeks 33 to 36 |
 | Method | Logistic regression with an L2 penalty | Logistic regression with an L2 penalty |
 | Code | `src/antenatal` | [`week36_model/`](week36_model/README.md) |
+| Notebook | [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) | [`04_week36_model.ipynb`](notebooks/04_week36_model.ipynb) |
 | Frozen model | `webapp/model/lbw_model.joblib`, served by the application | `week36_model/locked/`, not served |
 | Sealed evaluation | 782 held out pregnancies, 41 with low birth weight, opened once on 24 October 2026 | 975 test pregnancies, 29 with low birth weight, opened once on 7 November 2026 |
 | ROC AUC on its sealed records | 0.572 (0.475 to 0.672), not distinguishable from chance | 0.706 (0.624 to 0.781) |
@@ -258,7 +259,7 @@ The tests run on every push in continuous integration, together with ruff, black
 | [`configs/experiment_plan.yaml`](configs/experiment_plan.yaml) | The Stage 2 experiments and the selection rule, written before any of them ran |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed in the project, in order |
 
-The three notebooks explain the work in plain English and compute nothing of their own: [`01_data_audit.ipynb`](notebooks/01_data_audit.ipynb) covers the data quality audit, [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) the models and further analyses, and [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb) the research questions.
+The four notebooks explain the work in plain English and add no logic of their own; every cell calls the tested code. [`01_data_audit.ipynb`](notebooks/01_data_audit.ipynb) covers the data quality audit, [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) the served model and its further analyses, [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb) the research questions, and [`04_week36_model.ipynb`](notebooks/04_week36_model.ipynb) the week 36 model, refitted live and checked against its stored predictions and locked checksum.
 
 ## Repository structure
 
@@ -313,7 +314,8 @@ The three notebooks explain the work in plain English and compute nothing of the
 ├── notebooks
 │   ├── 01_data_audit.ipynb
 │   ├── 02_model_notebook.ipynb
-│   └── 03_statistical_analysis.ipynb
+│   ├── 03_statistical_analysis.ipynb
+│   └── 04_week36_model.ipynb
 ├── outputs
 │   ├── cohort_manifest.csv
 │   ├── figures
