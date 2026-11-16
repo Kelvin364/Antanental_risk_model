@@ -54,6 +54,9 @@ body {
   .btn-secondary {
     @apply inline-flex cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surface px-5 py-3.5 text-sm font-semibold text-ink;
   }
+  .btn-outline {
+    @apply inline-flex cursor-pointer items-center justify-center rounded-[10px] border border-green bg-surface px-5 py-3.5 text-sm font-semibold text-green disabled:cursor-wait disabled:opacity-60;
+  }
   .kicker {
     @apply text-[11px] font-semibold tracking-[0.06em] text-muted uppercase;
   }

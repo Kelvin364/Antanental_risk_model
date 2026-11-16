@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { DeleteCase } from "@/components/DeleteCase";
 import { Screen, Section, stepHref } from "@/components/Screen";
 import { api, Refused, type CaseloadOut } from "@/lib/api";
 import { pctShort } from "@/lib/fields";
@@ -17,9 +18,10 @@ export function CaseloadScreen() {
   const [data, setData] = useState<CaseloadOut | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     api.caseload().then(setData, (e: Refused) => setError(e.message));
   }, []);
+  useEffect(load, [load]);
 
   const likely = data?.rows.filter((r) => r.classification.startsWith("Likely")).length ?? 0;
   return (
@@ -48,6 +50,9 @@ export function CaseloadScreen() {
               <th className={`${HEAD} text-right`}>95% interval</th>
               <th className={HEAD}>Classification</th>
               <th className={`${HEAD} text-right`}>Rank among reference</th>
+              <th className={HEAD}>
+                <span className="sr-only">Delete</span>
+              </th>
             </tr>
           </thead>
           <tbody id="caseload-body">
@@ -86,6 +91,9 @@ export function CaseloadScreen() {
                 </td>
                 <td className={`${CELL} text-right font-mono text-[13px] text-muted`}>
                   {row.reference_rank_position.toLocaleString()} of {(data.reference_caseload_size + 1).toLocaleString()}
+                </td>
+                <td className={CELL}>
+                  <DeleteCase caseId={row.case_id} label={row.label} onDeleted={load} compact />
                 </td>
               </tr>
             ))}

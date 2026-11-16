@@ -60,3 +60,20 @@ def test_the_purge_command_reports_what_it_deleted(tmp_path, monkeypatch, capsys
     assert "Deleted 0 synthetic cases older than 7 days" in capsys.readouterr().out
     with pytest.raises(SystemExit):
         main(["create-admin"])
+
+
+def test_the_purge_leaves_consent_and_removal_requests_untouched(tmp_path):
+    sessions = create_session_factory(f"sqlite:///{tmp_path / 'c.sqlite3'}")
+    _store(sessions, "old", NOW - timedelta(days=8))
+    accepted, requested = NOW - timedelta(days=30), NOW - timedelta(days=9)
+    with sessions() as session:
+        owner = session.scalar(select(User))
+        owner.terms_version, owner.terms_accepted_at = "2026-11-16", accepted
+        owner.deletion_requested_at = requested
+        session.commit()
+    assert purge_old_cases(sessions, 7, now=NOW) == 1
+    with sessions() as session:
+        owner = session.scalar(select(User))
+        assert owner.terms_version == "2026-11-16"
+        assert owner.terms_accepted_at.replace(tzinfo=UTC) == accepted
+        assert owner.deletion_requested_at.replace(tzinfo=UTC) == requested

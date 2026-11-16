@@ -22,6 +22,7 @@ class SignedIn(BaseModel):
     terms_accepted: bool
     terms_version: str | None = None
     terms_accepted_at: datetime | None = None
+    deletion_requested_at: datetime | None = None
 
 
 class Consent(BaseModel):
@@ -66,6 +67,7 @@ class AccountOut(BaseModel):
     active: bool
     must_change_password: bool
     created_at: datetime
+    deletion_requested_at: datetime | None = None
 
 
 class GeneratedPassword(BaseModel):

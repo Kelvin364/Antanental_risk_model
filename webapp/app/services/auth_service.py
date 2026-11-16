@@ -56,6 +56,7 @@ class CurrentUser:
     must_change_password: bool
     terms_version: str | None = None
     terms_accepted_at: datetime | None = None
+    deletion_requested_at: datetime | None = None
 
     @property
     def is_administrator(self) -> bool:
@@ -77,6 +78,7 @@ class CurrentUser:
             user.must_change_password,
             user.terms_version,
             _aware(user.terms_accepted_at),
+            _aware(user.deletion_requested_at),
         )
 
 

@@ -68,6 +68,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{user_id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Remove Account
+         * @description Delete an account with its cases and sessions; not one's own, not the last administrator.
+         */
+        post: operations["remove_account_api_admin_users__user_id__remove_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users/{user_id}/reset-password": {
         parameters: {
             query?: never;
@@ -122,6 +142,26 @@ export interface paths {
          * @description Agree to the Terms of Use version shown; 409 if it is no longer the current one.
          */
         post: operations["consent_api_auth_consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/deletion-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Removal
+         * @description Ask for one's account to be removed; an administrator completes it.
+         */
+        post: operations["request_removal_api_auth_deletion_request_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -262,7 +302,11 @@ export interface paths {
         get: operations["get_case_api_cases__case_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete Case
+         * @description Delete one's own case with its visits and assessments; anyone else's is not found.
+         */
+        delete: operations["delete_case_api_cases__case_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -402,6 +446,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Deletion Requested At */
+            deletion_requested_at?: string | null;
             /** Id */
             id: number;
             /** Must Change Password */
@@ -815,6 +861,8 @@ export interface components {
         SignedIn: {
             /** Csrf Token */
             csrf_token: string;
+            /** Deletion Requested At */
+            deletion_requested_at?: string | null;
             /** Must Change Password */
             must_change_password: boolean;
             /** Role */
@@ -1030,6 +1078,35 @@ export interface operations {
             };
         };
     };
+    remove_account_api_admin_users__user_id__remove_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     reset_password_api_admin_users__user_id__reset_password_post: {
         parameters: {
             query?: never;
@@ -1111,6 +1188,24 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    request_removal_api_auth_deletion_request_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1288,6 +1383,35 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CaseOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_case_api_cases__case_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

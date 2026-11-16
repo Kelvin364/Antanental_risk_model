@@ -26,7 +26,15 @@ SENTENCES = {
         "Read the Terms of Use below. You can open the application once you agree to them."
     ),
     "consent_done": "You agreed to this version of the Terms of Use on {date}.",
+    "delete_confirm": "Delete case {label}? This cannot be undone.",
+    "removal_explained": (
+        "Removal deletes your cases, your sessions and your account; the audit trail keeps its "
+        "records, including the record of the removal."
+    ),
+    "removal_pending": "Removal requested on {date}. An administrator will complete it.",
 }
+SELF_REMOVAL = "An administrator cannot remove their own account."
+LAST_ADMINISTRATOR = "The last active administrator cannot be removed."
 
 TERMS_OF_USE = (
     "Enter synthetic cases only. Do not enter data about a real person, and never a real "

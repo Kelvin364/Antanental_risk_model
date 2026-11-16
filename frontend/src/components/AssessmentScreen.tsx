@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { ClassificationPanel } from "@/components/ClassificationPanel";
+import { DeleteCase } from "@/components/DeleteCase";
 import { Screen, stepHref } from "@/components/Screen";
 import type { AssessmentOut } from "@/lib/api";
 import { pctShort } from "@/lib/fields";
@@ -61,6 +63,7 @@ function ProbabilityCard({ a }: { a: AssessmentOut }) {
 /** Screen 4: position and probability, then the label with its confidence (Table 3.10, D6). */
 export function AssessmentScreen() {
   const { kase, error, loading } = useCase();
+  const router = useRouter();
   const a = kase?.latest_assessment ?? null;
   const caseId = kase?.id ?? null;
 
@@ -111,6 +114,9 @@ export function AssessmentScreen() {
               Register another case
             </Link>
           </div>
+          {kase && (
+            <DeleteCase caseId={kase.id} label={kase.label} onDeleted={() => router.replace("/caseload/")} />
+          )}
           <p id="limit-assessment" className="limit">
             {a?.limitation}
           </p>

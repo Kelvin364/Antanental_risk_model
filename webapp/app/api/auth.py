@@ -11,6 +11,7 @@ from webapp.app.api.deps import (
     administrator,
     auth_service,
     current_user,
+    removal_service,
     working_user,
 )
 from webapp.app.core import policy
@@ -28,12 +29,14 @@ from webapp.app.schemas.auth import (
     SignIn,
 )
 from webapp.app.services.auth_service import SESSION_HOURS, AuthService, CurrentUser
+from webapp.app.services.removal import RemovalService
 
 router = APIRouter(prefix="/api", tags=["accounts"])
 Auth = Annotated[AuthService, Depends(auth_service)]
 User = Annotated[CurrentUser, Depends(current_user)]
 Admin = Annotated[CurrentUser, Depends(administrator)]
 Working = Annotated[CurrentUser, Depends(working_user)]
+Removal = Annotated[RemovalService, Depends(removal_service)]
 
 
 def _signed_in(user: CurrentUser) -> SignedIn:
@@ -45,6 +48,7 @@ def _signed_in(user: CurrentUser) -> SignedIn:
         terms_accepted=user.has_accepted_terms,
         terms_version=user.terms_version,
         terms_accepted_at=user.terms_accepted_at,
+        deletion_requested_at=user.deletion_requested_at,
     )
 
 
@@ -101,6 +105,12 @@ def consent(payload: Consent, user: Working, auth: Auth):
     auth.accept_terms(user, payload.version)
 
 
+@router.post("/auth/deletion-request", status_code=204)
+def request_removal(user: Working, removal: Removal):
+    """Ask for one's account to be removed; an administrator completes it."""
+    removal.request(user)
+
+
 @router.get("/admin/users", response_model=list[AccountOut])
 def users(_: Admin, auth: Auth):
     """Every account."""
@@ -127,6 +137,12 @@ def reset_password(user_id: int, admin: Admin, auth: Auth):
 def set_active(user_id: int, payload: ActiveChange, admin: Admin, auth: Auth):
     """Activate or deactivate an account."""
     auth.set_active(user_id, payload.active, admin.username)
+
+
+@router.post("/admin/users/{user_id}/remove", status_code=204)
+def remove_account(user_id: int, admin: Admin, removal: Removal):
+    """Delete an account with its cases and sessions; not one's own, not the last administrator."""
+    removal.remove(user_id, admin)
 
 
 @router.get("/admin/audit", response_model=list[AuditOut])

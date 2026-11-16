@@ -155,6 +155,22 @@ export const api = {
   },
   audit: () => unwrap(client.GET("/api/admin/audit")),
   policy: () => unwrap(client.GET("/api/policy")),
+  deleteCase: async (caseId: number) => {
+    const { error, response } = await client.DELETE("/api/cases/{case_id}", {
+      params: { path: { case_id: caseId } },
+    });
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
+  requestRemoval: async () => {
+    const { error, response } = await client.POST("/api/auth/deletion-request");
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
+  removeAccount: async (userId: number) => {
+    const { error, response } = await client.POST("/api/admin/users/{user_id}/remove", {
+      params: { path: { user_id: userId } },
+    });
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
   consent: async (version: string) => {
     const { error, response } = await client.POST("/api/auth/consent", { body: { version } });
     if (error !== undefined || !response.ok) throw refusal(error, response.status);

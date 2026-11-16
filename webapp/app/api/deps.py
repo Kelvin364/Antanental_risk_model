@@ -20,6 +20,7 @@ from webapp.app.services.auth_service import AuthService, CurrentUser
 from webapp.app.services.case_service import CaseService
 from webapp.app.services.model_service import ModelService
 from webapp.app.services.ranking_service import RankingService
+from webapp.app.services.removal import RemovalService
 
 SESSION_COOKIE = "antenatal_session"
 CSRF_HEADER = "X-CSRF-Token"
@@ -48,6 +49,11 @@ def ranking_service(request: Request) -> RankingService:
 def auth_service(request: Request) -> AuthService:
     """Accounts, sessions and the audit trail."""
     return request.app.state.auth
+
+
+def removal_service(request: Request) -> RemovalService:
+    """Case deletion, removal requests and account removal."""
+    return request.app.state.removal
 
 
 def current_user(request: Request) -> CurrentUser:

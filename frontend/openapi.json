@@ -12,6 +12,18 @@
             "title": "Created At",
             "type": "string"
           },
+          "deletion_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deletion Requested At"
+          },
           "id": {
             "title": "Id",
             "type": "integer"
@@ -866,6 +878,18 @@
             "title": "Csrf Token",
             "type": "string"
           },
+          "deletion_requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deletion Requested At"
+          },
           "must_change_password": {
             "title": "Must Change Password",
             "type": "boolean"
@@ -1278,6 +1302,42 @@
         ]
       }
     },
+    "/api/admin/users/{user_id}/remove": {
+      "post": {
+        "description": "Delete an account with its cases and sessions; not one's own, not the last administrator.",
+        "operationId": "remove_account_api_admin_users__user_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Account",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/admin/users/{user_id}/reset-password": {
       "post": {
         "description": "Give an account a new generated password and end its sessions.",
@@ -1375,6 +1435,21 @@
           }
         },
         "summary": "Consent",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/auth/deletion-request": {
+      "post": {
+        "description": "Ask for one's account to be removed; an administrator completes it.",
+        "operationId": "request_removal_api_auth_deletion_request_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Request Removal",
         "tags": [
           "accounts"
         ]
@@ -1559,6 +1634,40 @@
       }
     },
     "/api/cases/{case_id}": {
+      "delete": {
+        "description": "Delete one's own case with its visits and assessments; anyone else's is not found.",
+        "operationId": "delete_case_api_cases__case_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "title": "Case Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Case",
+        "tags": [
+          "cases"
+        ]
+      },
       "get": {
         "description": "A case with its visits and latest assessment.",
         "operationId": "get_case_api_cases__case_id__get",

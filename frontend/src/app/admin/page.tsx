@@ -36,6 +36,7 @@ function Administration() {
     }
   }
 
+  const pending = accounts.filter((a) => a.deletion_requested_at);
   return (
     <>
       {error && (
@@ -71,6 +72,38 @@ function Administration() {
           Create account
         </button>
       </form>
+      <div id="removal-requests" className="card overflow-x-auto">
+        <h2 className="kicker mb-2">Removal requests</h2>
+        {pending.length === 0 ? (
+          <p className="text-sm text-muted">No account is waiting for removal.</p>
+        ) : (
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className={head}>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Requested</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pending.map((a) => (
+                <tr key={a.id} className={cell}>
+                  <td>{a.username}</td>
+                  <td>{a.role}</td>
+                  <td>{new Date(a.deletion_requested_at!).toLocaleString()}</td>
+                  <td>
+                    <button type="button" className="btn-outline remove-account px-3 py-1.5"
+                      onClick={() => act(api.removeAccount(a.id))}>
+                      Remove account
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
       <div className="card overflow-x-auto">
         <h2 className="kicker mb-3">Accounts</h2>
         <table className="w-full border-collapse text-left text-sm">

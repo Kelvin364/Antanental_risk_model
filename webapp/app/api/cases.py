@@ -9,11 +9,18 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 
-from webapp.app.api.deps import auth_service, case_service, consenting_user, ranking_service
+from webapp.app.api.deps import (
+    auth_service,
+    case_service,
+    consenting_user,
+    ranking_service,
+    removal_service,
+)
 from webapp.app.schemas.cases import AssessmentOut, CaseCreate, CaseloadOut, CaseOut, VisitCreate
 from webapp.app.services.auth_service import AuthService, CurrentUser
 from webapp.app.services.case_service import CaseService
 from webapp.app.services.ranking_service import RankingService
+from webapp.app.services.removal import RemovalService
 
 router = APIRouter(prefix="/api", tags=["cases"])
 Cases = Annotated[CaseService, Depends(case_service)]
@@ -30,6 +37,14 @@ def create_case(payload: CaseCreate, cases: Cases, user: User):
 def get_case(case_id: int, cases: Cases, user: User):
     """A case with its visits and latest assessment."""
     return cases.describe(case_id, user)
+
+
+@router.delete("/cases/{case_id}", status_code=204)
+def delete_case(
+    case_id: int, user: User, removal: Annotated[RemovalService, Depends(removal_service)]
+):
+    """Delete one's own case with its visits and assessments; anyone else's is not found."""
+    removal.delete_case(case_id, user)
 
 
 @router.put("/cases/{case_id}/visits/{visit_number}", response_model=CaseOut)

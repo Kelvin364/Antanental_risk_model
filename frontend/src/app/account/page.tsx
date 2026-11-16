@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 
 import { PlainScreen } from "@/components/Screen";
-import { api, Refused } from "@/lib/api";
+import { api, fill, Refused } from "@/lib/api";
+import { usePolicy } from "@/lib/usePolicy";
 import { firstStop, RequireSession, useSession } from "@/lib/session";
 
 function PasswordForm() {
@@ -58,12 +59,59 @@ function PasswordForm() {
   );
 }
 
+/** "Remove my account": a request that an administrator completes. */
+function RemoveAccount() {
+  const { user, signedIn } = useSession();
+  const policy = usePolicy();
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function request() {
+    if (!user) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await api.requestRemoval();
+      signedIn({ ...(await api.me()) });
+    } catch (e) {
+      setError((e as Refused).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const requested = user?.deletion_requested_at;
+  return (
+    <section id="remove-account" className="card flex max-w-[560px] flex-col gap-3">
+      <h2 className="kicker">Remove my account</h2>
+      <p className="text-sm">{policy?.sentences.removal_explained}</p>
+      {requested ? (
+        <p id="removal-pending" className="text-sm font-semibold">
+          {fill(policy?.sentences.removal_pending ?? "", { date: new Date(requested).toLocaleDateString() })}
+        </p>
+      ) : (
+        <div>
+          <button id="request-removal" type="button" className="btn-outline" disabled={busy} onClick={request}>
+            Request removal
+          </button>
+        </div>
+      )}
+      {error && (
+        <p role="alert" className="text-sm text-error">
+          {error}
+        </p>
+      )}
+    </section>
+  );
+}
+
 export default function Page() {
   return (
     <PlainScreen id="account" title="Account" lead="Change your password.">
       <Suspense>
         <RequireSession>
           <PasswordForm />
+          <RemoveAccount />
           <p>
             <a id="privacy-link" href="/privacy/" className="text-sm font-semibold text-green underline">
               Privacy Policy and Terms of Use

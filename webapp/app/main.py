@@ -23,6 +23,7 @@ from webapp.app.services.auth_service import (
 from webapp.app.services.case_service import CaseNotFound, CaseService, StepOutOfOrder
 from webapp.app.services.model_service import ModelService
 from webapp.app.services.ranking_service import RankingService
+from webapp.app.services.removal import RemovalRefused, RemovalService
 from webapp.app.services.retention import purge_old_cases
 from webapp.app.services.validation import EntryRefused, EntryRules
 
@@ -58,6 +59,12 @@ def _handlers(app: FastAPI) -> None:
             status_code=409, content={"detail": [{"field": "consent", "message": str(exc)}]}
         )
 
+    @app.exception_handler(RemovalRefused)
+    def removal_refused(_: Request, exc: RemovalRefused) -> JSONResponse:
+        return JSONResponse(
+            status_code=409, content={"detail": [{"field": "account", "message": str(exc)}]}
+        )
+
     @app.exception_handler(StepOutOfOrder)
     def order(_: Request, exc: StepOutOfOrder) -> JSONResponse:
         return JSONResponse(
@@ -83,6 +90,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.cases = CaseService(sessions, model, EntryRules())
     app.state.ranking = RankingService(sessions, model)
     app.state.auth = AuthService(sessions)
+    app.state.removal = RemovalService(sessions, app.state.auth)
     _handlers(app)
     security.install(app)
     for router in (health.router, auth.router, predict.router, cases.router):
