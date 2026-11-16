@@ -26,6 +26,11 @@ export default function Page() {
           <b>Accounts.</b> Administrators create researcher accounts. Researchers see only the cases they
           registered. Sign in is required for every case, visit, assessment and caseload.
         </p>
+        <p>
+          <a id="privacy-link" href="/privacy/" className="font-semibold text-green underline">
+            Privacy Policy and Terms of Use
+          </a>
+        </p>
       </div>
     </PlainScreen>
   );

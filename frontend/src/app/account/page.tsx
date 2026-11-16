@@ -64,6 +64,11 @@ export default function Page() {
       <Suspense>
         <RequireSession>
           <PasswordForm />
+          <p>
+            <a id="privacy-link" href="/privacy/" className="text-sm font-semibold text-green underline">
+              Privacy Policy and Terms of Use
+            </a>
+          </p>
         </RequireSession>
       </Suspense>
     </PlainScreen>

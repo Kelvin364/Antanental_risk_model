@@ -30,13 +30,19 @@ class Consent(BaseModel):
     version: str = Field(max_length=20)
 
 
+class PolicySection(BaseModel):
+    heading: str
+    text: str
+
+
 class PolicyOut(BaseModel):
-    """The Terms of Use and the consent sentence, from webapp/app/core/policy.py."""
+    """The Privacy Policy and Terms of Use, from webapp/app/core/policy.py."""
 
     version: str
     consent_sentence: str
     terms_of_use: str
     sentences: dict[str, str]
+    sections: list[PolicySection]
 
 
 class PasswordChange(BaseModel):

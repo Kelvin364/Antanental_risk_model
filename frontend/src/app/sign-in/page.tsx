@@ -73,6 +73,9 @@ function SignInForm() {
       <p className="font-mono text-[10px] leading-[1.4] text-muted">
         Research prototype for a bachelor&rsquo;s capstone. Synthetic data only.
       </p>
+      <a id="privacy-link" href="/privacy/" className="text-center text-xs font-semibold text-green underline">
+        Privacy Policy and Terms of Use
+      </a>
     </form>
   );
 }

@@ -761,11 +761,18 @@
         "type": "object"
       },
       "PolicyOut": {
-        "description": "The Terms of Use and the consent sentence, from webapp/app/core/policy.py.",
+        "description": "The Privacy Policy and Terms of Use, from webapp/app/core/policy.py.",
         "properties": {
           "consent_sentence": {
             "title": "Consent Sentence",
             "type": "string"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/PolicySection"
+            },
+            "title": "Sections",
+            "type": "array"
           },
           "sentences": {
             "additionalProperties": {
@@ -787,9 +794,28 @@
           "version",
           "consent_sentence",
           "terms_of_use",
-          "sentences"
+          "sentences",
+          "sections"
         ],
         "title": "PolicyOut",
+        "type": "object"
+      },
+      "PolicySection": {
+        "properties": {
+          "heading": {
+            "title": "Heading",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "heading",
+          "text"
+        ],
+        "title": "PolicySection",
         "type": "object"
       },
       "PredictRequest": {
@@ -1708,7 +1734,7 @@
     },
     "/api/policy": {
       "get": {
-        "description": "The current Terms of Use and the consent sentence; open without sign in.",
+        "description": "The Privacy Policy and Terms of Use with the consent sentence; open without sign in.",
         "operationId": "terms_api_policy_get",
         "responses": {
           "200": {

@@ -337,7 +337,7 @@ export interface paths {
         };
         /**
          * Terms
-         * @description The current Terms of Use and the consent sentence; open without sign in.
+         * @description The Privacy Policy and Terms of Use with the consent sentence; open without sign in.
          */
         get: operations["terms_api_policy_get"];
         put?: never;
@@ -769,11 +769,13 @@ export interface components {
         };
         /**
          * PolicyOut
-         * @description The Terms of Use and the consent sentence, from webapp/app/core/policy.py.
+         * @description The Privacy Policy and Terms of Use, from webapp/app/core/policy.py.
          */
         PolicyOut: {
             /** Consent Sentence */
             consent_sentence: string;
+            /** Sections */
+            sections: components["schemas"]["PolicySection"][];
             /** Sentences */
             sentences: {
                 [key: string]: string;
@@ -782,6 +784,13 @@ export interface components {
             terms_of_use: string;
             /** Version */
             version: string;
+        };
+        /** PolicySection */
+        PolicySection: {
+            /** Heading */
+            heading: string;
+            /** Text */
+            text: string;
         };
         /**
          * PredictRequest

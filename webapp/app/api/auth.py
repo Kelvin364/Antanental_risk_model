@@ -23,6 +23,7 @@ from webapp.app.schemas.auth import (
     NewAccount,
     PasswordChange,
     PolicyOut,
+    PolicySection,
     SignedIn,
     SignIn,
 )
@@ -84,12 +85,13 @@ def change_password(payload: PasswordChange, user: User, auth: Auth):
 
 @router.get("/policy", response_model=PolicyOut)
 def terms():
-    """The current Terms of Use and the consent sentence; open without sign in."""
+    """The Privacy Policy and Terms of Use with the consent sentence; open without sign in."""
     return PolicyOut(
         version=policy.POLICY_VERSION,
         consent_sentence=policy.CONSENT_SENTENCE,
         terms_of_use=policy.TERMS_OF_USE,
         sentences=policy.SENTENCES,
+        sections=[PolicySection(heading=h, text=t) for h, t in policy.SECTIONS],
     )
 
 
