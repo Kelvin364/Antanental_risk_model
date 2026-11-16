@@ -25,12 +25,13 @@ Kelvin Rwihimba, BSc Software Engineering, African Leadership University. Superv
 5. [Results](#results)
 6. [How the held out records were protected](#how-the-held-out-records-were-protected)
 7. [The prototype](#the-prototype)
-8. [Getting started](#getting-started)
-9. [Testing and evidence](#testing-and-evidence)
-10. [Documentation](#documentation)
-11. [Repository structure](#repository-structure)
-12. [Limitations](#limitations)
-13. [Licence and data](#licence-and-data)
+8. [Privacy, consent and deletion](#privacy-consent-and-deletion)
+9. [Getting started](#getting-started)
+10. [Testing and evidence](#testing-and-evidence)
+11. [Documentation](#documentation)
+12. [Repository structure](#repository-structure)
+13. [Limitations](#limitations)
+14. [Licence and data](#licence-and-data)
 
 ## The question and the answer
 
@@ -166,6 +167,19 @@ The interface takes one synthetic pregnancy through registration and two visits,
 | ![Register](designs/web/01-register.png) | ![Assessment](designs/web/04-assessment.png) | ![Caseload](designs/web/05-caseload.png) |
 
 The images are screenshots of the running interface drawn by `scripts/render_designs.py`; [`designs/README.md`](designs/README.md) lists every screen.
+
+## Privacy, consent and deletion
+
+The study holds ethical approval from the African Leadership University Research Ethics Committee, code SEPT26-BSE-064, dated 2 November 2026 and valid for six months ([`docs/ethics_and_ai.md`](docs/ethics_and_ai.md), section 2.2).
+
+| Feature | What the user sees | Where |
+| --- | --- | --- |
+| Consent at first sign in | "Before you continue": the Terms of Use, one checkbox and "I agree". No case work is possible before agreeing; the version and time are stored on the user row with an audit event | `frontend/src/app/consent/`, `POST /api/auth/consent` |
+| Privacy Policy and Terms of Use | `/privacy`, open without sign in, ten sections in plain English, version 2026-11-16 | `webapp/app/core/policy.py`, `GET /api/policy` |
+| Deleting a case | "Delete this case" on the assessment screen and every caseload row, with a confirmation in the page | `DELETE /api/cases/{id}` |
+| Removing an account | "Request removal" on the account page; an administrator completes it from the administration page | `POST /api/auth/deletion-request`, `POST /api/admin/users/{id}/remove` |
+
+Questions about privacy go to the issues page of this repository. The screenshots and the tests behind each feature are listed in [`docs/evidence/ethics_features.md`](docs/evidence/ethics_features.md).
 
 ## Getting started
 

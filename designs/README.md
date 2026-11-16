@@ -1,6 +1,6 @@
 # Designs
 
-The six images in `web/` are screenshots of the running interface, not drawings. `scripts/render_designs.py` starts the server with a temporary database, creates a temporary account, signs in, enters one synthetic pregnancy in Chromium at 1366 by 768 and saves one image per screen. It stops with an error if a screen shows triage wording. To redraw them after an interface change, run `make browsers` once and then `.venv/bin/python scripts/render_designs.py`.
+The twelve images in `web/` are screenshots of the running interface, not drawings. `scripts/render_designs.py` starts the server with a temporary database, creates a temporary account, signs in, agrees to the Terms of Use, enters one synthetic pregnancy in Chromium at 1366 by 768 and saves one image per screen, then captures the consent, privacy and deletion screens and the stored consent row. It stops with an error if a screen shows triage wording. To redraw them after an interface change, run `make browsers` once and then `.venv/bin/python scripts/render_designs.py`.
 
 | File | Screen |
 | --- | --- |
@@ -10,6 +10,12 @@ The six images in `web/` are screenshots of the running interface, not drawings.
 | `web/03-visit-two.png` | Visit two measurements |
 | `web/04-assessment.png` | Rank position and predicted probability with its interval |
 | `web/05-caseload.png` | Caseload ordered by predicted probability |
+| `web/06-consent.png` | Before you continue: the Terms of Use, the checkbox and "I agree" |
+| `web/07-privacy.png` | Privacy Policy and Terms of Use, open without sign in |
+| `web/08-delete-case.png` | Deleting a case from the assessment screen, with the confirmation in the page |
+| `web/09-account-removal.png` | A researcher's account page after requesting removal |
+| `web/10-admin-removal.png` | The administrator's list of removal requests, and the audit trail |
+| `web/11-consent-row.png` | The stored user row: consent version and time, password only as its scrypt hash |
 
 The earlier Figma screens, which included sign up and sign in screens and triage wording, were removed. Sign in returns with the authentication work of decision D1, and the assessment now shows a label at a fixed threshold (decision D6); no triage wording is shown.
 

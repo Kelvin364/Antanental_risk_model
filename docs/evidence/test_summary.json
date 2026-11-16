@@ -1,28 +1,33 @@
 {
-  "recorded_at": "2026-10-24T11:50:19+00:00",
-  "tests": 329,
+  "recorded_at": "2026-11-16T16:49:50+00:00",
+  "tests": 376,
   "failures": 0,
-  "skipped": 0,
-  "seconds": 336.4,
+  "skipped": 5,
+  "seconds": 342.2,
   "by_suite": {
     "e2e": {
-      "tests": 6,
+      "tests": 9,
       "failed": 0,
       "skipped": 0
     },
     "integration": {
-      "tests": 70,
+      "tests": 101,
       "failed": 0,
       "skipped": 0
     },
+    "postgres": {
+      "tests": 5,
+      "failed": 0,
+      "skipped": 5
+    },
     "unit": {
-      "tests": 253,
+      "tests": 261,
       "failed": 0,
       "skipped": 0
     }
   },
-  "line_coverage_percent": 96.3,
-  "statements": 4435,
+  "line_coverage_percent": 96.4,
+  "statements": 4686,
   "ruff_clean": true,
   "black_clean": true
 }

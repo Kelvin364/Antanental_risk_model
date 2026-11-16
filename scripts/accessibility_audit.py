@@ -1,4 +1,4 @@
-"""Measure the accessibility of the five screens with Lighthouse.
+"""Measure the accessibility of every screen of the interface with Lighthouse.
 
 Usage: ``python scripts/accessibility_audit.py``. The script starts its own
 server on a free local port with a temporary database, records one synthetic
@@ -36,6 +36,9 @@ LIGHTHOUSE = "lighthouse@12.8.2"
 SCREENS = (
     ("Sign in", "/sign-in/"),
     ("About", "/about/"),
+    ("Privacy", "/privacy/"),
+    ("Consent", "/consent/"),
+    ("Account", "/account/"),
     ("Administration", "/admin/"),
     ("Register", "/register/"),
     ("Visit one", "/visit-one/"),

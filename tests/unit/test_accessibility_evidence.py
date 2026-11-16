@@ -5,6 +5,9 @@ import json
 SCREENS = {
     "Sign in",
     "About",
+    "Privacy",
+    "Consent",
+    "Account",
     "Administration",
     "Register",
     "Visit one",

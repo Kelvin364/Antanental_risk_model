@@ -36,10 +36,16 @@ Sections marked **AUTHOR TO WRITE** contain statements that only the author can 
 
 ### 2.2 University determination
 
-> **AUTHOR TO WRITE.** The proposal states that the study follows the African
-> Leadership University's decision on the ethics of secondary data and claims
-> no exemption. Record that decision here when it is received: the deciding
-> body, the date, any reference number, and its conditions.
+The study holds ethical approval from the **African Leadership University Research Ethics Committee**:
+
+| Item | Value |
+| --- | --- |
+| Approval code | SEPT26-BSE-064 |
+| Date of approval | 2 November 2026 |
+| Validity | Six months from the date of approval |
+| Conditions | Any change in procedure must be reported to the committee within 48 hours; a significant change of topic or method needs a new application |
+
+The approval covers the secondary analysis of the released dataset and the research prototype described here. Section 2.1 still applies: the dataset producers have not published their own approval or consent statement, and reuse of their data rests on the licence and on the absence of direct identifiers.
 
 ### 2.3 Gaps found
 
@@ -139,4 +145,27 @@ Write each answer under its prompt, then move it into `docs/Technical-Report.md`
 
 ## 8. Walkthrough with health workers
 
-A walkthrough of the prototype with two or three health workers or clinicians, using synthetic cases only, is a **proposed activity** (proposal Sections 1.5 and 3.6). It has **not taken place**. It is pending the African Leadership University's determination, and it will not start before that determination is received and recorded in section 2.2. It is not on the critical path of the study and is not a clinical evaluation.
+A walkthrough of the prototype with two or three health workers or clinicians, using synthetic cases only, is a **proposed activity** (proposal Sections 1.5 and 3.6). It has **not taken place**. The African Leadership University Research Ethics Committee approval is now recorded in section 2.2; any walkthrough would follow its conditions. It is not on the critical path of the study and is not a clinical evaluation.
+
+## 9. Consent, privacy and user rights in the application
+
+Three features give users of the prototype the same respect the study gives the data. Each is enforced by the server and proven by tests; the screenshots are listed in [`docs/evidence/ethics_features.md`](evidence/ethics_features.md).
+
+### 9.1 Consent at first sign in
+
+A user who has not agreed to the current Terms of Use is taken, after sign in and after the forced password change, to a page titled "Before you continue". It shows the Terms of Use, one checkbox with the sentence "I will enter synthetic cases only, never a real pregnancy, and I understand that my actions in this application are logged", and an "I agree" button that stays disabled until the box is ticked.
+
+* Until the user agrees, every case route and the prediction route answer 403 with "Accept the Terms of Use before using the application" (`webapp/app/api/deps.py`, `consenting_user`), and the interface sends the user back to the consent page (`frontend/src/lib/session.tsx`, `frontend/src/app/consent/page.tsx`).
+* Agreement is stored on the user row as `terms_version` and `terms_accepted_at` (`webapp/app/db/models.py`), written by `POST /api/auth/consent`, with a `consent_accepted` audit event. A version other than the current one is refused, and a new policy version asks every user to agree again.
+* Tests: `tests/integration/test_consent.py`, and the first test in `tests/e2e/test_ethics_features.py`.
+
+### 9.2 Privacy Policy and Terms of Use
+
+The page `/privacy` needs no sign in and is linked from the sign in, About, account and consent pages (`frontend/src/app/privacy/page.tsx`). Its ten sections, with version `POLICY_VERSION`, are written once in `webapp/app/core/policy.py` and served by `GET /api/policy`. Every statement follows the code. In particular, it says that an administrator can open any case to support researchers, and that the web server's request log, kept by the host, holds network addresses, because both are true. Tests: `tests/unit/test_policy.py` and the privacy test in `tests/e2e/test_ethics_features.py`.
+
+### 9.3 Deleting data
+
+* **A case, at once.** The owner of a case can delete it from the assessment screen or the caseload, after a confirmation shown in the page. `DELETE /api/cases/{id}` removes the case with its visits and assessments and logs `case_deleted`. Anyone else, including an administrator, receives the same "not found" answer as for a case that does not exist (`webapp/app/services/removal.py`).
+* **An account, on request.** The account page offers "Request removal", which records `deletion_requested_at` and logs `deletion_requested`. An administrator sees pending requests on the administration page and completes them; removal deletes the user's cases, sessions and account in one transaction and logs `account_removed`. An administrator cannot remove their own account or the last active administrator.
+* **Automatically.** Synthetic cases are deleted seven days after they are created, as before (`webapp/app/services/retention.py`).
+* Tests: `tests/integration/test_deletion.py`, the added test in `tests/integration/test_retention.py`, and the deletion test in `tests/e2e/test_ethics_features.py`.

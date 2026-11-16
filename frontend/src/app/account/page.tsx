@@ -107,7 +107,7 @@ function RemoveAccount() {
 
 export default function Page() {
   return (
-    <PlainScreen id="account" title="Account" lead="Change your password.">
+    <PlainScreen id="account" title="Account" lead="Change your password, or ask for your account to be removed.">
       <Suspense>
         <RequireSession>
           <PasswordForm />
