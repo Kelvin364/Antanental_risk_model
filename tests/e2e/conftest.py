@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 EVIDENCE = ROOT / "docs" / "evidence"
 RESULTS: dict[tuple[str, str], str] = {}
 VERSIONS: dict[str, str] = {}
+DATABASE: dict[str, str] = {}
 
 playwright_api = pytest.importorskip("playwright.sync_api")
 
@@ -59,9 +60,21 @@ def server(tmp_path_factory):
             time.sleep(0.1)
     from evidence_account import create_account
 
+    DATABASE["url"] = f"sqlite:///{database}"
     yield url, create_account(f"sqlite:///{database}", url)
     process.terminate()
     process.wait(timeout=30)
+
+
+@pytest.fixture
+def fresh_account(server):
+    """Make a new account on the running server that has not yet accepted the terms."""
+    from evidence_account import create_account
+
+    def _make(username: str):
+        return create_account(DATABASE["url"], server[0], username, consent=False)
+
+    return _make
 
 
 @pytest.fixture(scope="session")

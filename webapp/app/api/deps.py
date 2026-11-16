@@ -2,8 +2,9 @@
 
 ``current_user`` resolves the session cookie and, for every request that
 changes something, checks the CSRF token header against the session's token.
-``working_user`` also requires a changed first password before any case work,
-and ``administrator`` requires the administrator role. Every check runs on the
+``working_user`` also requires a changed first password, ``consenting_user``
+also requires agreement to the current Terms of Use before any case work, and
+``administrator`` requires the administrator role. Every check runs on the
 server; the interface never decides access on its own (decision D1).
 """
 
@@ -14,6 +15,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 
+from webapp.app.core.policy import CONSENT_REQUIRED
 from webapp.app.services.auth_service import AuthService, CurrentUser
 from webapp.app.services.case_service import CaseService
 from webapp.app.services.model_service import ModelService
@@ -64,6 +66,13 @@ def working_user(user: Annotated[CurrentUser, Depends(current_user)]) -> Current
     """A signed in user who has replaced the generated first password."""
     if user.must_change_password:
         raise _refuse(403, "password", "Change your password before working with cases.")
+    return user
+
+
+def consenting_user(user: Annotated[CurrentUser, Depends(working_user)]) -> CurrentUser:
+    """A working user who has agreed to the current Terms of Use version."""
+    if not user.has_accepted_terms:
+        raise _refuse(403, "consent", CONSENT_REQUIRED)
     return user
 
 

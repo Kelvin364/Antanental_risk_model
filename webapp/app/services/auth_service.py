@@ -20,6 +20,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
+from webapp.app.core import policy
 from webapp.app.db.models import AuditEvent, User, UserSession
 
 ADMINISTRATOR, RESEARCHER = "administrator", "researcher"
@@ -40,6 +41,10 @@ class AccountRefused(ValueError):
     """An account change that breaks a rule (name, role or password length)."""
 
 
+class TermsChanged(ValueError):
+    """Consent was sent for a Terms of Use version that is not the current one."""
+
+
 @dataclass(frozen=True)
 class CurrentUser:
     """The signed in user a request acts for."""
@@ -49,10 +54,30 @@ class CurrentUser:
     role: str
     csrf_token: str
     must_change_password: bool
+    terms_version: str | None = None
+    terms_accepted_at: datetime | None = None
 
     @property
     def is_administrator(self) -> bool:
         return self.role == ADMINISTRATOR
+
+    @property
+    def has_accepted_terms(self) -> bool:
+        """True once the user has agreed to the current Terms of Use version."""
+        return self.terms_version == policy.POLICY_VERSION
+
+    @classmethod
+    def of(cls, user: User, csrf_token: str) -> CurrentUser:
+        """The request's view of a stored user and its session's CSRF token."""
+        return cls(
+            user.id,
+            user.username,
+            user.role,
+            csrf_token,
+            user.must_change_password,
+            user.terms_version,
+            _aware(user.terms_accepted_at),
+        )
 
 
 def hash_password(password: str) -> str:
@@ -147,9 +172,7 @@ class AuthService:
                 )
             )
             session.commit()
-            current = CurrentUser(
-                user.id, user.username, user.role, csrf, user.must_change_password
-            )
+            current = CurrentUser.of(user, csrf)
         self.audit("sign_in", username)
         return token, current
 
@@ -166,10 +189,7 @@ class AuthService:
             )
             if not row or _aware(row.expires_at) <= datetime.now(UTC) or not row.user.active:
                 return None
-            user = row.user
-            return CurrentUser(
-                user.id, user.username, user.role, row.csrf_token, user.must_change_password
-            )
+            return CurrentUser.of(row.user, row.csrf_token)
 
     def sign_out(self, token: str, username: str) -> None:
         with self._sessions() as session:
@@ -191,6 +211,16 @@ class AuthService:
             row.password_hash, row.must_change_password = hash_password(new), False
             session.commit()
         self.audit("password_changed", user.username)
+
+    def accept_terms(self, user: CurrentUser, version: str) -> None:
+        """Record agreement to the current Terms of Use; refuse any other version."""
+        if version != policy.POLICY_VERSION:
+            raise TermsChanged(policy.TERMS_CHANGED)
+        with self._sessions() as session:
+            row = session.get(User, user.id)
+            row.terms_version, row.terms_accepted_at = version, datetime.now(UTC)
+            session.commit()
+        self.audit("consent_accepted", user.username, f"version {version}")
 
     def reset_password(self, user_id: int, actor: str) -> tuple[str, str]:
         """Give an account a new generated password and end its sessions."""

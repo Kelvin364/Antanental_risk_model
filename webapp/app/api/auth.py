@@ -11,14 +11,18 @@ from webapp.app.api.deps import (
     administrator,
     auth_service,
     current_user,
+    working_user,
 )
+from webapp.app.core import policy
 from webapp.app.schemas.auth import (
     AccountOut,
     ActiveChange,
     AuditOut,
+    Consent,
     GeneratedPassword,
     NewAccount,
     PasswordChange,
+    PolicyOut,
     SignedIn,
     SignIn,
 )
@@ -28,6 +32,7 @@ router = APIRouter(prefix="/api", tags=["accounts"])
 Auth = Annotated[AuthService, Depends(auth_service)]
 User = Annotated[CurrentUser, Depends(current_user)]
 Admin = Annotated[CurrentUser, Depends(administrator)]
+Working = Annotated[CurrentUser, Depends(working_user)]
 
 
 def _signed_in(user: CurrentUser) -> SignedIn:
@@ -36,6 +41,9 @@ def _signed_in(user: CurrentUser) -> SignedIn:
         role=user.role,
         csrf_token=user.csrf_token,
         must_change_password=user.must_change_password,
+        terms_accepted=user.has_accepted_terms,
+        terms_version=user.terms_version,
+        terms_accepted_at=user.terms_accepted_at,
     )
 
 
@@ -72,6 +80,23 @@ def me(user: User):
 def change_password(payload: PasswordChange, user: User, auth: Auth):
     """Replace one's own password; at least 12 characters."""
     auth.change_password(user, payload.current_password, payload.new_password)
+
+
+@router.get("/policy", response_model=PolicyOut)
+def terms():
+    """The current Terms of Use and the consent sentence; open without sign in."""
+    return PolicyOut(
+        version=policy.POLICY_VERSION,
+        consent_sentence=policy.CONSENT_SENTENCE,
+        terms_of_use=policy.TERMS_OF_USE,
+        sentences=policy.SENTENCES,
+    )
+
+
+@router.post("/auth/consent", status_code=204)
+def consent(payload: Consent, user: Working, auth: Auth):
+    """Agree to the Terms of Use version shown; 409 if it is no longer the current one."""
+    auth.accept_terms(user, payload.version)
 
 
 @router.get("/admin/users", response_model=list[AccountOut])

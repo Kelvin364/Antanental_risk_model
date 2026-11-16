@@ -1,4 +1,7 @@
-"""Synthetic cases, their two visits, assessments and the caseload. Sign in required (D1)."""
+"""Synthetic cases, their two visits, assessments and the caseload.
+
+Sign in (D1) and agreement to the current Terms of Use are required for every route.
+"""
 
 from __future__ import annotations
 
@@ -6,7 +9,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 
-from webapp.app.api.deps import auth_service, case_service, ranking_service, working_user
+from webapp.app.api.deps import auth_service, case_service, consenting_user, ranking_service
 from webapp.app.schemas.cases import AssessmentOut, CaseCreate, CaseloadOut, CaseOut, VisitCreate
 from webapp.app.services.auth_service import AuthService, CurrentUser
 from webapp.app.services.case_service import CaseService
@@ -14,7 +17,7 @@ from webapp.app.services.ranking_service import RankingService
 
 router = APIRouter(prefix="/api", tags=["cases"])
 Cases = Annotated[CaseService, Depends(case_service)]
-User = Annotated[CurrentUser, Depends(working_user)]
+User = Annotated[CurrentUser, Depends(consenting_user)]
 
 
 @router.post("/cases", response_model=CaseOut, status_code=201)

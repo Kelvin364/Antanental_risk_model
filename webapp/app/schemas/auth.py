@@ -13,12 +13,30 @@ class SignIn(BaseModel):
 
 
 class SignedIn(BaseModel):
-    """Who is signed in, and the CSRF token to send with every change."""
+    """Who is signed in, the CSRF token to send with every change, and their consent."""
 
     username: str
     role: str
     csrf_token: str
     must_change_password: bool
+    terms_accepted: bool
+    terms_version: str | None = None
+    terms_accepted_at: datetime | None = None
+
+
+class Consent(BaseModel):
+    """Agreement to the Terms of Use version the user was shown."""
+
+    version: str = Field(max_length=20)
+
+
+class PolicyOut(BaseModel):
+    """The Terms of Use and the consent sentence, from webapp/app/core/policy.py."""
+
+    version: str
+    consent_sentence: str
+    terms_of_use: str
+    sentences: dict[str, str]
 
 
 class PasswordChange(BaseModel):

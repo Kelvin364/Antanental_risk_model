@@ -5,7 +5,7 @@ import { Suspense, useState } from "react";
 
 import { Banner } from "@/components/Screen";
 import { api, Refused } from "@/lib/api";
-import { useSession } from "@/lib/session";
+import { firstStop, useSession } from "@/lib/session";
 
 function SignInForm() {
   const { signedIn } = useSession();
@@ -23,7 +23,7 @@ function SignInForm() {
       const me = await api.signIn(String(form.get("username")), String(form.get("password")));
       signedIn(me);
       const safe = next && next.startsWith("/") && !next.startsWith("//") ? next : "/register/";
-      router.replace(me.must_change_password ? "/account/" : safe);
+      router.replace(firstStop(me) ?? safe);
     } catch (e) {
       setError((e as Refused).message);
     } finally {

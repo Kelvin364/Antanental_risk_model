@@ -295,11 +295,14 @@ The four notebooks explain the work in plain English and add no logic of their o
 │   ├── STATUS_REPORT.md
 │   ├── Technical Report_ Incremental Predictive Value of Two Antenatal Visits for Recorded Low Birth Weight (1).pdf
 │   ├── analyses_register.md
+│   ├── decisions_log.md
 │   ├── deviations.md
+│   ├── ethics_and_ai.md
 │   ├── evidence
 │   ├── holdout_protocol.md
 │   ├── holdout_results.md
-│   └── research_results.md
+│   ├── research_results.md
+│   └── tripod_ai_checklist.md
 ├── frontend
 │   ├── next-env.d.ts
 │   ├── next.config.ts

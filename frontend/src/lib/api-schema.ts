@@ -108,6 +108,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Consent
+         * @description Agree to the Terms of Use version shown; 409 if it is no longer the current one.
+         */
+        post: operations["consent_api_auth_consent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/me": {
         parameters: {
             query?: never;
@@ -300,6 +320,26 @@ export interface paths {
          * @description The fixed banner, limitation and interval wording, and the entry ranges for the hints.
          */
         get: operations["interface_text_api_interface_text_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Terms
+         * @description The current Terms of Use and the consent sentence; open without sign in.
+         */
+        get: operations["terms_api_policy_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -674,6 +714,14 @@ export interface components {
             threshold: number;
         };
         /**
+         * Consent
+         * @description Agreement to the Terms of Use version the user was shown.
+         */
+        Consent: {
+            /** Version */
+            version: string;
+        };
+        /**
          * Estimate
          * @description A proportion with its 95 percent group bootstrap interval.
          */
@@ -720,6 +768,22 @@ export interface components {
             new_password: string;
         };
         /**
+         * PolicyOut
+         * @description The Terms of Use and the consent sentence, from webapp/app/core/policy.py.
+         */
+        PolicyOut: {
+            /** Consent Sentence */
+            consent_sentence: string;
+            /** Sentences */
+            sentences: {
+                [key: string]: string;
+            };
+            /** Terms Of Use */
+            terms_of_use: string;
+            /** Version */
+            version: string;
+        };
+        /**
          * PredictRequest
          * @description A complete case scored without being saved.
          */
@@ -737,7 +801,7 @@ export interface components {
         };
         /**
          * SignedIn
-         * @description Who is signed in, and the CSRF token to send with every change.
+         * @description Who is signed in, the CSRF token to send with every change, and their consent.
          */
         SignedIn: {
             /** Csrf Token */
@@ -746,6 +810,12 @@ export interface components {
             must_change_password: boolean;
             /** Role */
             role: string;
+            /** Terms Accepted */
+            terms_accepted: boolean;
+            /** Terms Accepted At */
+            terms_accepted_at?: string | null;
+            /** Terms Version */
+            terms_version?: string | null;
             /** Username */
             username: string;
         };
@@ -1000,6 +1070,37 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    consent_api_auth_consent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Consent"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1275,6 +1376,26 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    terms_api_policy_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PolicyOut"];
                 };
             };
         };

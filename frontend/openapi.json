@@ -645,6 +645,21 @@
         "title": "ClassificationOut",
         "type": "object"
       },
+      "Consent": {
+        "description": "Agreement to the Terms of Use version the user was shown.",
+        "properties": {
+          "version": {
+            "maxLength": 20,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "Consent",
+        "type": "object"
+      },
       "Estimate": {
         "description": "A proportion with its 95 percent group bootstrap interval.",
         "properties": {
@@ -745,6 +760,38 @@
         "title": "PasswordChange",
         "type": "object"
       },
+      "PolicyOut": {
+        "description": "The Terms of Use and the consent sentence, from webapp/app/core/policy.py.",
+        "properties": {
+          "consent_sentence": {
+            "title": "Consent Sentence",
+            "type": "string"
+          },
+          "sentences": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Sentences",
+            "type": "object"
+          },
+          "terms_of_use": {
+            "title": "Terms Of Use",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "consent_sentence",
+          "terms_of_use",
+          "sentences"
+        ],
+        "title": "PolicyOut",
+        "type": "object"
+      },
       "PredictRequest": {
         "description": "A complete case scored without being saved.",
         "properties": {
@@ -787,7 +834,7 @@
         "type": "object"
       },
       "SignedIn": {
-        "description": "Who is signed in, and the CSRF token to send with every change.",
+        "description": "Who is signed in, the CSRF token to send with every change, and their consent.",
         "properties": {
           "csrf_token": {
             "title": "Csrf Token",
@@ -801,6 +848,33 @@
             "title": "Role",
             "type": "string"
           },
+          "terms_accepted": {
+            "title": "Terms Accepted",
+            "type": "boolean"
+          },
+          "terms_accepted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terms Accepted At"
+          },
+          "terms_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terms Version"
+          },
           "username": {
             "title": "Username",
             "type": "string"
@@ -810,7 +884,8 @@
           "username",
           "role",
           "csrf_token",
-          "must_change_password"
+          "must_change_password",
+          "terms_accepted"
         ],
         "title": "SignedIn",
         "type": "object"
@@ -1244,6 +1319,41 @@
         ]
       }
     },
+    "/api/auth/consent": {
+      "post": {
+        "description": "Agree to the Terms of Use version shown; 409 if it is no longer the current one.",
+        "operationId": "consent_api_auth_consent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Consent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Consent",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/auth/me": {
       "get": {
         "description": "Who is signed in.",
@@ -1593,6 +1703,28 @@
         "summary": "Interface Text",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/policy": {
+      "get": {
+        "description": "The current Terms of Use and the consent sentence; open without sign in.",
+        "operationId": "terms_api_policy_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PolicyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Terms",
+        "tags": [
+          "accounts"
         ]
       }
     },

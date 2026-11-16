@@ -50,6 +50,11 @@ class User(Base):
     failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    # The Terms of Use version the user agreed to, and when (webapp/app/core/policy.py).
+    terms_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
 
 class UserSession(Base):

@@ -56,23 +56,34 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
 export const useSession = () => useContext(SessionContext);
 
+/** Where a signed in user must go first: the account page for a generated first
+ * password, then the consent page until the current Terms of Use are accepted. */
+export function firstStop(user: SignedIn): string | null {
+  if (user.must_change_password) return "/account/";
+  if (!user.terms_accepted) return "/consent/";
+  return null;
+}
+
 /**
  * Renders its children only for a signed in user. Anyone else is sent to the
- * sign in page, and a user with a generated first password to the account page.
+ * sign in page, a user with a generated first password to the account page, and
+ * a user who has not accepted the current Terms of Use to the consent page.
  * The server enforces the same rules on every request; this only saves a trip.
  */
 export function RequireSession({ children, role }: { children: React.ReactNode; role?: string }) {
   const { user, checked } = useSession();
   const router = useRouter();
   const path = usePathname();
+  const stop = user ? firstStop(user) : null;
+  const elsewhere = stop !== null && path !== stop;
 
   useEffect(() => {
     if (!checked) return;
     if (!user) router.replace(`/sign-in/?next=${encodeURIComponent(path)}`);
-    else if (user.must_change_password && path !== "/account/") router.replace("/account/");
-  }, [checked, user, router, path]);
+    else if (stop && path !== stop) router.replace(stop);
+  }, [checked, user, router, path, stop]);
 
-  if (!checked || !user || (user.must_change_password && path !== "/account/")) {
+  if (!checked || !user || elsewhere) {
     return <p className="mx-auto max-w-[980px] px-4 py-8 text-muted">Checking sign in.</p>;
   }
   if (role && user.role !== role) {

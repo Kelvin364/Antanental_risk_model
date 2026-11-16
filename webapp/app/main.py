@@ -14,7 +14,12 @@ from webapp.app.api import auth, cases, health, predict
 from webapp.app.core import security
 from webapp.app.core.settings import Settings
 from webapp.app.db.database import backend, create_session_factory, require_persistent
-from webapp.app.services.auth_service import AccountRefused, AuthService, SignInRefused
+from webapp.app.services.auth_service import (
+    AccountRefused,
+    AuthService,
+    SignInRefused,
+    TermsChanged,
+)
 from webapp.app.services.case_service import CaseNotFound, CaseService, StepOutOfOrder
 from webapp.app.services.model_service import ModelService
 from webapp.app.services.ranking_service import RankingService
@@ -45,6 +50,12 @@ def _handlers(app: FastAPI) -> None:
     def account_refused(_: Request, exc: AccountRefused) -> JSONResponse:
         return JSONResponse(
             status_code=422, content={"detail": [{"field": "account", "message": str(exc)}]}
+        )
+
+    @app.exception_handler(TermsChanged)
+    def terms_changed(_: Request, exc: TermsChanged) -> JSONResponse:
+        return JSONResponse(
+            status_code=409, content={"detail": [{"field": "consent", "message": str(exc)}]}
         )
 
     @app.exception_handler(StepOutOfOrder)

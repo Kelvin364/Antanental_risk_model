@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from webapp.app.api.deps import case_service, working_user
+from webapp.app.api.deps import case_service, consenting_user
 from webapp.app.schemas.cases import AssessmentOut, PredictRequest
 from webapp.app.services.auth_service import CurrentUser
 from webapp.app.services.case_service import CaseService
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api", tags=["predict"])
 def predict(
     payload: PredictRequest,
     cases: Annotated[CaseService, Depends(case_service)],
-    _: Annotated[CurrentUser, Depends(working_user)],
+    _: Annotated[CurrentUser, Depends(consenting_user)],
 ):
     """Apply the entry rules and score the case with the frozen artefact, without saving it."""
     return cases.score(payload.case, payload.visit_one, payload.visit_two)

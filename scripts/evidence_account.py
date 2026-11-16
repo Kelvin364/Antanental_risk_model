@@ -1,9 +1,9 @@
 """A signed in account for the evidence scripts that start their own server (decision D1).
 
 The account is made the way an operator makes one: ``python -m webapp.app.admin
-create-admin`` against the server's database, then a sign in and a password
-change through the API. The database is the script's own temporary file, so
-nothing outlives the run.
+create-admin`` against the server's database, then a sign in, a password
+change and agreement to the current Terms of Use through the API. The database
+is the script's own temporary file, so nothing outlives the run.
 """
 
 from __future__ import annotations
@@ -53,8 +53,18 @@ def sign_in(base: str, username: str, password: str) -> tuple[str, str]:
         return cookie[COOKIE].value, json.loads(r.read())["csrf_token"]
 
 
-def create_account(database_url: str, base: str, username: str = "evidence") -> Account:
-    """Create an administrator, sign in, and replace the generated first password."""
+def agree_to_terms(client) -> None:
+    """Accept the current Terms of Use with a signed in client (httpx), unless already done."""
+    if not client.get("/api/auth/me").json().get("terms_accepted"):
+        version = client.get("/api/policy").json()["version"]
+        client.post("/api/auth/consent", json={"version": version}).raise_for_status()
+
+
+def create_account(
+    database_url: str, base: str, username: str = "evidence", consent: bool = True
+) -> Account:
+    """Create an administrator, sign in, replace the generated first password and, unless
+    ``consent`` is False, agree to the current Terms of Use as the consent page does."""
     env = {**os.environ, "ANTENATAL_DATABASE_URL": database_url}
     command = [sys.executable, "-m", "webapp.app.admin", "create-admin", username]
     out = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, text=True, check=True)
@@ -64,4 +74,9 @@ def create_account(database_url: str, base: str, username: str = "evidence") -> 
     change = {"current_password": first, "new_password": PASSWORD}
     with _post(base, "/api/auth/password", change, account.headers()):
         pass
+    if consent:
+        with urllib.request.urlopen(f"{base}/api/policy", timeout=30) as r:
+            version = json.loads(r.read())["version"]
+        with _post(base, "/api/auth/consent", {"version": version}, account.headers()):
+            pass
     return Account(username, PASSWORD, token, csrf)

@@ -15,6 +15,7 @@ export type SignedIn = components["schemas"]["SignedIn"];
 export type AccountOut = components["schemas"]["AccountOut"];
 export type GeneratedPassword = components["schemas"]["GeneratedPassword"];
 export type AuditOut = components["schemas"]["AuditOut"];
+export type PolicyOut = components["schemas"]["PolicyOut"];
 
 /** One refused value, with the API's reason. */
 export type FieldError = { field: string; message: string };
@@ -153,4 +154,13 @@ export const api = {
     if (error !== undefined || !response.ok) throw refusal(error, response.status);
   },
   audit: () => unwrap(client.GET("/api/admin/audit")),
+  policy: () => unwrap(client.GET("/api/policy")),
+  consent: async (version: string) => {
+    const { error, response } = await client.POST("/api/auth/consent", { body: { version } });
+    if (error !== undefined || !response.ok) throw refusal(error, response.status);
+  },
 };
+
+/** Fill the {placeholders} of a sentence the API serves. */
+export const fill = (sentence: string, values: Record<string, string>) =>
+  sentence.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");

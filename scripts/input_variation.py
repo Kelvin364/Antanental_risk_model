@@ -19,6 +19,9 @@ from pathlib import Path
 import httpx
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence_account import agree_to_terms  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 CASE = {
     "synthetic": True,
@@ -200,6 +203,7 @@ def main() -> int:
         )
         signed.raise_for_status()
         client.headers["X-CSRF-Token"] = signed.json()["csrf_token"]
+        agree_to_terms(client)
         rows = [run_one(client, v) for v in VARIATIONS]
     write(rows, args.base_url)
     return 0 if all(r["result"] == "pass" for r in rows) else 1

@@ -26,6 +26,9 @@ from pathlib import Path
 
 import httpx
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence_account import agree_to_terms  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 CASE = {
     "synthetic": True,
@@ -74,6 +77,7 @@ def _signed_in_checks(base: str, username: str, password: str) -> list[tuple[str
         cookie = signed.headers.get("set-cookie", "").lower()
         no_csrf = client.post("/api/predict", json=PREDICT).status_code
         client.headers["X-CSRF-Token"] = signed.json().get("csrf_token", "")
+        agree_to_terms(client)
         valid = client.post("/api/predict", json=PREDICT)
         label = valid.json().get("classification", {}).get("label", "") if valid.is_success else ""
         bad = client.post("/api/predict", json={**PREDICT, "case": {**CASE, "age": 121}})
@@ -110,6 +114,7 @@ def _session(base: str, username: str, password: str) -> httpx.Client:
     signed = client.post("/api/auth/sign-in", json={"username": username, "password": password})
     signed.raise_for_status()
     client.headers["X-CSRF-Token"] = signed.json()["csrf_token"]
+    agree_to_terms(client)
     return client
 
 

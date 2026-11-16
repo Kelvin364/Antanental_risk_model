@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
@@ -57,6 +57,32 @@ def require_persistent(database_url: str) -> None:
         )
 
 
+def add_missing_columns(engine: Engine) -> list[str]:
+    """Add any nullable column the models define but an existing table lacks; return them.
+
+    ``create_all`` creates missing tables but never alters an existing one, so a database
+    made before a column was added (the local file, or the hosted one) would otherwise
+    fail on the first query. Only nullable columns are added, so no existing row changes.
+    """
+    present = inspect(engine)
+    tables = set(present.get_table_names())
+    added = []
+    with engine.begin() as connection:
+        for table in Base.metadata.sorted_tables:
+            if table.name not in tables:
+                continue
+            have = {column["name"] for column in present.get_columns(table.name)}
+            for column in table.columns:
+                if column.name in have or not column.nullable:
+                    continue
+                kind = column.type.compile(engine.dialect)
+                connection.execute(
+                    text(f'ALTER TABLE {table.name} ADD COLUMN "{column.name}" {kind}')
+                )
+                added.append(f"{table.name}.{column.name}")
+    return added
+
+
 def create_session_factory(database_url: str) -> sessionmaker:
     """Create the database if needed and return a session factory bound to it."""
     database_url = with_driver(database_url)
@@ -69,4 +95,5 @@ def create_session_factory(database_url: str) -> sessionmaker:
         # A hosted database can close idle connections; test each one before use.
         engine = create_engine(database_url, pool_pre_ping=True)
     Base.metadata.create_all(engine)
+    add_missing_columns(engine)
     return sessionmaker(bind=engine, expire_on_commit=False)

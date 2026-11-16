@@ -5,7 +5,7 @@ import { Suspense, useState } from "react";
 
 import { PlainScreen } from "@/components/Screen";
 import { api, Refused } from "@/lib/api";
-import { RequireSession, useSession } from "@/lib/session";
+import { firstStop, RequireSession, useSession } from "@/lib/session";
 
 function PasswordForm() {
   const { user, signedIn } = useSession();
@@ -19,9 +19,10 @@ function PasswordForm() {
     setError(null);
     try {
       await api.changePassword(String(form.get("current")), String(form.get("new")));
-      if (user) signedIn({ ...user, must_change_password: false });
+      const changed = user ? { ...user, must_change_password: false } : null;
+      if (changed) signedIn(changed);
       setMessage("Password changed.");
-      router.replace("/register/");
+      router.replace((changed && firstStop(changed)) ?? "/register/");
     } catch (e) {
       setError((e as Refused).message);
     }
