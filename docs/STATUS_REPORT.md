@@ -446,7 +446,7 @@ Request and response schemas are from the application's OpenAPI document (`creat
 | --- | --- | --- | --- |
 | `GET /health` | None | 200 with status, artefact version and SHA 256, data and partition SHA 256, prevalence, events, feature count, reference caseload size | None |
 | `GET /api/artefact` | None | 200 with `webapp/model/version.json` | None |
-| `GET /api/interface-text` | None | 200 with banner, limitation and interval label | None |
+| `GET /api/interface-text` | None | 200 with limitation and interval label | None |
 | `POST /api/cases` | `CaseCreate` | 201 `CaseOut` | 422 "Saving is blocked: tick the synthetic flag. No real pregnancy may be entered."; 422 "<field> is required"; 422 "<field> must be between <low> and <high> <unit>; <value> is outside the cleaning range"; 422 type errors from Pydantic |
 | `GET /api/cases/{case_id}` | None | 200 `CaseOut` | 404 "No synthetic case with id <id>" |
 | `PUT /api/cases/{case_id}/visits/{visit_number}` | `VisitCreate`; visit number 1 or 2 | 200 `CaseOut` | 422 range and required messages as above; 422 "Visit <n> must be at or before 28 weeks; <value> is later"; 422 "Visit two must be later than visit one (<week> weeks); <value> is not"; 409 "Record visit one before visit two"; 404 unknown case; 422 visit number outside 1 to 2 |
@@ -460,7 +460,7 @@ The server refuses to start when the artefact checksum does not match (`Checksum
 
 ### 6.2 Screens
 
-Source: `webapp/static/index.html`, 264 lines. Every screen carries the banner "Synthetic cases only. Do not enter any real pregnancy." fetched from `/api/interface-text`. No logo and no circled numbers.
+Source: `webapp/static/index.html`, 264 lines. The banner was removed on 19 November 2026 at the author's request; cases are named Patient 01, Patient 02 and so on. No logo and no circled numbers.
 
 | Screen | Shows | Refuses (messages from the API) |
 | --- | --- | --- |

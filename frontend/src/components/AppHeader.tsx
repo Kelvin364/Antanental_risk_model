@@ -22,7 +22,7 @@ export function AppHeader() {
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3.5 sm:px-10">
         <div className="mr-auto flex flex-col leading-normal">
           <b className="text-[15px] font-semibold">Antenatal Caseload</b>
-          <span className="font-mono text-[11px] text-muted">Research prototype · synthetic cases</span>
+          <span className="font-mono text-[11px] text-muted">Research prototype</span>
         </div>
         <nav aria-label="Account" className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium">
           <Link href="/about/" className="text-muted hover:text-ink">

@@ -257,7 +257,7 @@ export interface paths {
         };
         /**
          * Caseload
-         * @description The signed in user's assessed synthetic cases, ordered by predicted probability.
+         * @description The signed in user's assessed patients, ordered by predicted probability.
          */
         get: operations["caseload_api_caseload_get"];
         put?: never;
@@ -361,7 +361,7 @@ export interface paths {
         };
         /**
          * Interface Text
-         * @description The fixed banner, limitation and interval wording, and the entry ranges for the hints.
+         * @description The fixed limitation and interval wording, and the entry ranges for the hints.
          */
         get: operations["interface_text_api_interface_text_get"];
         put?: never;
@@ -688,8 +688,6 @@ export interface components {
         CaseloadOut: {
             /** Artefact Version */
             artefact_version: string;
-            /** Banner */
-            banner: string;
             /** Classification Threshold */
             classification_threshold: number;
             /** Events */

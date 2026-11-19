@@ -18,7 +18,7 @@ const plex = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Antenatal Caseload Prototype",
-  description: "Research prototype. Synthetic cases only. Not for clinical use.",
+  description: "Research prototype. Not for clinical use.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

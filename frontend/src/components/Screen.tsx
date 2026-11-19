@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
 import { api, type CaseOut } from "@/lib/api";
 
 export type Step = "register" | "visit1" | "visit2" | "assessment" | "caseload";
@@ -14,9 +12,6 @@ const STEPS: { id: Step; label: string; path: string }[] = [
   { id: "assessment", label: "Assessment", path: "/assessment/" },
   { id: "caseload", label: "Caseload", path: "/caseload/" },
 ];
-
-// The banner text the API serves; shown before the request returns.
-const BANNER = "Synthetic cases only. Do not enter any real pregnancy.";
 
 /** Link to a step, keeping the open case. */
 export function stepHref(step: Step, caseId: number | null) {
@@ -72,25 +67,6 @@ function Steps({ current, kase }: { current: Step; kase: CaseOut | null }) {
   );
 }
 
-/** The synthetic banner, on every screen (rule 11). */
-export function Banner() {
-  const [text, setText] = useState(BANNER);
-  useEffect(() => {
-    api.interfaceText().then((t) => setText(t.banner), () => undefined);
-  }, []);
-  return (
-    <div
-      id="banner"
-      role="status"
-      className="sticky top-0 z-10 flex items-center gap-2 rounded-lg bg-banner px-3 py-[9px] text-[11px] font-medium text-banner-ink"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/banner-dot.svg" width={7} height={7} alt="" className="shrink-0" />
-      {text}
-    </div>
-  );
-}
-
 /** An uppercase section heading with a rule beneath, as in the design. */
 export function Section({ title }: { title: string }) {
   return (
@@ -110,7 +86,7 @@ function Heading({ title, lead }: { title: string; lead: string }) {
   );
 }
 
-/** One of the five screens: steps, the synthetic banner, a heading and its content. */
+/** One of the five screens: steps, a heading and its content. */
 export function Screen(props: {
   id: Step;
   title: string;
@@ -123,7 +99,6 @@ export function Screen(props: {
       <Steps current={props.id} kase={props.kase} />
       <main className="mx-auto max-w-[1000px] px-4 pt-9 pb-15">
         <section id={props.id} className="flex flex-col gap-5">
-          <Banner />
           <Heading title={props.title} lead={props.lead} />
           {props.children}
         </section>
@@ -132,12 +107,11 @@ export function Screen(props: {
   );
 }
 
-/** A page outside the five steps (account, administration, about), with the banner. */
+/** A page outside the five steps (account, administration, about). */
 export function PlainScreen(props: { id: string; title: string; lead: string; children: React.ReactNode }) {
   return (
     <main className="mx-auto max-w-[1000px] px-4 pt-9 pb-15">
       <section id={props.id} className="flex flex-col gap-5">
-        <Banner />
         <Heading title={props.title} lead={props.lead} />
         {props.children}
       </section>

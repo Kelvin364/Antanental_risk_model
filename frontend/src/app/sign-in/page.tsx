@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
-import { Banner } from "@/components/Screen";
 import { api, Refused } from "@/lib/api";
 import { firstStop, useSession } from "@/lib/session";
 
@@ -39,7 +38,7 @@ function SignInForm() {
     >
       <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-semibold">Welcome back</h1>
-        <p className="text-[13px] leading-[1.35] text-muted">Sign in to record and assess synthetic cases.</p>
+        <p className="text-[13px] leading-[1.35] text-muted">Sign in to record and assess patients.</p>
       </div>
       <div className="flex flex-col gap-3.5">
         <label className="flex flex-col gap-1.5">
@@ -71,7 +70,7 @@ function SignInForm() {
         <p className="text-center text-[13px] text-muted">Accounts are created by an administrator.</p>
       </div>
       <p className="font-mono text-[10px] leading-[1.4] text-muted">
-        Research prototype for a bachelor&rsquo;s capstone. Synthetic data only.
+        Research prototype for a bachelor&rsquo;s capstone.
       </p>
       <a id="privacy-link" href="/privacy/" className="text-center text-xs font-semibold text-green underline">
         Privacy Policy and Terms of Use
@@ -83,9 +82,6 @@ function SignInForm() {
 export default function Page() {
   return (
     <main id="sign-in-screen" className="mx-auto flex max-w-[1000px] flex-col items-center gap-8 px-4 pt-9 pb-15">
-      <div className="w-full">
-        <Banner />
-      </div>
       <Suspense>
         <SignInForm />
       </Suspense>

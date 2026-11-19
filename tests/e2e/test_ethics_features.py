@@ -26,7 +26,7 @@ def test_first_sign_in_asks_for_consent_once(launch, server, fresh_account):
     page = browser.new_page(viewport={"width": 1366, "height": 768})
     _sign_in(page, base_url, account)
     page.wait_for_selector("#consent")
-    page.locator("#terms-of-use", has_text="synthetic").wait_for()
+    page.locator("#terms-of-use", has_text="real pregnancy").wait_for()
     assert page.is_disabled("#agree")
     page.check("#consent-box")
     assert page.is_enabled("#agree")

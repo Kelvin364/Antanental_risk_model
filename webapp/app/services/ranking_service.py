@@ -11,7 +11,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
-from webapp.app.core.settings import INTERVAL_LABEL, LIMITATION, SYNTHETIC_BANNER
+from webapp.app.core.settings import INTERVAL_LABEL, LIMITATION
 from webapp.app.db.models import SyntheticCase
 from webapp.app.schemas.cases import CaseloadOut, CaseloadRow
 from webapp.app.services.auth_service import CurrentUser
@@ -45,7 +45,6 @@ class RankingService:
             classification_threshold=self._model.rule.threshold,
             interval_label=INTERVAL_LABEL,
             limitation=LIMITATION,
-            banner=SYNTHETIC_BANNER,
         )
 
     def _row(self, position: int, case: SyntheticCase, assessment) -> CaseloadRow:

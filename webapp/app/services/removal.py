@@ -41,7 +41,7 @@ class RemovalService:
         with self._sessions() as session:
             case = session.get(SyntheticCase, case_id)
             if case is None or case.owner_id != owner.id:
-                raise CaseNotFound(f"No synthetic case with id {case_id}")
+                raise CaseNotFound(f"No patient with id {case_id}")
             session.delete(case)
             session.commit()
         self._auth.audit("case_deleted", owner.username, f"case {case_id}")

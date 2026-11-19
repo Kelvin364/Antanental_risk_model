@@ -58,7 +58,7 @@ class CaseService:
     def _get(self, session: Session, case_id: int, viewer: CurrentUser) -> SyntheticCase:
         case = session.get(SyntheticCase, case_id)
         if case is None or (case.owner_id != viewer.id and not viewer.is_administrator):
-            raise CaseNotFound(f"No synthetic case with id {case_id}")
+            raise CaseNotFound(f"No patient with id {case_id}")
         return case
 
     def create(self, payload: CaseCreate, viewer: CurrentUser) -> CaseOut:
@@ -67,7 +67,7 @@ class CaseService:
         with self._sessions() as session:
             count = session.scalar(select(SyntheticCase.id).order_by(SyntheticCase.id.desc()))
             data = payload.model_dump()
-            data["label"] = payload.label or f"Synthetic case {(count or 0) + 1}"
+            data["label"] = payload.label or f"Patient {(count or 0) + 1:02d}"
             case = SyntheticCase(**data, owner_id=viewer.id)
             session.add(case)
             session.commit()

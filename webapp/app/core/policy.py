@@ -1,16 +1,16 @@
 """The Terms of Use, the consent sentence and the other fixed sentences of the consent step.
 
 Every sentence here is written once and reaches the interface through ``GET /api/policy``,
-the way the synthetic banner travels through ``/api/interface-text``. Changing
+the way the limitation line travels through ``/api/interface-text``. Changing
 ``POLICY_VERSION`` asks every user to agree again at their next request.
 """
 
 from __future__ import annotations
 
-POLICY_VERSION = "2026-11-16"
+POLICY_VERSION = "2026-11-19"
 
 CONSENT_SENTENCE = (
-    "I will enter synthetic cases only, never a real pregnancy, and I understand that my "
+    "I will never enter data about a real pregnancy, and I understand that my "
     "actions in this application are logged"
 )
 CONSENT_REQUIRED = "Accept the Terms of Use before using the application"
@@ -37,8 +37,8 @@ SELF_REMOVAL = "An administrator cannot remove their own account."
 LAST_ADMINISTRATOR = "The last active administrator cannot be removed."
 
 TERMS_OF_USE = (
-    "Enter synthetic cases only. Do not enter data about a real person, and never a real "
-    "pregnancy. Do not share your account; it is for you alone. Your actions in this "
+    "Do not enter data about a real person, and never a real pregnancy. Do not share your "
+    "account; it is for you alone. Your actions in this "
     "application are logged in an audit trail. The application may be withdrawn at any time. "
     "The author gives no warranty, and the outputs must not inform the care of any pregnancy."
 )
@@ -49,7 +49,7 @@ SECTIONS: tuple[tuple[str, str], ...] = (
     (
         "What this application is",
         "A research demonstration of the prediction model from the capstone study on two "
-        "antenatal visits and recorded low birth weight. It accepts synthetic cases only. It is "
+        "antenatal visits and recorded low birth weight. It is "
         "not a medical device, it gives no clinical advice, and it must not be used for any real "
         "pregnancy.",
     ),
@@ -66,7 +66,7 @@ SECTIONS: tuple[tuple[str, str], ...] = (
         "version and time of your agreement to these terms. An audit trail of account actions "
         "(sign in, sign out, password changes and resets, consent, assessments, case deletion, "
         "removal requests and account changes) with the username and the time, and never a "
-        "clinical value. Your synthetic cases with their visits and assessments, each marked "
+        "clinical value. Your cases with their visits and assessments, each marked "
         "synthetic by a database rule that cannot be switched off.",
     ),
     (
@@ -79,7 +79,7 @@ SECTIONS: tuple[tuple[str, str], ...] = (
     ),
     (
         "How long it is kept",
-        "Synthetic cases, with their visits and assessments, are deleted once they are more than "
+        "Cases, with their visits and assessments, are deleted once they are more than "
         "seven days old, each time the application starts (the setting "
         "ANTENATAL_CASE_RETENTION_DAYS). Sessions stop working eight hours after sign in. Audit "
         "events are kept for the life of the deployment. Accounts are kept until an "

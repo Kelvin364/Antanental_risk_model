@@ -82,7 +82,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     purge_old_cases(sessions, settings.case_retention_days)
     app = FastAPI(
         title="Antenatal caseload prototype",
-        description="Research prototype. Synthetic cases only. Not for clinical use.",
+        description="Research prototype. Not for clinical use.",
         version=model.version,
     )
     app.state.model = model

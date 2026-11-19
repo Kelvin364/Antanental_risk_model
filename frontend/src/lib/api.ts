@@ -50,7 +50,6 @@ export type Health = {
 
 export type Range = { low: number; high: number; unit: string; required: boolean };
 export type InterfaceText = {
-  banner: string;
   limitation: string;
   interval_label: string;
   ranges: Record<string, Range>;

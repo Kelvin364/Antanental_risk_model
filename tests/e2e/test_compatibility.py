@@ -2,10 +2,9 @@
 
 Each run registers a synthetic pregnancy, records two visits, reads the
 assessment and opens the caseload, saving one screenshot per screen to
-``docs/evidence/compatibility/``. It checks the synthetic banner on every
-screen, the locked synthetic box, that the assessment shows a rank and an
-interval from the API, that the classification and its confidence are shown,
-and that no triage wording appears.
+``docs/evidence/compatibility/``. It checks that no banner is shown, that the
+assessment shows a rank and an interval from the API, that the classification and
+its confidence are shown, and that no triage wording appears.
 """
 
 from __future__ import annotations
@@ -62,7 +61,7 @@ def _snap(page, browser: str, size: str, number: int, screen: str) -> None:
 
 def _check_screen(page, section: str) -> None:
     assert page.locator(f"#{section}").is_visible()
-    assert "Synthetic cases only" in page.locator("#banner").inner_text()
+    assert page.locator("#banner").count() == 0
     assert not FORBIDDEN.search(page.locator(f"#{section}").inner_text())
 
 
@@ -76,13 +75,11 @@ def test_five_screen_flow(request, launch, server, browser_name, size):
     base_url, account = server
     page.goto(f"{base_url}/register/")
     page.wait_for_selector("#sign-in-screen")
-    assert "Synthetic cases only" in page.locator("#banner").inner_text()
     page.fill("#username", account.username)
     page.fill("#password", account.password)
     page.click("#sign-in")
     page.wait_for_selector("#register:not([hidden])")
     _check_screen(page, "register")
-    assert page.is_checked("#synthetic") and page.is_disabled("#synthetic")
     _fill(page, "reg", REGISTER)
     _snap(page, browser_name, label, 1, "register")
     page.click("#save-register")

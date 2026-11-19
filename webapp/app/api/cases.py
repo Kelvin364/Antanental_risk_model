@@ -74,5 +74,5 @@ def assess(
 
 @router.get("/caseload", response_model=CaseloadOut)
 def caseload(ranking: Annotated[RankingService, Depends(ranking_service)], user: User):
-    """The signed in user's assessed synthetic cases, ordered by predicted probability."""
+    """The signed in user's assessed patients, ordered by predicted probability."""
     return ranking.caseload(user)

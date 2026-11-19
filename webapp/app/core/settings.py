@@ -12,7 +12,6 @@ WEBAPP = Path(__file__).resolve().parents[2]
 # The Next.js static export, built by `make frontend`.
 FRONTEND_BUILD = WEBAPP.parent / "frontend" / "out"
 
-SYNTHETIC_BANNER = "Synthetic cases only. Do not enter any real pregnancy."
 INTERVAL_LABEL = (
     "95 percent confidence interval for the estimated probability, reflecting uncertainty in "
     "the fitted model. It is not a range for this pregnancy's outcome."

@@ -84,7 +84,7 @@ def test_nobody_else_can_delete_a_case_and_an_unknown_id_looks_the_same(app):
     refused = stranger.delete(f"/api/cases/{case_id}")
     unknown = stranger.delete("/api/cases/9999")
     assert refused.status_code == unknown.status_code == 404
-    assert refused.json()["detail"][0]["message"].startswith("No synthetic case with id")
+    assert refused.json()["detail"][0]["message"].startswith("No patient with id")
     assert _count(app, SyntheticCase, SyntheticCase.id == case_id) == 1
     administrator = sign_in_as(TestClient(app), "xena", "administrator")
     assert administrator.delete(f"/api/cases/{case_id}").status_code == 404

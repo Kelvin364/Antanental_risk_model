@@ -96,7 +96,7 @@ export function RegisterScreen() {
             onChange={(e) => setLabel(e.target.value)}
             className="field-input"
           />
-          <span className="hint">{errors.label ?? "shown in the caseload"}</span>
+          <span className="hint">{errors.label ?? "left empty, the next number is used: Patient 01, Patient 02"}</span>
         </label>
       </FieldGrid>
       <Section title="Medical history" />
@@ -115,10 +115,6 @@ export function RegisterScreen() {
           </label>
         ))}
       </div>
-      <label className="flex items-center gap-2 text-[13px] font-semibold">
-        <input id="synthetic" type="checkbox" className="size-4 accent-green" checked disabled />
-        Synthetic case (required, cannot be changed)
-      </label>
       {errors.synthetic && (
         <div id="err-synthetic" className="text-xs text-error">
           {errors.synthetic}

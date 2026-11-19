@@ -63,7 +63,7 @@ def _server(database: Path) -> tuple[subprocess.Popen, str]:
 
 
 def _capture(page: Page, section: str, name: str) -> Path:
-    text = page.locator(f"#{section}").inner_text() + page.locator("#banner").inner_text()
+    text = page.locator(f"#{section}").inner_text()
     if FORBIDDEN.search(text):
         raise RuntimeError(f"{name} shows triage wording")
     page.evaluate("window.scrollTo(0, 0)")
@@ -84,7 +84,7 @@ def _walk(page: Page, username: str, password: str) -> list[Path]:
     shots = [_capture(page, "sign-in-screen", "00-sign-in")]
     page.fill("#password", password)
     page.click("#sign-in")
-    page.locator("#terms-of-use", has_text="synthetic").wait_for()
+    page.locator("#terms-of-use", has_text="real pregnancy").wait_for()
     page.check("#consent-box")
     shots.append(_capture(page, "consent", "06-consent"))
     page.click("#agree")

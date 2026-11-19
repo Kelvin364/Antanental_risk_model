@@ -150,7 +150,6 @@ class CaseloadOut(BaseModel):
     classification_threshold: float
     interval_label: str
     limitation: str
-    banner: str
 
 
 class FieldError(BaseModel):

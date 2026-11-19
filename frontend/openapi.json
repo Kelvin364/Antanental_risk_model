@@ -472,10 +472,6 @@
             "title": "Artefact Version",
             "type": "string"
           },
-          "banner": {
-            "title": "Banner",
-            "type": "string"
-          },
           "classification_threshold": {
             "title": "Classification Threshold",
             "type": "number"
@@ -516,8 +512,7 @@
           "artefact_version",
           "classification_threshold",
           "interval_label",
-          "limitation",
-          "banner"
+          "limitation"
         ],
         "title": "CaseloadOut",
         "type": "object"
@@ -1158,7 +1153,7 @@
     }
   },
   "info": {
-    "description": "Research prototype. Synthetic cases only. Not for clinical use.",
+    "description": "Research prototype. Not for clinical use.",
     "title": "Antenatal caseload prototype",
     "version": "1.0.0"
   },
@@ -1571,7 +1566,7 @@
     },
     "/api/caseload": {
       "get": {
-        "description": "The signed in user's assessed synthetic cases, ordered by predicted probability.",
+        "description": "The signed in user's assessed patients, ordered by predicted probability.",
         "operationId": "caseload_api_caseload_get",
         "responses": {
           "200": {
@@ -1819,7 +1814,7 @@
     },
     "/api/interface-text": {
       "get": {
-        "description": "The fixed banner, limitation and interval wording, and the entry ranges for the hints.",
+        "description": "The fixed limitation and interval wording, and the entry ranges for the hints.",
         "operationId": "interface_text_api_interface_text_get",
         "responses": {
           "200": {

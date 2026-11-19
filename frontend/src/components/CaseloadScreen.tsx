@@ -12,7 +12,7 @@ import { useCase } from "@/lib/useCase";
 const HEAD = "px-3 py-3 text-[10.5px] font-semibold tracking-[0.04em] text-muted uppercase sm:px-5";
 const CELL = "px-3 py-3.5 sm:px-5";
 
-/** Screen 5: assessed synthetic cases ordered by predicted probability, each with its label. */
+/** Screen 5: assessed patients ordered by predicted probability, each with its label. */
 export function CaseloadScreen() {
   const { kase } = useCase();
   const [data, setData] = useState<CaseloadOut | null>(null);
@@ -28,7 +28,7 @@ export function CaseloadScreen() {
     <Screen
       id="caseload"
       title="Caseload"
-      lead="Your assessed synthetic cases, ordered by predicted probability, highest first."
+      lead="Your assessed patients, ordered by predicted probability, highest first."
       kase={kase}
     >
       {error && <p className="text-error">{error}</p>}
@@ -117,7 +117,7 @@ export function CaseloadScreen() {
         </Link>
       </div>
       <p className="limit">
-        {data && `Frozen model ${data.artefact_version} · logistic regression, feature set C · synthetic cases only`}
+        {data && `Frozen model ${data.artefact_version} · logistic regression, feature set C`}
       </p>
       <p id="limit-caseload" className="limit">
         {data?.limitation}

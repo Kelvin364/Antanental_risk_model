@@ -10,8 +10,8 @@ export default function Page() {
           using a model developed on one publicly released Tanzanian dataset.
         </p>
         <p>
-          <b>Synthetic cases only.</b> No real pregnancy may be entered. The system stores no names or
-          identifiers, and every case must carry the synthetic flag.
+          The system stores no names or identifiers. Patients are numbered Patient 01, Patient 02 and
+          so on.
         </p>
         <p>
           <b>Not a medical device.</b> The label, probability and rank are research estimates. They have not
