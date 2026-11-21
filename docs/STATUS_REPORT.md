@@ -1,6 +1,6 @@
 # Status report
 
-A complete account of the repository at commit `28f9d75` (`git log -1`), updated on 22 October 2026 after CLAUDE.md Section 3 items 1 to 9, for a reviewer who has seen nothing else. Every number below is copied from a file in `outputs/`, a test run or git, and the source is named beside it. Where something does not exist, it says "Not built" with the reason.
+A complete account of the repository at commit `28f9d75` (`git log -1`), updated on 22 October 2026 after items 1 to 9 of the project instructions, for a reviewer who has seen nothing else. Every number below is copied from a file in `outputs/`, a test run or git, and the source is named beside it. Where something does not exist, it says "Not built" with the reason.
 
 The test run quoted in this report was made on 22 October 2026 at commit `28f9d75` with `.venv/bin/pytest tests -q --junitxml=... --cov --cov-report=json:...`: 235 tests (188 unit, 41 integration, 6 browser), 0 failures, 0 errors, 0 skipped, 196.4 seconds, line coverage 97.6 percent of 2,910 statements. The repository's own recorded run, `docs/evidence/test_summary.json`, made the same day (2026-10-22T10:27:25+00:00) by `scripts/record_test_results.py`, gives the same counts and coverage.
 
@@ -434,7 +434,7 @@ Polymorphism in place of branching: `NestedCVRunner.fit` calls `experiment.featu
 
 ### 5.6 Continuous integration
 
-`.github/workflows/ci.yml` runs on push and pull request: checkout, Python 3.12 setup, install from `requirements-dev.txt`, a SHA 256 check of the data file, `ruff check`, `black --check`, and `pytest --cov` with a coverage XML uploaded as an artefact. It has not yet run on GitHub, because nothing from finalisation has been pushed. Two gaps against CLAUDE.md Section 5: its lint step checks `src tests webapp` but not `scripts`, and it does not install browsers, so the six browser tests would be skipped on the runner.
+`.github/workflows/ci.yml` runs on push and pull request: checkout, Python 3.12 setup, install from `requirements-dev.txt`, a SHA 256 check of the data file, `ruff check`, `black --check`, and `pytest --cov` with a coverage XML uploaded as an artefact. It has not yet run on GitHub, because nothing from finalisation has been pushed. Two gaps against project instructions Section 5: its lint step checks `src tests webapp` but not `scripts`, and it does not install browsers, so the six browser tests would be skipped on the runner.
 
 ## 6. Interface and API
 
@@ -515,7 +515,7 @@ The single worker answers concurrent requests one after another, so concurrent l
 
 6 of 6 runs passed; 30 screenshots are in `docs/evidence/compatibility/`. At 390 by 844 the step navigation scrolls sideways, so the last step labels sit off screen until scrolled; the flow still completes.
 
-**Not built:** accessibility scores and a container run (Stage 6 and CLAUDE.md item 12).
+**Not built:** accessibility scores and a container run (Stage 6 and project instructions item 12).
 
 ## 7. Documentation inventory
 
@@ -525,7 +525,7 @@ The single worker answers concurrent requests one after another, so concurrent l
 | `docs/ARCHITECTURE.md` | Three Mermaid diagrams: modules, the request flow for one assessment, the analysis flow; a data model section for the research tables written by `load-db`. |
 | `docs/ethics_note.md` | The gap: the release has no ethics approval or consent statement; a request was sent to the producers on 21 October 2026. A marked placeholder stands where the statement would be quoted. The walkthrough is recorded as a proposed activity pending ALU determination. |
 | `docs/deviations.md` | Thirteen rows, including Table 3.8 counts, S4 defined on development records only (2,504 with 144 events), the pulse range confirmed against `StudySpec`, the tree missing value handling, the iterative imputer option, artefact reproducibility, the newer dataset version, the missing ethics statement, cloud hosting against R14, and React.js and PostgreSQL in Table 3.12 against the Next.js plan and SQLite. |
-| `CHANGELOG.md` | Version 1.0.0 dated 2026-10-21 and an Unreleased section listing Stage 4, Stage 6 and the container image as not done. Not yet updated for CLAUDE.md items 1 to 9: its Unreleased section still lists cross browser tests, the latency benchmark and regenerated designs as not done. |
+| `CHANGELOG.md` | Version 1.0.0 dated 2026-10-21 and an Unreleased section listing Stage 4, Stage 6 and the container image as not done. Not yet updated for project instructions items 1 to 9: its Unreleased section still lists cross browser tests, the latency benchmark and regenerated designs as not done. |
 | `docs/tripod_ai_checklist.md` | Every item of the TRIPOD+AI checklist version of 11 January 2024 mapped to a file. Pending: 2, 18a, 18b, 18c, 18d, 19, 27c (need statements from the author, listed with prompts in `docs/tripod_ai_pending.md`), and 20c (needs Stage 4). Item 17 is partly answered. |
 | `docs/Technical-Report.md` | 2,240 words (`wc -w`), generated by `python -m antenatal technical-report` from `src/antenatal/reporting/templates/technical_report.md`. Generated numbers: cohort and partition counts, every result and interval, test counts, coverage, lint status, input test table, commit count, and design constants from `StudySpec`. No unfilled fields remain (`test_technical_report_fills_every_field_from_files`). It does not yet contain the seven author statements or an abstract. `scripts/build_report_pdf.py` (`make report-pdf`) prints it to `docs/Technical-Report.pdf`: 5 pages, exactly the limit, so any added text needs a cut elsewhere. The commit count it states is the count at generation time. |
 | `docs/VIDEO_SCRIPT.md` | A ten minute outline in seven timed parts with commands, addresses and files. Its parts A to E follow the report's five sections, because the assignment brief's own Section 2 headings are not in the repository; each is marked "To confirm". |
@@ -538,9 +538,9 @@ Hours are estimates by the author of this report, not measurements.
 
 | Item | Status | Reason | What it would take | Estimated hours |
 | --- | --- | --- | --- | --- |
-| Stage 4 single held out evaluation | Not built | Waits for the supervisor to review the analysis plan | Confirm review, run `HoldoutEvaluator.evaluate_once`, add the result to the report and TRIPOD item 20c (CLAUDE.md item 10) | 3 |
-| Stage 6 Next.js interface | Not built | Runs only on instruction (CLAUDE.md item 11) | Build five pages over the existing API, serve the static build from FastAPI, rerun the browser tests, benchmark and designs | 20 |
-| Container image | Not built | Docker is not installed on the development machine (CLAUDE.md item 12) | Build and run the image, fix any path issues, record the run | 3 |
+| Stage 4 single held out evaluation | Not built | Waits for the supervisor to review the analysis plan | Confirm review, run `HoldoutEvaluator.evaluate_once`, add the result to the report and TRIPOD item 20c (project instructions item 10) | 3 |
+| Stage 6 Next.js interface | Not built | Runs only on instruction (project instructions item 11) | Build five pages over the existing API, serve the static build from FastAPI, rerun the browser tests, benchmark and designs | 20 |
+| Container image | Not built | Docker is not installed on the development machine (project instructions item 12) | Build and run the image, fix any path issues, record the run | 3 |
 | Accessibility scores | Not built | Part of Stage 6 | Lighthouse on each page | 2 |
 | Phone width navigation | Cosmetic defect | At 390 by 844 the step navigation scrolls sideways, so the last step labels sit off screen | Wrap or shorten the step labels; part of Stage 6 | 0.5 |
 | Demonstration video | Placeholder | Not recorded; the outline's A to E headings await the brief's wording | Confirm headings in `docs/VIDEO_SCRIPT.md`, record, add the link to the README | 3 |
@@ -551,9 +551,9 @@ Hours are estimates by the author of this report, not measurements.
 | University ethics determination | Placeholder | Not yet recorded | Record the decision in `docs/ethics_note.md` | 1 |
 | Walkthrough with health workers | Not built | Optional; pending ALU determination | Obtain determination, run with synthetic cases | 6 |
 | Continuous integration run | Not built | Not pushed; the workflow also omits `scripts` from lint and installs no browsers | Add `scripts` to the lint step, push, fix any environment differences on the runner | 1 |
-| Clean clone and submission zip checks | Not run | CLAUDE.md Section 5 items 12 and 13 need a fresh machine or directory | Unzip the package, `make install`, `make test`, `make serve` | 1 |
-| Roadmap and guideline documents | Placeholder | CLAUDE.md names `docs/Capstone-Finalisation-Roadmap.md` and `docs/Implementation-Guideline-for-Claude.md`; neither is in the repository | Add both files | 0.5 |
-| CHANGELOG | Out of date | Not updated for CLAUDE.md items 1 to 9 | Move the finished items out of "Not yet done" | 0.5 |
+| Clean clone and submission zip checks | Not run | project instructions Section 5 items 12 and 13 need a fresh machine or directory | Unzip the package, `make install`, `make test`, `make serve` | 1 |
+| Roadmap and guideline documents | Placeholder | The project instructions name a finalisation roadmap and an implementation guideline; neither is in the repository | Add both files | 0.5 |
+| CHANGELOG | Out of date | Not updated for project instructions items 1 to 9 | Move the finished items out of "Not yet done" | 0.5 |
 | Cloud hosting | Not built by decision | R14 keeps every record local; logged in `docs/deviations.md` | Supervisor's view; if hosting is wanted, deploy with synthetic entry only | 4 if wanted |
 | Database technology | Deviated | SQLite chosen for a local, single user prototype; Table 3.12 names PostgreSQL | Change `ANTENATAL_DATABASE_URL` and add the driver if a server is needed | 2 |
 | Frontend technology | Deviated | Table 3.12 names React.js; the interface is plain HTML until Stage 6 builds the Next.js version | Stage 6 | Included above |

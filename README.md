@@ -291,7 +291,6 @@ The four notebooks explain the work in plain English and add no logic of their o
 │   └── workflows
 ├── .gitignore
 ├── CHANGELOG.md
-├── CLAUDE.md
 ├── Dockerfile
 ├── LICENSE
 ├── Makefile

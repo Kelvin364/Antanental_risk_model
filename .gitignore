@@ -39,5 +39,4 @@ backups/
 node_modules/
 
 # Local assistant settings and runtime database copies; never committed.
-.claude/
 webapp/data/*.bak

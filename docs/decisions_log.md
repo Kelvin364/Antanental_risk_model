@@ -34,7 +34,7 @@ Engineering choices made under the decision rules of guideline version 2 are lis
 
 ## D5. Guideline numbering resolved (23 October 2026)
 
-* **Decided by:** Claude Code, under decision rule 3 (amend, do not ignore), to be confirmed by the author.
+* **Decided by:** the AI coding assistant, under decision rule 3 (amend, do not ignore), to be confirmed by the author.
 * **Decision:** guideline version 2 asks to replace "rule 6" with the authentication rule. In the project rules, rule 6 defines set C for linear models and rule 7 is the rule against sign in and accounts. The authentication sentence replaces the first sentence of rule 7; rule 6 is kept unchanged, and the rest of rule 7 (no risk categories or triage wording) is kept.
 * **What it changes:** nothing in the proposal.
 
@@ -70,7 +70,7 @@ Engineering choices made under the decision rules of guideline version 2 are lis
 | 23 October 2026 | Deployment waits for authentication: a route is protected on the server or it is not deployed | Rule 6 |
 | 23 October 2026 | The three spline knots of experiment 2.4 are placed at the 10th, 50th and 90th percentiles of each training fold, the usual placement for three knots | Rule 2, prespecification; rule 1, knots come from the training fold only |
 | 23 October 2026 | Deployed to Fly.io in the account owner's organisation (`personal`), region `jnb`, one 512 MB machine that stops when idle and an encrypted 1 GB volume with five daily snapshots; approved by the author in this session, including the cost | Rule 9, the hosting target is the user's decision |
-| 23 October 2026 | The first accounts on the live site are created by the account owner, not by Claude Code, so no live password passes through this session | Rule 6, security |
+| 23 October 2026 | The first accounts on the live site are created by the account owner, not by the AI coding assistant, so no live password passes through this session | Rule 6, security |
 | 23 October 2026 | Experiments 2.3 and 2.6 reuse the existing `logistic_l2_no_indicator` predictions on sets B and C from `outputs/oof_extensions.parquet`, an identical configuration on the same sealed folds, instead of refitting it | Rule 5, honesty: recorded rather than rerun silently |
 | 23 October 2026 | The Stage 2 code was committed before its full run produced any result; a one repeat dry run with 50 resamples was used only to find errors and its numbers were discarded unread | Rule 2, prespecification |
 | 23 October 2026 | Stage 2 ran in full (28 runs, all 10 repeats, no convergence warnings). The selection rule's outcome is (c): no candidate passed part (a), so artefact 1.0.0 stays served and is the model to lock for Stage 4 (`outputs/tables/selection_v2.json`, `candidates_v2.csv`) | Rule 2, prespecification; guideline Stage 4.1c |
