@@ -40,3 +40,7 @@ node_modules/
 
 # Local assistant settings and runtime database copies; never committed.
 webapp/data/*.bak
+
+# Progress notes kept on the author's machine; the repository holds only working files.
+CHANGELOG.md
+docs/STATUS_REPORT.md

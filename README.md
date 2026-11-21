@@ -274,7 +274,6 @@ The tests run on every push in continuous integration, together with ruff, black
 | [`week36_model/README.md`](week36_model/README.md) | The week 36 model: its plan, locked model, single test evaluation and files |
 | [`docs/analyses_register.md`](docs/analyses_register.md) | The seven further analyses, each with its question, plan commit and result, and how to restore it from git |
 | [`configs/experiment_plan.yaml`](configs/experiment_plan.yaml) | The Stage 2 experiments and the selection rule, written before any of them ran |
-| [`CHANGELOG.md`](CHANGELOG.md) | What changed in the project, in order |
 
 The four notebooks explain the work in plain English and add no logic of their own; every cell calls the tested code. [`01_data_audit.ipynb`](notebooks/01_data_audit.ipynb) covers the data quality audit, [`02_model_notebook.ipynb`](notebooks/02_model_notebook.ipynb) the served model and its further analyses, [`03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis.ipynb) the research questions, and [`04_week36_model.ipynb`](notebooks/04_week36_model.ipynb) the week 36 model, refitted live and checked against its stored predictions and locked checksum.
 
@@ -290,7 +289,6 @@ The four notebooks explain the work in plain English and add no logic of their o
 ├── .github
 │   └── workflows
 ├── .gitignore
-├── CHANGELOG.md
 ├── Dockerfile
 ├── LICENSE
 ├── Makefile
@@ -308,7 +306,6 @@ The four notebooks explain the work in plain English and add no logic of their o
 ├── docker-compose.yml
 ├── docs
 │   ├── ARCHITECTURE.md
-│   ├── STATUS_REPORT.md
 │   ├── Technical Report_ Incremental Predictive Value of Two Antenatal Visits for Recorded Low Birth Weight (1).pdf
 │   ├── analyses_register.md
 │   ├── decisions_log.md
@@ -402,17 +399,87 @@ The four notebooks explain the work in plain English and add no logic of their o
 
 </details>
 
-| Folder | Role |
-| --- | --- |
-| `src/antenatal` | The research package: data, cohort, partition, features, models, evaluation, artefact, reporting |
-| `week36_model/` | The week 36 model: plan, code, sealed test list, locked models and results |
-| `webapp/` | The FastAPI service and the frozen model artefacts |
-| `frontend/` | The Next.js interface, built into a static export that the service serves |
-| `outputs/` | Every table, figure and saved prediction |
-| `partitions/` | The sealed held out identifiers, the folds and the access log |
-| `tests/` | Unit, integration and browser tests |
-| `scripts/` | Evidence, packaging and held out evaluation scripts |
-| `docs/` | Architecture, protocols, deviations, the register of further analyses and the test evidence |
+### What each folder and file does
+
+Every file in the repository does one job. Progress notes are kept off the repository (see `.gitignore`).
+
+```
+.
+├── README.md                 This page: the question, the answer, how to run and where everything is
+├── LICENSE                   MIT licence for the code
+├── Makefile                  make install, test, lint, run-all, serve, frontend, notebook and the evidence targets
+├── pyproject.toml            Package metadata and the settings of ruff, black, pytest and coverage
+├── requirements.txt          Pinned runtime dependencies
+├── requirements-dev.txt      Pinned test, lint and notebook dependencies
+├── Dockerfile                Container image: builds the interface, installs the service, runs uvicorn
+├── .dockerignore             What the image build leaves out
+├── docker-compose.yml        Runs the image locally with a volume for the database
+├── render.yaml               The Render web service definition of the online prototype
+├── neon.ts                   Link to the Neon PostgreSQL project, read by `npx neon deploy`
+├── package.json              The Neon command line tool for neon.ts (the interface has its own in frontend/)
+├── package-lock.json         Pinned versions for package.json
+├── .github/workflows/ci.yml  Tests, lint and the OpenAPI check on every push
+│
+├── data/                     The released Tanzanian file, read only and checked by SHA 256, and its description
+├── partitions/               The sealed held out identifiers, their checksum, the cross validation folds and the access log
+├── configs/                  experiment_plan.yaml: the prespecified improvement experiments and their selection rule
+│
+├── src/antenatal/            The research package behind every result (python -m antenatal ...)
+│   ├── config.py, paths.py   The frozen specification (StudySpec, seed, ranges, checksums) and file locations
+│   ├── data/                 Loading the file, cell parsers, the field dictionary
+│   ├── audit/                Data quality audit of the released file
+│   ├── cohort/               Cleaning, the seven eligibility steps, the sealed partition
+│   ├── features/             Feature sets A, B and C and the availability screen
+│   ├── models/               Model factory, experiment specifications, transforms
+│   ├── evaluation/           Nested grouped cross validation, group bootstrap, the held out gate and integrity audit
+│   ├── artefact/             The frozen model file with its checksum and version record
+│   ├── reporting/            Tables, figures, README blocks and report templates
+│   ├── study.py, analysis.py, extensions.py, research.py, stage2.py, experiments_v2.py
+│   │                         The analysis stages, one command each
+│   ├── storage.py            The load-db command (research tables in SQLite)
+│   └── cli.py, __main__.py   The command line
+├── outputs/                  Everything the package writes: tables/, figures/, research/, predictions, cohort manifest, manifest.json
+│
+├── week36_model/             The second model, with its own plan, sealed test set and single evaluation (see its README)
+│
+├── webapp/
+│   ├── app/                  The FastAPI service
+│   │   ├── api/              Routes: sign in and accounts, consent and policy, cases, prediction, health
+│   │   ├── core/             Settings, security middleware, the policy and fixed sentences
+│   │   ├── db/               Tables, database connection, check and backup commands
+│   │   ├── schemas/          Request and response shapes
+│   │   ├── services/         Accounts, cases, ranking, scoring, removal, retention, entry rules
+│   │   ├── main.py           The application factory (refuses to start on a changed artefact)
+│   │   ├── admin.py          create-admin and purge-cases commands
+│   │   └── selfcheck.py      Checks this installation scores like the frozen model
+│   ├── model/                The frozen served artefact 1.0.0 and the set A and set B comparators, with checksums
+│   └── data/                 Where the local SQLite database is created (empty in git)
+├── frontend/                 The Next.js interface: src/app pages, src/components, src/lib typed API client, openapi.json
+├── deploy/entrypoint.sh      Container start script: prepares the state folder, then runs the server as the app user
+│
+├── notebooks/                Four walkthroughs that call the package: data audit, served model, statistics, week 36 model
+├── scripts/                  One job each: run_holdout (single held out evaluation), render_designs, accessibility_audit,
+│                             benchmark_api, input_variation, smoke_test, record_test_results, export_openapi,
+│                             build_report_pdf, package_attempt2, evidence_account (shared sign in helper)
+├── tests/                    unit/, integration/, e2e/ (browsers), postgres/ (needs a test database)
+│
+├── docs/
+│   ├── Technical Report_ ... .pdf  The submitted report
+│   ├── ARCHITECTURE.md       Modules, layers and the data model, with diagrams
+│   ├── holdout_protocol.md   What was locked before the held out records were opened
+│   ├── holdout_results.md    The held out results beside the development results (generated)
+│   ├── research_results.md   The research questions with estimates and intervals (generated)
+│   ├── deviations.md         Every difference from the proposal, with its reason
+│   ├── decisions_log.md      Decisions taken during the work, with who decided
+│   ├── ethics_and_ai.md      Ethics approval, data use, safeguards, consent and user rights
+│   ├── tripod_ai_checklist.md  The TRIPOD+AI reporting items and where each is answered
+│   ├── analyses_register.md  Further analyses kept in git history under a tag
+│   └── evidence/             Test summary, input, performance, compatibility, accessibility, deployment,
+│                             held out integrity and ethics feature evidence, each written by its script
+└── designs/                  Screenshots of the running interface, drawn by scripts/render_designs.py
+```
+
+The generated list above it is the exact set of tracked files, rebuilt by `python -m antenatal update-readme`.
 
 ## Limitations
 
